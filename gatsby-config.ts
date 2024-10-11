@@ -9,6 +9,7 @@ const config: GatsbyConfig = {
   pathPrefix: "/gatsby-demo",
   plugins: [
     `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-postcss`,  // Add this line
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -23,6 +24,18 @@ const config: GatsbyConfig = {
       },
     },
     `gatsby-plugin-typescript`,
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `Ryan Lindsey - Personal Website`,
+        short_name: `Ryan Lindsey`,
+        start_url: `/`,
+        background_color: `#ffffff`,
+        theme_color: `#663399`,
+        display: `minimal-ui`,
+        icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
+      },
+    },
   ],
 }
 
