@@ -1,5 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 /* Add any additional global styles here */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold mb-4;
+}
+
+h1 {
+  @apply text-4xl;
+}
+
+h2 {
+  @apply text-3xl;
+}
+
+h3 {
+  @apply text-2xl;
+}
+
+p {
+  @apply mb-4 pl-4;
+}
+
+a {
+  @apply text-blue-600 hover:text-blue-800;
+}
+
+ul, ol {
+  @apply mb-4 pl-8;
+}
+
+li {
+  @apply mb-2;
+}

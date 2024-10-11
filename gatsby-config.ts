@@ -2,9 +2,9 @@ import type { GatsbyConfig } from "gatsby"
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    title: `Your Name - Personal Website`,
-    description: `Backend Engineer with a passion for scalable systems`,
-    author: `Your Name`,
+    title: `Ryan Lindsey - Personal Website`,
+    description: `testing out gatsby for a personal site/blog`,
+    author: `Ryan Lindsey`,
   },
   pathPrefix: "/gatsby-demo",
   plugins: [

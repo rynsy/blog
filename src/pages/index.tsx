@@ -6,15 +6,15 @@ import SEO from "../components/seo"
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />
-    <h1>Your Name</h1>
-    <p>Backend Engineer with a passion for scalable systems</p>
-    <nav>
-      <Link to="/about">About</Link>
-      <Link to="/portfolio">Portfolio</Link>
+    <h1 className="text-4xl font-bold mb-4">Ryan Lindsey</h1>
+    <p className="mb-6">Testing out Gatsby for a personal site/blog</p>
+    <nav className="mb-8">
+      <Link to="/about" className="mr-4">About</Link>
+      <Link to="/portfolio" className="mr-4">Portfolio</Link>
       <Link to="/blog">Blog</Link>
     </nav>
     <Link to="/portfolio">
-      <button>View Portfolio</button>
+      <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View Portfolio</button>
     </Link>
   </Layout>
 )
