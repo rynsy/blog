@@ -35,7 +35,7 @@
   ],
   "license": "0BSD",
   "scripts": {
-    "build": "gatsby build && cp static/404.html public/",
+    "build": "gatsby build --prefix-paths && cp static/404.html public/",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "start": "gatsby develop",

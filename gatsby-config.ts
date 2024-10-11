@@ -6,6 +6,7 @@ const config: GatsbyConfig = {
     description: `Backend Engineer with a passion for scalable systems`,
     author: `Your Name`,
   },
+  pathPrefix: "/gatsby-demo",
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
