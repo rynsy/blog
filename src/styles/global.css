@@ -3,15 +3,3 @@
 @tailwind utilities;
 
 /* Add any additional global styles here */
-
-a {
-  color: #0066cc;
-  font-weight: bold;
-  padding: 2px 4px;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-a:hover {
-  background-color: rgba(0, 102, 204, 0.1);
-}
