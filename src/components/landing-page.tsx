@@ -23,7 +23,7 @@ interface LandingPageProps {
 }
 
 export function LandingPageComponent({
-  name = "Your Name",
+  name = "Ryan Lindsey",
   imageUrl = "/placeholder.svg",
 }: LandingPageProps) {
   return (
@@ -50,8 +50,8 @@ export function LandingPageComponent({
                     {name}
                   </h1>
                   <p className="text-gray-600">
-                    Welcome to my personal website. I'm a passionate developer
-                    and this is where I share my thoughts and projects.
+                    Welcome to my placeholder website. This is very much a
+                    work-in-progress, excuse the mess.
                   </p>
                 </div>
               </div>
