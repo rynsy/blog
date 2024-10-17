@@ -9,7 +9,7 @@ const config: GatsbyConfig = {
   pathPrefix: "/gatsby-demo",
   plugins: [
     `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-postcss`,  // Add this line
+    `gatsby-plugin-postcss`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {

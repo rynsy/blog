@@ -1,11 +1,13 @@
 import path from "path"
 import { GatsbyNode } from "gatsby"
-import { createFilePath } from "gatsby-source-filesystem"
 
 /**
  * @type {import('gatsby').GatsbyNode['createPages']}
  */
-export const createPages: GatsbyNode["createPages"] = async ({ graphql, actions }) => {
+export const createPages: GatsbyNode["createPages"] = async ({
+  graphql,
+  actions,
+}) => {
   const { createPage } = actions
   const result = await graphql<{
     allMarkdownRemark: {
@@ -33,7 +35,7 @@ export const createPages: GatsbyNode["createPages"] = async ({ graphql, actions 
     throw result.errors
   }
 
-  result.data?.allMarkdownRemark.nodes.forEach((node) => {
+  result.data?.allMarkdownRemark.nodes.forEach(node => {
     if (node.frontmatter.slug) {
       createPage({
         path: `/blog/${node.frontmatter.slug}`,
@@ -55,4 +57,15 @@ export const onCreateNode: GatsbyNode["onCreateNode"] = ({ node, actions }) => {
       value: node.frontmatter.slug,
     })
   }
+}
+
+export const onCreateWebpackConfig = ({ actions }) => {
+  actions.setWebpackConfig({
+    resolve: {
+      alias: {
+        "@/components": path.resolve(__dirname, "src/components"),
+        "@/lib/utils": path.resolve(__dirname, "src/lib/utils"),
+      },
+    },
+  })
 }
