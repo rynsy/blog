@@ -20,10 +20,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <header className="mb-8">
         <nav className="flex space-x-4">
-          <Link to="/" className="text-blue-600 hover:text-blue-800">Home</Link>
-          <Link to="/about" className="text-blue-600 hover:text-blue-800">About</Link>
-          <Link to="/portfolio" className="text-blue-600 hover:text-blue-800">Portfolio</Link>
-          <Link to="/blog" className="text-blue-600 hover:text-blue-800">Blog</Link>
+          <Link to="/" className="text-blue-600 hover:text-blue-800">
+            Home
+          </Link>
+          <Link to="/about" className="text-blue-600 hover:text-blue-800">
+            About
+          </Link>
+          <Link to="/portfolio" className="text-blue-600 hover:text-blue-800">
+            Portfolio
+          </Link>
+          <Link to="/blog" className="text-blue-600 hover:text-blue-800">
+            Blog
+          </Link>
         </nav>
       </header>
       <main className="mb-8">{children}</main>

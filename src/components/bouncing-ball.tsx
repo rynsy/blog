@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from "react"
 
 interface Ball {
   x: number
@@ -17,7 +17,7 @@ const BouncingBall: React.FC = () => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext("2d")
     if (!ctx) return
 
     let animationFrameId: number
@@ -27,7 +27,7 @@ const BouncingBall: React.FC = () => {
       y: Math.random() * canvas.height,
       radius: 20,
       dx: (Math.random() - 0.5) * 5,
-      dy: (Math.random() - 0.5) * 5
+      dy: (Math.random() - 0.5) * 5,
     }
 
     const animate = () => {
@@ -38,7 +38,7 @@ const BouncingBall: React.FC = () => {
       // Draw ball
       ctx.beginPath()
       ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(66, 135, 245, 0.5)'
+      ctx.fillStyle = "rgba(66, 135, 245, 0.5)"
       ctx.fill()
       ctx.closePath()
 
@@ -63,13 +63,13 @@ const BouncingBall: React.FC = () => {
     }
 
     handleResize()
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize)
 
     animate()
 
     return () => {
       cancelAnimationFrame(animationFrameId)
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener("resize", handleResize)
     }
   }, [])
 
