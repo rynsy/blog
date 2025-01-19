@@ -3,7 +3,10 @@ import { graphql, PageProps } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
-const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({ data, location }) => {
+const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
+  data,
+  location,
+}) => {
   const post = data.markdownRemark
   const siteTitle = data.site?.siteMetadata?.title || `Title`
 
@@ -13,6 +16,7 @@ const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({ da
 
   return (
     <Layout location={location} title={siteTitle}>
+      <div>Can you see me? </div>
       <SEO title={post.frontmatter.title} description={post.excerpt} />
       <div>
         <h1>{post.frontmatter.title}</h1>
