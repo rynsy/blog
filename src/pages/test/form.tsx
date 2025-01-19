@@ -19,8 +19,12 @@ const TailwindUIForm = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
+
+    const apiUrl = process.env.GATSBY_BACKEND_URL
+
     // Add your form submission logic here
+    console.log("API :", apiUrl)
+    console.log("Form submitted:", formData)
   }
 
   return (
