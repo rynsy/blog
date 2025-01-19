@@ -3,27 +3,22 @@ import type { GatsbyConfig } from "gatsby"
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `Ryan Lindsey - Personal Website`,
-    description: `testing out gatsby for a personal site/blog`,
+    description: `Testing out Gatsby for a personal site/blog`,
     author: `Ryan Lindsey`,
   },
   pathPrefix: "/gatsby-demo",
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,
+    `gatsby-plugin-typescript`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `blog`,
-        path: `${__dirname}/content/blog`,
+        path: `${__dirname}/content/blog`, // Path to your Markdown files
       },
     },
-    {
-      resolve: `gatsby-transformer-remark`,
-      options: {
-        plugins: [],
-      },
-    },
-    `gatsby-plugin-typescript`,
+    `gatsby-transformer-remark`, // Ensure this plugin is included
     {
       resolve: `gatsby-plugin-manifest`,
       options: {

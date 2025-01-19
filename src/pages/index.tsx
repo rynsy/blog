@@ -4,7 +4,11 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { LandingPageComponent } from "@/components/landing-page"
 
-const IndexPage = () => <LandingPageComponent />
+const IndexPage = () => (
+  <Layout>
+    <LandingPageComponent />
+  </Layout>
+)
 
 export default IndexPage
 //
