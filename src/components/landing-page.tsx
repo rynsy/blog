@@ -2,6 +2,7 @@
 
 import React from "react"
 import BouncingBall from "./bouncing-ball"
+import { Link } from "gatsby"
 
 // Define font classes
 const fontClasses = {
@@ -64,13 +65,13 @@ export function LandingPageComponent({
                 { href: "/projects", label: "Projects" },
                 { href: "/contact", label: "Contact" },
               ].map((link, index) => (
-                <a
+                <Link
                   key={link.href}
-                  href={link.href}
-                  className={`text-gray-600 hover:text-gray-900 font-medium py-2 px-4 rounded-full transition-all duration-300 ${linkColors[index]} text-right`}
+                  to={link.href}
+                  className="text-blue-600 hover:text-blue-800"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>
