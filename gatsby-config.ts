@@ -11,7 +11,7 @@ const config: GatsbyConfig = {
     author: `Ryan Lindsey`,
     siteUrl: `https://rynsy.com`,
   },
-  // pathPrefix: "/gatsby-demo", // Disabled for Cloudflare Pages deployment
+  pathPrefix: process.env.DEPLOY_TARGET === "github" ? "/blog" : "",
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,
