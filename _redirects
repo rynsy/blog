@@ -1,0 +1,8 @@
+# Cloudflare Pages redirects for client-side routing
+/*    /index.html   200
+
+# Handle blog post routing
+/blog/*   /blog/:splat   200
+
+# Redirect old paths if needed
+# /old-path/* /new-path/:splat 301
