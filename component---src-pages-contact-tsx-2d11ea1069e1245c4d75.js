@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkgatsby_starter_default=self.webpackChunkgatsby_starter_default||[]).push([[313],{2511:function(e,t,l){l.r(t);var a=l(6540),n=l(6543),u=l(1010);t.default=()=>a.createElement(n.A,null,a.createElement(u.A,{title:"About"}),a.createElement("h1",null,"Contact Info"),a.createElement("h2",null,"Links"),a.createElement("h2",null,"Email"))}}]);
+//# sourceMappingURL=component---src-pages-contact-tsx-2d11ea1069e1245c4d75.js.map
