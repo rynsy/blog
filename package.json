@@ -48,20 +48,24 @@
     "postcss": "^8.5.1",
     "prettier": "^2.8.8",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "wrangler": "^4.28.0"
   },
   "keywords": [
     "gatsby"
   ],
   "license": "0BSD",
   "scripts": {
-    "build": "gatsby build --prefix-paths",
+    "build": "gatsby build",
+    "build:cf": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "start": "gatsby develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "deploy": "npm run build && gh-pages -d public",
+    "deploy:cf": "npm run build:cf && npx wrangler pages deploy public --project-name rynsy-personal-site",
+    "deploy:cf:preview": "npm run build:cf && npx wrangler pages deploy public --project-name rynsy-personal-site --compatibility-date 2024-10-01",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
     "new-blog": "node scripts/new-blog.js"
   },

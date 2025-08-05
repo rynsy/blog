@@ -7,10 +7,11 @@ require("dotenv").config({
 const config: GatsbyConfig = {
   siteMetadata: {
     title: `Ryan Lindsey - Personal Website`,
-    description: `Testing out Gatsby for a personal site/blog`,
+    description: `Personal website and blog of Ryan Lindsey - Software Engineer`,
     author: `Ryan Lindsey`,
+    siteUrl: `https://rynsy.com`,
   },
-  // pathPrefix: "/gatsby-demo",
+  // pathPrefix: "/gatsby-demo", // Disabled for Cloudflare Pages deployment
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,
