@@ -1,35 +1,38 @@
 # Deployment Guide
 
-This project supports deployment to both GitHub Pages and Cloudflare Pages with the correct path prefixes.
+This project uses a development/production workflow with GitHub Pages for testing and Cloudflare Pages for production.
 
 ## 🔧 **Configuration**
 
-- **GitHub Pages**: Uses `/blog` path prefix (matches your repository name)
-- **Cloudflare Pages**: No path prefix (root domain deployment)
+- **GitHub Pages (Development)**: Uses `/blog` path prefix → `rynsy.github.io/blog/`
+- **Cloudflare Pages (Production)**: No path prefix → `rynsy.com`
 
-## 🚀 **Deployment Commands**
+## 🚀 **Deployment Workflow**
 
-### GitHub Pages (Testing)
+### 1. Development/Testing (Automatic)
 ```bash
-# Deploy via GitHub Actions (automatic on push to main)
+# Develop locally
+npm run develop
+
+# When ready to test, push to GitHub
 git add .
-git commit -m "Update site"
+git commit -m "Add new feature"
 git push origin main
-
-# Or build locally for testing
-npm run build:gh
 ```
+✅ **GitHub Actions automatically deploys to `rynsy.github.io/blog/` for testing**
 
-**Note**: GitHub deployment uses GitHub Actions workflow, not the `npm run deploy` command.
-
-### Cloudflare Pages (Production)
+### 2. Production (Manual)
 ```bash
-# Deploy to Cloudflare Pages at rynsy.com
+# When satisfied with testing, deploy to production
 npm run deploy:cf
-
-# Or build only
-npm run build:cf
 ```
+✅ **Manually deploy to `rynsy.com` when ready to publish**
+
+## 🎯 **Build Commands**
+
+- `npm run build:gh` - Build for GitHub Pages (with `/blog` prefix)
+- `npm run build:cf` - Build for Cloudflare Pages (no prefix)
+- `npm run develop` - Local development server
 
 ## 📍 **URLs After Deployment**
 

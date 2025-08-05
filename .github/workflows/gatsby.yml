@@ -1,8 +1,7 @@
-# Sample workflow for building and deploying a Gatsby site to GitHub Pages
+# Build and deploy Gatsby site to GitHub Pages for development/testing
+# Production deployment to Cloudflare Pages is done manually
 #
-# To get started with Gatsby see: https://www.gatsbyjs.com/docs/quick-start/
-#
-name: Deploy Gatsby site to Pages
+name: Deploy to GitHub Pages (Development)
 
 on:
   # Runs on pushes targeting the default branch
@@ -75,7 +74,7 @@ jobs:
             ${{ runner.os }}-gatsby-build-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Gatsby
+      - name: Build with Gatsby (GitHub Pages)
         env:
           DEPLOY_TARGET: github
         run: ${{ steps.detect-package-manager.outputs.manager }} run build:gh
