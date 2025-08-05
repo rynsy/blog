@@ -3,6 +3,10 @@ import { graphql, PageProps } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import "katex/dist/katex.min.css"
+import "prismjs/themes/prism.css"
+import "prismjs/plugins/line-numbers/prism-line-numbers.css"
+import "../styles/syntax-highlighting.css"
+import "../utils/prism-setup"
 
 const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
   data,

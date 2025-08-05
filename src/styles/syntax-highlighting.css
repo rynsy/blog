@@ -1,0 +1,241 @@
+/* Monokai Theme for Light Mode */
+.light pre[class*="language-"] {
+  background: #272822;
+  color: #f8f8f2;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.light code[class*="language-"] {
+  background: #272822;
+  color: #f8f8f2;
+}
+
+.light .token.comment,
+.light .token.prolog,
+.light .token.doctype,
+.light .token.cdata {
+  color: #75715e;
+}
+
+.light .token.punctuation {
+  color: #f8f8f2;
+}
+
+.light .token.property,
+.light .token.tag,
+.light .token.constant,
+.light .token.symbol,
+.light .token.deleted {
+  color: #f92672;
+}
+
+.light .token.boolean,
+.light .token.number {
+  color: #ae81ff;
+}
+
+.light .token.selector,
+.light .token.attr-name,
+.light .token.string,
+.light .token.char,
+.light .token.builtin,
+.light .token.inserted {
+  color: #a6e22e;
+}
+
+.light .token.operator,
+.light .token.entity,
+.light .token.url,
+.light .language-css .token.string,
+.light .style .token.string,
+.light .token.variable {
+  color: #f8f8f2;
+}
+
+.light .token.atrule,
+.light .token.attr-value,
+.light .token.function,
+.light .token.class-name {
+  color: #e6db74;
+}
+
+.light .token.keyword {
+  color: #66d9ef;
+}
+
+.light .token.regex,
+.light .token.important {
+  color: #fd971f;
+}
+
+.light .token.important,
+.light .token.bold {
+  font-weight: bold;
+}
+
+.light .token.italic {
+  font-style: italic;
+}
+
+.light .token.entity {
+  cursor: help;
+}
+
+/* Line numbers for light mode */
+.light .line-numbers .line-numbers-rows {
+  border-right: 1px solid #75715e;
+}
+
+.light .line-numbers-rows > span:before {
+  color: #75715e;
+}
+
+/* Gruvbox Dark Theme for Dark Mode */
+.dark pre[class*="language-"] {
+  background: #282828;
+  color: #ebdbb2;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.dark code[class*="language-"] {
+  background: #282828;
+  color: #ebdbb2;
+}
+
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.doctype,
+.dark .token.cdata {
+  color: #928374;
+}
+
+.dark .token.punctuation {
+  color: #ebdbb2;
+}
+
+.dark .token.property,
+.dark .token.tag,
+.dark .token.constant,
+.dark .token.symbol,
+.dark .token.deleted {
+  color: #fb4934;
+}
+
+.dark .token.boolean,
+.dark .token.number {
+  color: #d3869b;
+}
+
+.dark .token.selector,
+.dark .token.attr-name,
+.dark .token.string,
+.dark .token.char,
+.dark .token.builtin,
+.dark .token.inserted {
+  color: #b8bb26;
+}
+
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string,
+.dark .token.variable {
+  color: #ebdbb2;
+}
+
+.dark .token.atrule,
+.dark .token.attr-value,
+.dark .token.function,
+.dark .token.class-name {
+  color: #fabd2f;
+}
+
+.dark .token.keyword {
+  color: #83a598;
+}
+
+.dark .token.regex,
+.dark .token.important {
+  color: #fe8019;
+}
+
+.dark .token.important,
+.dark .token.bold {
+  font-weight: bold;
+}
+
+.dark .token.italic {
+  font-style: italic;
+}
+
+.dark .token.entity {
+  cursor: help;
+}
+
+/* Line numbers for dark mode */
+.dark .line-numbers .line-numbers-rows {
+  border-right: 1px solid #928374;
+}
+
+.dark .line-numbers-rows > span:before {
+  color: #928374;
+}
+
+/* General code block styling */
+pre[class*="language-"] {
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+code[class*="language-"] {
+  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+}
+
+/* Inline code styling */
+:not(pre) > code[class*="language-"] {
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.light :not(pre) > code[class*="language-"] {
+  background: #f4f4f4;
+  color: #272822;
+}
+
+.dark :not(pre) > code[class*="language-"] {
+  background: #3c3836;
+  color: #ebdbb2;
+}
+
+/* Scrollbar styling for code blocks */
+pre[class*="language-"]::-webkit-scrollbar {
+  height: 8px;
+}
+
+.light pre[class*="language-"]::-webkit-scrollbar-track {
+  background: #3e3d32;
+}
+
+.light pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background: #75715e;
+  border-radius: 4px;
+}
+
+.dark pre[class*="language-"]::-webkit-scrollbar-track {
+  background: #1d2021;
+}
+
+.dark pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background: #504945;
+  border-radius: 4px;
+}

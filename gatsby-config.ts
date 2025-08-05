@@ -40,6 +40,16 @@ const config: GatsbyConfig = {
               // Add any KaTeX options here
               strict: `ignore`
             }
+          },
+          {
+            resolve: `gatsby-remark-prismjs`,
+            options: {
+              classPrefix: "language-",
+              inlineCodeMarker: null,
+              aliases: {},
+              showLineNumbers: true,
+              noInlineHighlight: false,
+            }
           }
         ]
       }
