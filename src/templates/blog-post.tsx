@@ -2,6 +2,7 @@ import React from "react"
 import { graphql, PageProps } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import "katex/dist/katex.min.css"
 
 const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
   data,

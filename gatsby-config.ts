@@ -30,7 +30,20 @@ const config: GatsbyConfig = {
         path: `${__dirname}/content/reading`, // Path to reading entries
       },
     },
-    `gatsby-transformer-remark`, // Ensure this plugin is included
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-katex`,
+            options: {
+              // Add any KaTeX options here
+              strict: `ignore`
+            }
+          }
+        ]
+      }
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
