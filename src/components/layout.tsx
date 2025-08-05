@@ -17,25 +17,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <header className="mb-8">
-        <nav className="flex space-x-4">
-          <Link to="/" className="text-blue-600 hover:text-blue-800">
+    <div className="max-w-4xl mx-auto px-element py-section-sm font-sans">
+      <header className="mb-section-sm">
+        <nav className="flex gap-element">
+          <Link to="/" className="text-primary hover:text-primary/80 transition-colors">
             Home
           </Link>
-          <Link to="/about" className="text-blue-600 hover:text-blue-800">
+          <Link to="/about" className="text-primary hover:text-primary/80 transition-colors">
             About
           </Link>
-          <Link to="/portfolio" className="text-blue-600 hover:text-blue-800">
+          <Link to="/portfolio" className="text-primary hover:text-primary/80 transition-colors">
             Portfolio
           </Link>
-          <Link to="/blog" className="text-blue-600 hover:text-blue-800">
+          <Link to="/blog" className="text-primary hover:text-primary/80 transition-colors">
             Blog
           </Link>
         </nav>
       </header>
-      <main className="mb-8">{children}</main>
-      <footer className="text-center text-gray-600">
+      <main className="mb-section-sm">{children}</main>
+      <footer className="text-center text-muted-foreground">
         © {new Date().getFullYear()}, Built with Gatsby
       </footer>
     </div>

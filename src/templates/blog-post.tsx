@@ -16,13 +16,17 @@ const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
 
   return (
     <Layout location={location} title={siteTitle}>
-      <div>Can you see me? </div>
       <SEO title={post.frontmatter.title} description={post.excerpt} />
-      <div>
-        <h1>{post.frontmatter.title}</h1>
-        <small>{post.frontmatter.date}</small>
-        <div dangerouslySetInnerHTML={{ __html: post.html }} />
-      </div>
+      <article className="prose prose-lg max-w-none">
+        <header className="mb-section">
+          <h1 className="text-display-md font-bold text-foreground mb-element">{post.frontmatter.title}</h1>
+          <time className="text-body-sm text-muted-foreground">{post.frontmatter.date}</time>
+        </header>
+        <div 
+          className="prose prose-lg max-w-none text-body-md text-foreground leading-relaxed" 
+          dangerouslySetInnerHTML={{ __html: post.html }} 
+        />
+      </article>
     </Layout>
   )
 }

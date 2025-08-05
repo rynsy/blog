@@ -22,20 +22,24 @@ export const query = graphql`
 const BlogPage = ({ data }) => (
   <Layout>
     <SEO title="Blog" />
-    <h1>Blog</h1>
-    <div className="space-y-8">
-      {data.allMarkdownRemark.nodes.map(node => (
-        <div key={node.id} className="bg-white p-6 rounded shadow">
-          <Link
-            to={`/blog/${node.frontmatter.slug}`}
-            className="text-2xl font-bold text-blue-600 hover:text-blue-800"
-          >
-            <h2>{node.frontmatter.title}</h2>
-          </Link>
-          <p className="text-gray-600 mb-2">{node.frontmatter.date}</p>
-          <p>{node.excerpt}</p>
-        </div>
-      ))}
+    <div className="space-y-section">
+      <h1 className="text-display-md font-bold text-foreground mb-component">Blog</h1>
+      <div className="space-y-component">
+        {data.allMarkdownRemark.nodes.map(node => (
+          <article key={node.id} className="bg-card p-component rounded-lg border shadow-sm">
+            <Link
+              to={`/blog/${node.frontmatter.slug}`}
+              className="group"
+            >
+              <h2 className="text-heading-lg font-semibold text-primary group-hover:text-primary/80 transition-colors mb-element-sm">
+                {node.frontmatter.title}
+              </h2>
+            </Link>
+            <p className="text-body-sm text-muted-foreground mb-element">{node.frontmatter.date}</p>
+            <p className="text-body-md text-muted-foreground">{node.excerpt}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </Layout>
 )

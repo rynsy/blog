@@ -10,7 +10,7 @@ const config: GatsbyConfig = {
     description: `Testing out Gatsby for a personal site/blog`,
     author: `Ryan Lindsey`,
   },
-  pathPrefix: "/gatsby-demo",
+  // pathPrefix: "/gatsby-demo",
   plugins: [
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,

@@ -6,7 +6,7 @@ import { Link } from "gatsby"
 
 // Define font classes
 const fontClasses = {
-  header: "font-serif",
+  header: "font-display",
   content: "font-sans",
 }
 
@@ -29,16 +29,16 @@ export function LandingPageComponent({
 }: LandingPageProps) {
   return (
     <div
-      className={`min-h-screen bg-gray-50 flex flex-col ${fontClasses.content} relative overflow-hidden`}
+      className={`min-h-screen bg-background flex flex-col ${fontClasses.content} relative overflow-hidden`}
     >
       <BouncingBall />
       <main className="flex-grow flex items-center justify-center p-4 relative z-10">
-        <div className="w-full h-full bg-white/80 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col">
-          <div className="p-8 flex-grow flex flex-col">
-            <div className="mb-6">
-              <div className="flex items-start mb-6">
+        <div className="w-full h-full bg-card/80 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col">
+          <div className="p-section-sm flex-grow flex flex-col">
+            <div className="mb-component">
+              <div className="flex items-start mb-component">
                 <img
-                  className="h-24 w-24 rounded-full object-cover mr-6"
+                  className="h-24 w-24 rounded-full object-cover mr-component"
                   src={imageUrl}
                   alt={name}
                   width={96}
@@ -46,11 +46,11 @@ export function LandingPageComponent({
                 />
                 <div>
                   <h1
-                    className={`text-4xl font-bold text-gray-900 mb-4 ${fontClasses.header}`}
+                    className={`text-display-sm font-bold text-foreground mb-element ${fontClasses.header}`}
                   >
                     {name}
                   </h1>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground text-body-lg">
                     Welcome to my placeholder website. This is very much a
                     work-in-progress, excuse the mess.
                   </p>
@@ -58,7 +58,7 @@ export function LandingPageComponent({
               </div>
             </div>
             <div className="flex-grow" />
-            <nav className="flex flex-col items-end space-y-2">
+            <nav className="flex flex-col items-end gap-element-sm">
               {[
                 { href: "/about", label: "About Me" },
                 { href: "/blog", label: "Blog" },
@@ -68,7 +68,7 @@ export function LandingPageComponent({
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="text-primary hover:text-primary/80 transition-colors text-body-lg"
                 >
                   {link.label}
                 </Link>
@@ -77,8 +77,8 @@ export function LandingPageComponent({
           </div>
         </div>
       </main>
-      <footer className="h-12 flex items-center justify-center bg-gray-100/80 backdrop-blur-sm relative z-10">
-        <p className="text-center text-gray-500 text-xs">
+      <footer className="h-12 flex items-center justify-center bg-muted/80 backdrop-blur-sm relative z-10">
+        <p className="text-center text-muted-foreground text-caption">
           © {new Date().getFullYear()} {name}. All rights reserved.
         </p>
       </footer>
