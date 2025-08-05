@@ -20,7 +20,7 @@ const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
   }
 
   return (
-    <Layout location={location} title={siteTitle}>
+    <Layout>
       <SEO title={post.frontmatter.title} description={post.excerpt} />
       <article className="prose prose-lg max-w-none">
         <header className="mb-section">
