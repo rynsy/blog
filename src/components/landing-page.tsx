@@ -4,6 +4,7 @@ import React from "react"
 import BouncingBall from "./bouncing-ball"
 import { Link } from "gatsby"
 import RecentReading from "./reading/RecentReading"
+import ThemeToggle from "./ThemeToggle"
 
 // Define font classes
 const fontClasses = {
@@ -85,6 +86,9 @@ export function LandingPageComponent({
           </div>
         </div>
       </main>
+      
+      {/* Theme Toggle */}
+      <ThemeToggle />
     </div>
   )
 }

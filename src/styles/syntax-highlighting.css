@@ -1,28 +1,47 @@
-/* Monokai Theme for Light Mode */
-.light pre[class*="language-"] {
-  background: #272822;
-  color: #f8f8f2;
+/* Clean base styles for code blocks */
+pre[class*="language-"] {
+  margin: 2rem auto !important;
+  position: relative;
+  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+  text-shadow: none !important;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 1.5rem !important;
   overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  tab-size: 2;
+  max-width: 100%;
+}
+
+code[class*="language-"] {
+  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+  text-shadow: none !important;
+}
+
+/* Light Mode Theme */
+.light pre[class*="language-"] {
+  background: #f8f8f8 !important;
+  color: #333 !important;
+  border: 1px solid #e1e5e9;
 }
 
 .light code[class*="language-"] {
-  background: #272822;
-  color: #f8f8f2;
+  background: transparent !important;
+  color: #333 !important;
 }
 
 .light .token.comment,
 .light .token.prolog,
 .light .token.doctype,
 .light .token.cdata {
-  color: #75715e;
+  color: #6a737d;
+  font-style: italic;
 }
 
 .light .token.punctuation {
-  color: #f8f8f2;
+  color: #24292e;
 }
 
 .light .token.property,
@@ -30,12 +49,12 @@
 .light .token.constant,
 .light .token.symbol,
 .light .token.deleted {
-  color: #f92672;
+  color: #d73a49;
 }
 
 .light .token.boolean,
 .light .token.number {
-  color: #ae81ff;
+  color: #005cc5;
 }
 
 .light .token.selector,
@@ -44,7 +63,7 @@
 .light .token.char,
 .light .token.builtin,
 .light .token.inserted {
-  color: #a6e22e;
+  color: #032f62;
 }
 
 .light .token.operator,
@@ -53,23 +72,23 @@
 .light .language-css .token.string,
 .light .style .token.string,
 .light .token.variable {
-  color: #f8f8f2;
+  color: #e36209;
 }
 
 .light .token.atrule,
 .light .token.attr-value,
 .light .token.function,
 .light .token.class-name {
-  color: #e6db74;
+  color: #6f42c1;
 }
 
 .light .token.keyword {
-  color: #66d9ef;
+  color: #d73a49;
 }
 
 .light .token.regex,
 .light .token.important {
-  color: #fd971f;
+  color: #e36209;
 }
 
 .light .token.important,
@@ -85,40 +104,28 @@
   cursor: help;
 }
 
-/* Line numbers for light mode */
-.light .line-numbers .line-numbers-rows {
-  border-right: 1px solid #75715e;
-}
-
-.light .line-numbers-rows > span:before {
-  color: #75715e;
-}
-
-/* Gruvbox Dark Theme for Dark Mode */
+/* Dark Mode Theme */
 .dark pre[class*="language-"] {
-  background: #282828;
-  color: #ebdbb2;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  background: #1e1e1e !important;
+  color: #d4d4d4 !important;
+  border: 1px solid #333;
 }
 
 .dark code[class*="language-"] {
-  background: #282828;
-  color: #ebdbb2;
+  background: transparent !important;
+  color: #d4d4d4 !important;
 }
 
 .dark .token.comment,
 .dark .token.prolog,
 .dark .token.doctype,
 .dark .token.cdata {
-  color: #928374;
+  color: #6a9955;
+  font-style: italic;
 }
 
 .dark .token.punctuation {
-  color: #ebdbb2;
+  color: #d4d4d4;
 }
 
 .dark .token.property,
@@ -126,12 +133,12 @@
 .dark .token.constant,
 .dark .token.symbol,
 .dark .token.deleted {
-  color: #fb4934;
+  color: #f44747;
 }
 
 .dark .token.boolean,
 .dark .token.number {
-  color: #d3869b;
+  color: #b5cea8;
 }
 
 .dark .token.selector,
@@ -140,7 +147,7 @@
 .dark .token.char,
 .dark .token.builtin,
 .dark .token.inserted {
-  color: #b8bb26;
+  color: #ce9178;
 }
 
 .dark .token.operator,
@@ -149,23 +156,23 @@
 .dark .language-css .token.string,
 .dark .style .token.string,
 .dark .token.variable {
-  color: #ebdbb2;
+  color: #4fc1ff;
 }
 
 .dark .token.atrule,
 .dark .token.attr-value,
 .dark .token.function,
 .dark .token.class-name {
-  color: #fabd2f;
+  color: #dcdcaa;
 }
 
 .dark .token.keyword {
-  color: #83a598;
+  color: #569cd6;
 }
 
 .dark .token.regex,
 .dark .token.important {
-  color: #fe8019;
+  color: #d16969;
 }
 
 .dark .token.important,
@@ -181,40 +188,24 @@
   cursor: help;
 }
 
-/* Line numbers for dark mode */
-.dark .line-numbers .line-numbers-rows {
-  border-right: 1px solid #928374;
-}
-
-.dark .line-numbers-rows > span:before {
-  color: #928374;
-}
-
-/* General code block styling */
-pre[class*="language-"] {
-  margin: 1.5rem 0;
-  position: relative;
-}
-
-code[class*="language-"] {
-  font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
-}
-
 /* Inline code styling */
 :not(pre) > code[class*="language-"] {
-  padding: 0.125rem 0.25rem;
+  padding: 0.125rem 0.25rem !important;
   border-radius: 0.25rem;
-  font-size: 0.875rem;
+  font-size: 0.85rem !important;
+  white-space: normal;
 }
 
 .light :not(pre) > code[class*="language-"] {
-  background: #f4f4f4;
-  color: #272822;
+  background: #f6f8fa !important;
+  color: #24292e !important;
+  border: 1px solid #e1e5e9;
 }
 
 .dark :not(pre) > code[class*="language-"] {
-  background: #3c3836;
-  color: #ebdbb2;
+  background: #2d2d2d !important;
+  color: #d4d4d4 !important;
+  border: 1px solid #444;
 }
 
 /* Scrollbar styling for code blocks */
@@ -223,19 +214,67 @@ pre[class*="language-"]::-webkit-scrollbar {
 }
 
 .light pre[class*="language-"]::-webkit-scrollbar-track {
-  background: #3e3d32;
+  background: #f1f1f1;
 }
 
 .light pre[class*="language-"]::-webkit-scrollbar-thumb {
-  background: #75715e;
+  background: #c1c1c1;
   border-radius: 4px;
 }
 
 .dark pre[class*="language-"]::-webkit-scrollbar-track {
-  background: #1d2021;
+  background: #2d2d2d;
 }
 
 .dark pre[class*="language-"]::-webkit-scrollbar-thumb {
-  background: #504945;
+  background: #555;
   border-radius: 4px;
+}
+
+/* LaTeX/KaTeX styling for display equations */
+.katex-display {
+  text-align: center !important;
+  margin: 3rem auto !important;
+  padding: 3rem 2rem !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05)) !important;
+  border-radius: 1rem !important;
+  border: 2px solid rgba(99, 102, 241, 0.2) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  overflow-x: auto !important;
+  font-size: 1.3em !important;
+  position: relative;
+}
+
+.katex-display::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.dark .katex-display {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1)) !important;
+  border: 2px solid rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Regular LaTeX sizing */
+.katex {
+  font-size: 1.1em !important;
+}
+
+/* Inline LaTeX - subtle background */
+p .katex {
+  padding: 0.125rem 0.25rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 0.25rem;
+  margin: 0 0.125rem;
+}
+
+.dark p .katex {
+  background: rgba(255, 255, 255, 0.05) !important;
 }

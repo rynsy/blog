@@ -1,4 +1,5 @@
 import "./src/styles/global.css"
+import "./src/utils/prism-setup"
 import React from "react"
 import RootWrapper from "./src/components/RootWrapper"
 

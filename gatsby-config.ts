@@ -47,8 +47,9 @@ const config: GatsbyConfig = {
               classPrefix: "language-",
               inlineCodeMarker: null,
               aliases: {},
-              showLineNumbers: true,
+              showLineNumbers: false,
               noInlineHighlight: false,
+              escapeEntities: {},
             }
           }
         ]
