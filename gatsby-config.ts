@@ -23,6 +23,13 @@ const config: GatsbyConfig = {
         path: `${__dirname}/content/blog`, // Path to your Markdown files
       },
     },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `reading`,
+        path: `${__dirname}/content/reading`, // Path to reading entries
+      },
+    },
     `gatsby-transformer-remark`, // Ensure this plugin is included
     {
       resolve: `gatsby-plugin-manifest`,

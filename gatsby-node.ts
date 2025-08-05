@@ -15,6 +15,7 @@ export const createPages: GatsbyNode["createPages"] = async ({
       nodes: Array<{
         id: string
         frontmatter: { slug: string }
+        fileAbsolutePath: string
       }>
     }
   }>(`
@@ -25,6 +26,7 @@ export const createPages: GatsbyNode["createPages"] = async ({
           frontmatter {
             slug
           }
+          fileAbsolutePath
         }
       }
     }
@@ -36,11 +38,23 @@ export const createPages: GatsbyNode["createPages"] = async ({
 
   result.data.allMarkdownRemark.nodes.forEach(node => {
     if (node.frontmatter.slug) {
-      createPage({
-        path: `/blog/${node.frontmatter.slug}`,
-        component: path.resolve(`./src/templates/blog-post.tsx`),
-        context: { id: node.id },
-      })
+      // Determine if this is a blog post or reading entry based on file path
+      const isReadingEntry = node.fileAbsolutePath.includes('/content/reading/')
+      const isBlogPost = node.fileAbsolutePath.includes('/content/blog/')
+      
+      if (isBlogPost) {
+        createPage({
+          path: `/blog/${node.frontmatter.slug}`,
+          component: path.resolve(`./src/templates/blog-post.tsx`),
+          context: { id: node.id },
+        })
+      } else if (isReadingEntry) {
+        createPage({
+          path: `/reading/${node.frontmatter.slug}`,
+          component: path.resolve(`./src/templates/reading-entry.tsx`),
+          context: { id: node.id },
+        })
+      }
     }
   })
 }

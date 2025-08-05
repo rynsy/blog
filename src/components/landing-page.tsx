@@ -3,6 +3,7 @@
 import React from "react"
 import BouncingBall from "./bouncing-ball"
 import { Link } from "gatsby"
+import RecentReading from "./reading/RecentReading"
 
 // Define font classes
 const fontClasses = {
@@ -33,8 +34,8 @@ export function LandingPageComponent({
     >
       <BouncingBall />
       <main className="flex-grow flex items-center justify-center p-4 relative z-10">
-        <div className="w-full h-full bg-card/80 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden flex flex-col">
-          <div className="p-section-sm flex-grow flex flex-col">
+        <div className="w-full h-full bg-card/80 backdrop-blur-sm shadow-lg rounded-lg overflow-hidden relative">
+          <div className="p-section-sm h-full flex flex-col">
             <div className="mb-component">
               <div className="flex items-start mb-component">
                 <img
@@ -57,12 +58,14 @@ export function LandingPageComponent({
                 </div>
               </div>
             </div>
+            
             <div className="flex-grow" />
             <nav className="flex flex-col items-end gap-element-sm">
               {[
                 { href: "/about", label: "About Me" },
                 { href: "/blog", label: "Blog" },
                 { href: "/portfolio", label: "Portfolio" },
+                { href: "/reading", label: "Reading" },
                 { href: "/contact", label: "Contact" },
               ].map((link, index) => (
                 <Link
@@ -74,6 +77,11 @@ export function LandingPageComponent({
                 </Link>
               ))}
             </nav>
+          </div>
+          
+          {/* Recent Reading Section - Bottom Left */}
+          <div className="absolute bottom-4 left-4 w-80 max-w-[calc(100%-2rem)]">
+            <RecentReading limit={2} showViewAll={true} />
           </div>
         </div>
       </main>

@@ -32,6 +32,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link to="/blog" className="text-primary hover:text-primary/80 transition-colors">
             Blog
           </Link>
+          <Link to="/reading" className="text-primary hover:text-primary/80 transition-colors">
+            Reading
+          </Link>
         </nav>
       </header>
       <main>{children}</main>
