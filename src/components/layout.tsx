@@ -34,10 +34,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Link>
         </nav>
       </header>
-      <main className="mb-section-sm">{children}</main>
-      <footer className="text-center text-muted-foreground">
-        © {new Date().getFullYear()}, Built with Gatsby
-      </footer>
+      <main>{children}</main>
     </div>
   )
 }

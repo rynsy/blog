@@ -62,7 +62,7 @@ export function LandingPageComponent({
               {[
                 { href: "/about", label: "About Me" },
                 { href: "/blog", label: "Blog" },
-                { href: "/projects", label: "Projects" },
+                { href: "/portfolio", label: "Portfolio" },
                 { href: "/contact", label: "Contact" },
               ].map((link, index) => (
                 <Link
@@ -77,11 +77,6 @@ export function LandingPageComponent({
           </div>
         </div>
       </main>
-      <footer className="h-12 flex items-center justify-center bg-muted/80 backdrop-blur-sm relative z-10">
-        <p className="text-center text-muted-foreground text-caption">
-          © {new Date().getFullYear()} {name}. All rights reserved.
-        </p>
-      </footer>
     </div>
   )
 }

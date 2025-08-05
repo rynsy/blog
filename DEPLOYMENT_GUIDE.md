@@ -11,12 +11,16 @@ This project supports deployment to both GitHub Pages and Cloudflare Pages with 
 
 ### GitHub Pages (Testing)
 ```bash
-# Deploy to GitHub Pages at rynsy.github.io/blog/
-npm run deploy
+# Deploy via GitHub Actions (automatic on push to main)
+git add .
+git commit -m "Update site"
+git push origin main
 
-# Or build only
+# Or build locally for testing
 npm run build:gh
 ```
+
+**Note**: GitHub deployment uses GitHub Actions workflow, not the `npm run deploy` command.
 
 ### Cloudflare Pages (Production)
 ```bash
