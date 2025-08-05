@@ -1,8 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
 
 const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme()
+  const [isMounted, setIsMounted] = useState(false)
+  const [localTheme, setLocalTheme] = useState<'light' | 'dark'>('light')
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Try to get theme from context, fallback to local state
+  let theme = localTheme
+  let toggleTheme = () => setLocalTheme(prev => prev === 'light' ? 'dark' : 'light')
+
+  if (isMounted) {
+    try {
+      const themeContext = useTheme()
+      theme = themeContext.theme
+      toggleTheme = themeContext.toggleTheme
+    } catch {
+      // ThemeProvider not available yet, use fallback
+    }
+  }
 
   return (
     <button

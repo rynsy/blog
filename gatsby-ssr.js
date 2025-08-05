@@ -1,9 +1,9 @@
 import React from "react"
-import { ThemeProvider } from "./src/contexts/ThemeContext"
+import RootWrapper from "./src/components/RootWrapper"
 
 // Wrap the entire app with ThemeProvider for SSR
 export const wrapRootElement = ({ element }) => {
-  return React.createElement(ThemeProvider, null, element)
+  return React.createElement(RootWrapper, null, element)
 }
 
 export function onRenderBody({ setHeadComponents }) {

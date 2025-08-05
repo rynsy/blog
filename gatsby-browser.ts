@@ -1,8 +1,8 @@
 import "./src/styles/global.css"
 import React from "react"
-import { ThemeProvider, WrapRootElementProps } from "./src/contexts/ThemeContext"
+import RootWrapper from "./src/components/RootWrapper"
 
 // Wrap the entire app with ThemeProvider
-export const wrapRootElement = ({ element }: WrapRootElementProps) => {
-  return React.createElement(ThemeProvider, null, element)
+export const wrapRootElement = ({ element }) => {
+  return React.createElement(RootWrapper, null, element)
 }
