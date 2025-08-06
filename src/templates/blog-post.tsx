@@ -22,7 +22,7 @@ const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
       <SEO title={post.frontmatter.title} description={post.excerpt} />
       <article className="prose prose-lg max-w-none">
         <header className="mb-section">
-          <h1 className="text-display-md font-bold text-foreground mb-element">{post.frontmatter.title}</h1>
+          <h1 className="text-display-xl font-bold text-foreground mb-2 font-serif">{post.frontmatter.title}</h1>
           <time className="text-body-sm text-muted-foreground">{post.frontmatter.date}</time>
         </header>
         <div 

@@ -26,7 +26,7 @@ const BlogPage = ({ data }) => (
   <Layout>
     <SEO title="Blog" />
     <div className="space-y-section">
-      <h1 className="text-display-md font-bold text-foreground mb-component">Blog</h1>
+      <h1 className="text-display-md font-bold text-foreground mb-component font-serif">Blog</h1>
       <div className="space-y-component">
         {data.allMarkdownRemark.nodes.map(node => (
           <article key={node.id} className="bg-card p-component rounded-lg border shadow-sm">
@@ -34,7 +34,7 @@ const BlogPage = ({ data }) => (
               to={`/blog/${node.frontmatter.slug}`}
               className="group"
             >
-              <h2 className="text-heading-lg font-semibold text-primary group-hover:text-primary/80 transition-colors mb-element-sm">
+              <h2 className="text-heading-lg font-semibold text-primary group-hover:text-primary/80 transition-colors mb-element-sm font-serif">
                 {node.frontmatter.title}
               </h2>
             </Link>

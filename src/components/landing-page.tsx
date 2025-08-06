@@ -8,7 +8,7 @@ import ThemeToggle from "./ThemeToggle"
 
 // Define font classes
 const fontClasses = {
-  header: "font-display",
+  header: "font-serif",
   content: "font-sans",
 }
 
