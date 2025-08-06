@@ -11,6 +11,7 @@ import {
   CheckIcon
 } from '@heroicons/react/24/outline'
 import { useBackground } from '../contexts/BackgroundContext'
+import { debugBackground } from '../utils/debug'
 
 const ControlTray: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -23,6 +24,14 @@ const ControlTray: React.FC = () => {
     toggleActive,
     togglePause
   } = useBackground()
+
+  debugBackground.controls('Render state:', {
+    currentModule,
+    isActive,
+    isPaused,
+    availableModules: Object.keys(modules),
+    moduleCount: Object.keys(modules).length
+  })
 
   const moduleOptions = [
     { id: null, name: 'None', description: 'No background animation' },
@@ -45,16 +54,29 @@ const ControlTray: React.FC = () => {
     if (typeof window === 'undefined') return
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      debugBackground.controls('Key event:', {
+        key: event.key,
+        shiftKey: event.shiftKey,
+        target: event.target?.constructor.name
+      })
+
       // Shift + ~ to cycle through modules
       if (event.shiftKey && event.key === '~') {
+        debugBackground.controls('Shift+~ detected! Cycling modules...', {
+          currentModule,
+          moduleOptions: moduleOptions.map(m => m.id)
+        })
         event.preventDefault()
         const currentIndex = moduleOptions.findIndex(option => option.id === currentModule)
         const nextIndex = (currentIndex + 1) % moduleOptions.length
-        setCurrentModule(moduleOptions[nextIndex].id)
+        const nextModule = moduleOptions[nextIndex]
+        debugBackground.controls(`Switching from ${currentModule} to ${nextModule.id}`)
+        setCurrentModule(nextModule.id)
       }
       
       // Escape to close tray
       if (event.key === 'Escape' && isOpen) {
+        debugBackground.controls('Escape pressed, closing tray')
         setIsOpen(false)
       }
     }

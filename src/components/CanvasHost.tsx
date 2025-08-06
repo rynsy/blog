@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useBackground } from '../contexts/BackgroundContext'
 import { useTheme } from '../contexts/ThemeContext'
+import { debugBackground } from '../utils/debug'
 
 interface CanvasHostProps {
   className?: string
@@ -20,10 +21,20 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
 
   // Initialize and manage module lifecycle
   useEffect(() => {
+    debugBackground.canvas('Effect triggered', {
+      hasCanvas: !!canvasRef.current,
+      currentModule,
+      hasModuleConfig: currentModule ? !!modules[currentModule] : false,
+      isActive,
+      availableModules: Object.keys(modules)
+    })
+
     const canvas = canvasRef.current
     if (!canvas || !currentModule || !modules[currentModule] || !isActive) {
+      debugBackground.canvas('Conditions not met, cleaning up...')
       // Clean up existing module if conditions aren't met
       if (_moduleInstance) {
+        debugBackground.canvas('Destroying existing module instance')
         _moduleInstance.destroy()
         _setModuleInstance(null)
       }
@@ -34,20 +45,34 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
 
     const initializeModule = async () => {
       try {
+        debugBackground.canvas('Loading module:', currentModule)
+        
         // Load the module
         const moduleExport = await modules[currentModule].load()
+        debugBackground.canvas('Module loaded successfully:', moduleExport)
         
         // Check if component is still mounted and module is still current
-        if (!mounted || currentModule !== currentModule) return
+        if (!mounted) {
+          debugBackground.canvas('Component unmounted during load')
+          return
+        }
 
         // Set canvas size
         const updateCanvasSize = () => {
           canvas.width = window.innerWidth
           canvas.height = window.innerHeight
+          debugBackground.canvas('Canvas sized to:', `${canvas.width}x${canvas.height}`)
         }
         updateCanvasSize()
 
         // Setup the module
+        debugBackground.canvas('Setting up module with params:', {
+          canvas: canvas.tagName,
+          width: canvas.width,
+          height: canvas.height,
+          theme
+        })
+        
         const moduleInstance = moduleExport.setup({
           canvas,
           width: canvas.width,
@@ -55,19 +80,31 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
           theme
         })
 
+        debugBackground.canvas('Module instance created:', moduleInstance)
+
         if (mounted) {
           _setModuleInstance(moduleInstance)
+          debugBackground.canvas('Module instance set in context')
           
           // Start paused if needed
+          debugBackground.canvas('Checking pause conditions:', {
+            isPaused,
+            documentHidden: document.hidden,
+            shouldPause: isPaused || document.hidden
+          })
           if (isPaused || document.hidden) {
+            debugBackground.canvas('Starting module in paused state')
             moduleInstance.pause()
+          } else {
+            debugBackground.canvas('Module should be running')
           }
         } else {
           // Component was unmounted, clean up
+          debugBackground.canvas('Component unmounted, cleaning up')
           moduleInstance.destroy()
         }
       } catch (error) {
-        console.error('Failed to initialize background module:', error)
+        debugBackground.canvas('Failed to initialize background module:', error)
       }
     }
 
@@ -86,9 +123,18 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
   useEffect(() => {
     if (!_moduleInstance) return
 
+    debugBackground.canvas('Pause/Resume effect triggered:', {
+      isPaused,
+      documentHidden: document.hidden,
+      isActive,
+      shouldPause: isPaused || document.hidden
+    })
+
     if (isPaused || document.hidden) {
+      debugBackground.canvas('Pausing module due to conditions')
       _moduleInstance.pause()
     } else if (isActive) {
+      debugBackground.canvas('Resuming module')
       _moduleInstance.resume()
     }
   }, [isPaused, isActive, _moduleInstance])
@@ -145,17 +191,18 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
         ref={canvasRef}
         className={`fixed inset-0 pointer-events-none ${className}`}
         style={{ 
-          zIndex: -1,
+          zIndex: -1,  // Behind content
           width: '100vw',
-          height: '100vh'
+          height: '100vh',
+          transition: 'opacity 0.2s ease-in-out'
         }}
         aria-hidden="true"
       />
       
-      {/* Background overlay for text readability */}
-      {isActive && currentModule && (
+      {/* Background overlay for text readability - temporarily disabled for testing */}
+      {false && isActive && currentModule && (
         <div 
-          className="fixed inset-0 bg-white/75 dark:bg-gray-900/75 pointer-events-none"
+          className="fixed inset-0 bg-white/10 dark:bg-gray-900/10 pointer-events-none"
           style={{ zIndex: 0 }}
           aria-hidden="true"
         />

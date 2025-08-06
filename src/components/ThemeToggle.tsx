@@ -9,18 +9,18 @@ const ThemeToggle: React.FC = () => {
     setIsMounted(true)
   }, [])
 
-  // Try to get theme from context, fallback to local state
+  // Always call useTheme hook, but handle errors gracefully
   let theme = localTheme
   let toggleTheme = () => setLocalTheme(prev => prev === 'light' ? 'dark' : 'light')
 
-  if (isMounted) {
-    try {
-      const themeContext = useTheme()
+  try {
+    const themeContext = useTheme()
+    if (isMounted) {
       theme = themeContext.theme
       toggleTheme = themeContext.toggleTheme
-    } catch {
-      // ThemeProvider not available yet, use fallback
     }
+  } catch {
+    // ThemeProvider not available yet, use fallback
   }
 
   return (

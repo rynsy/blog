@@ -1,4 +1,5 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
+import { debugBackground } from '../../utils/debug'
 
 interface GradientConfig {
   speed: number
@@ -9,7 +10,7 @@ interface GradientConfig {
 }
 
 const defaultConfig: GradientConfig = {
-  speed: 0.002,
+  speed: 0.002,  // Slow, subtle animation
   colors: {
     light: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'],  // Blue to purple to pink to amber
     dark: ['#1e40af', '#7c3aed', '#be185d', '#d97706']    // Darker versions
@@ -26,6 +27,13 @@ class GradientModule implements BackgroundModule {
   private isRunning = false
 
   constructor(canvas: HTMLCanvasElement, theme: 'light' | 'dark', config: GradientConfig = defaultConfig) {
+    debugBackground.gradient('Constructor called', { 
+      canvas: canvas.tagName,
+      width: canvas.width, 
+      height: canvas.height,
+      theme 
+    })
+    
     this.canvas = canvas
     this.currentTheme = theme
     this.config = config
@@ -35,16 +43,27 @@ class GradientModule implements BackgroundModule {
       throw new Error('Failed to get 2D context from canvas')
     }
     this.ctx = ctx
+    debugBackground.gradient('2D context obtained successfully')
   }
 
   private animate = () => {
-    if (!this.isRunning) return
+    if (!this.isRunning) {
+      debugBackground.gradient('Animation stopped, isRunning:', this.isRunning)
+      return
+    }
     
+    debugBackground.gradient('Animation frame, animationId will be:', 'next frame')
     const currentTime = Date.now()
     const elapsed = (currentTime - this.startTime) * this.config.speed
     
     // Clear canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    
+    // TEMPORARY: Draw a solid red rectangle to test visibility
+    this.ctx.fillStyle = 'red'
+    this.ctx.fillRect(50, 50, 200, 100)
+    this.ctx.fillStyle = 'blue'
+    this.ctx.fillRect(300, 150, 200, 100)
     
     // Create animated gradient
     const gradient = this.ctx.createLinearGradient(
@@ -100,8 +119,16 @@ class GradientModule implements BackgroundModule {
   }
 
   resume(): void {
+    debugBackground.gradient('Resume called', { 
+      wasRunning: this.isRunning, 
+      animationId: this.animationId,
+      hasCanvas: !!this.canvas,
+      hasContext: !!this.ctx
+    })
     if (!this.isRunning) {
       this.isRunning = true
+      debugBackground.gradient('Starting animation loop')
+      this.startTime = Date.now() // Reset start time
       this.animate()
     }
   }
@@ -123,11 +150,19 @@ class GradientModule implements BackgroundModule {
 }
 
 export const setup = ({ canvas, width, height, theme }: ModuleSetupParams): BackgroundModule => {
+  debugBackground.gradient('Setup function called', {
+    canvas: canvas.constructor.name,
+    width,
+    height,
+    theme
+  })
+
   if (!(canvas instanceof HTMLCanvasElement)) {
     throw new Error('Gradient module requires HTMLCanvasElement')
   }
   
   const module = new GradientModule(canvas, theme)
+  debugBackground.gradient('Module created, starting animation...')
   module.resume() // Start animation
   return module
 }

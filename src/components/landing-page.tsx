@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react"
 import { Link } from "gatsby"
-import ThemeToggle from "./ThemeToggle"
 import InteractiveGraph from "./InteractiveGraph"
+import { useBackground } from "../contexts/BackgroundContext"
 
 // Define font classes
 const fontClasses = {
@@ -80,75 +80,62 @@ export function LandingPageComponent({
   name = "Ryan Lindsey",
   imageUrl = "/placeholder.svg",
 }: LandingPageProps) {
+  console.log('🌟 LandingPage: Rendering LandingPageComponent')
+  
+  // Test if background context is available
+  try {
+    const { currentModule, isActive, modules } = useBackground()
+    console.log('🌟 LandingPage: Background context available:', {
+      currentModule,
+      isActive,
+      moduleCount: Object.keys(modules).length
+    })
+  } catch (error) {
+    console.error('🌟 LandingPage: Background context NOT available:', error)
+  }
+  
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 relative overflow-hidden">
-      
-      {/* Match Layout structure exactly */}
-      <div className="max-w-4xl mx-auto px-element py-section-sm font-sans relative z-10 min-h-screen flex flex-col">
-        <header className="mb-section-sm">
-          <nav className="flex gap-element">
-            <Link to="/" className="text-primary hover:text-primary/80 transition-colors">
-              Home
-            </Link>
-            <Link to="/about" className="text-primary hover:text-primary/80 transition-colors">
-              About
-            </Link>
-            <Link to="/portfolio" className="text-primary hover:text-primary/80 transition-colors">
-              Portfolio
-            </Link>
-            <Link to="/blog" className="text-primary hover:text-primary/80 transition-colors">
-              Blog
-            </Link>
-            <Link to="/reading" className="text-primary hover:text-primary/80 transition-colors">
-              Reading
-            </Link>
-          </nav>
-        </header>
-        
-        {/* Main Content - Interactive Graph */}
-        <main className="flex-1 relative flex items-center justify-center">
-          {/* Interactive Graph Visualization */}
-          <div className="text-center">
-            <div className="mb-6">
-              <h2 className={`text-display-sm font-bold text-foreground mb-4 ${fontClasses.header}`}>
-                Explore & Connect
-              </h2>
-              <p className="text-muted-foreground text-body-md mb-6 max-w-md mx-auto">
-                Drag the nodes around and watch the connections come alive
-              </p>
-            </div>
-            
-            {/* Interactive Graph Component */}
-            <InteractiveGraph />
-            
-            <p className="text-muted-foreground text-body-sm mt-4 max-w-lg mx-auto">
-              This interactive graph represents the interconnected nature of technology, learning, and creativity
+    <div className="relative min-h-[calc(100vh-theme(spacing.32))] flex flex-col">
+      {/* Main Content - Interactive Graph */}
+      <main className="flex-1 relative flex items-center justify-center">
+        {/* Interactive Graph Visualization */}
+        <div className="text-center">
+          <div className="mb-6">
+            <h2 className={`text-display-sm font-bold text-foreground mb-4 ${fontClasses.header}`}>
+              Explore & Connect
+            </h2>
+            <p className="text-muted-foreground text-body-md mb-6 max-w-md mx-auto">
+              Drag the nodes around and watch the connections come alive
             </p>
           </div>
           
-          {/* Name/subtitle in bottom left of the main area */}
-          <div className="absolute bottom-0 left-0 flex items-center gap-4">
-            <img
-              className="h-16 w-16 rounded-full object-cover border-2 border-primary/20"
-              src={imageUrl}
-              alt={name}
-              width={64}
-              height={64}
-            />
-            <div>
-              <h1 className={`text-heading-lg font-bold text-foreground ${fontClasses.header}`}>
-                {name}
-              </h1>
-              <p className="text-muted-foreground text-body-md">
-                Software Engineer
-              </p>
-            </div>
+          {/* Interactive Graph Component */}
+          <InteractiveGraph />
+          
+          <p className="text-muted-foreground text-body-sm mt-4 max-w-lg mx-auto">
+            This interactive graph represents the interconnected nature of technology, learning, and creativity
+          </p>
+        </div>
+        
+        {/* Name/subtitle in bottom left of the main area */}
+        <div className="absolute bottom-0 left-0 flex items-center gap-4">
+          <img
+            className="h-16 w-16 rounded-full object-cover border-2 border-primary/20"
+            src={imageUrl}
+            alt={name}
+            width={64}
+            height={64}
+          />
+          <div>
+            <h1 className={`text-heading-lg font-bold text-foreground ${fontClasses.header}`}>
+              {name}
+            </h1>
+            <p className="text-muted-foreground text-body-md">
+              Software Engineer
+            </p>
           </div>
-        </main>
-      </div>
-      
-      {/* Theme Toggle */}
-      <ThemeToggle />
+        </div>
+      </main>
     </div>
   )
 }
