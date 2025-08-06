@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react'
-import * as d3 from 'd3-force'
-import { select } from 'd3-selection'
+import * as d3Force from 'd3-force'
+import { select, pointer } from 'd3-selection'
 import { drag } from 'd3-drag'
 import { zoom } from 'd3-zoom'
 
-interface Node extends d3.SimulationNodeDatum {
+interface Node extends d3Force.SimulationNodeDatum {
   id: string
   label: string
   color: string
@@ -12,14 +12,14 @@ interface Node extends d3.SimulationNodeDatum {
   group?: number
 }
 
-interface Link extends d3.SimulationLinkDatum<Node> {
+interface Link extends d3Force.SimulationLinkDatum<Node> {
   source: string | Node
   target: string | Node
 }
 
 const InteractiveGraph: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null)
-  const simulationRef = useRef<d3.Simulation<Node, Link> | null>(null)
+  const simulationRef = useRef<d3Force.Simulation<Node, Link> | null>(null)
   const [isClient, setIsClient] = useState(false)
   const [isAddingConnection, setIsAddingConnection] = useState(false)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
@@ -83,11 +83,11 @@ const InteractiveGraph: React.FC = () => {
     svg.selectAll('*').remove()
 
     // Create simulation
-    const simulation = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id((d: any) => d.id).distance(80).strength(0.8))
-      .force('charge', d3.forceManyBody().strength(-300).distanceMax(200))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius((d: any) => d.radius + 4))
+    const simulation = d3Force.forceSimulation(nodes)
+      .force('link', d3Force.forceLink(links).id((d: any) => d.id).distance(80).strength(0.8))
+      .force('charge', d3Force.forceManyBody().strength(-300).distanceMax(200))
+      .force('center', d3Force.forceCenter(width / 2, height / 2))
+      .force('collision', d3Force.forceCollide().radius((d: any) => d.radius + 4))
       .alphaDecay(0.02)
       .velocityDecay(0.3)
 
@@ -213,7 +213,7 @@ const InteractiveGraph: React.FC = () => {
       // Mouse move for temporary line
       svg.on('mousemove', (event) => {
         if (isAddingConnection && selectedNode) {
-          const [mouseX, mouseY] = d3.pointer(event, container.node())
+          const [mouseX, mouseY] = pointer(event, container.node())
           const selectedNodeData = nodes.find(n => n.id === selectedNode)
           if (selectedNodeData && selectedNodeData.x !== undefined && selectedNodeData.y !== undefined) {
             tempLineElement

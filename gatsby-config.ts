@@ -13,7 +13,6 @@ const config: GatsbyConfig = {
   },
   pathPrefix: process.env.DEPLOY_TARGET === "github" ? "/blog" : "",
   plugins: [
-    `gatsby-plugin-react-helmet`,
     `gatsby-plugin-postcss`,
     `gatsby-plugin-typescript`,
     {

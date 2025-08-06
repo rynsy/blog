@@ -1,10 +1,10 @@
 import React from "react"
+import { HeadFC } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 const ContactPage = () => (
   <Layout>
-    <SEO title="Contact" />
     <div className="prose prose-lg max-w-none">
       <h1 className="text-display-md font-bold text-foreground mb-component">Contact Info</h1>
       
@@ -20,5 +20,7 @@ const ContactPage = () => (
     </div>
   </Layout>
 )
+
+export const Head: HeadFC = () => <SEO title="Contact" />
 
 export default ContactPage

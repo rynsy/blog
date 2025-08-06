@@ -1,10 +1,10 @@
 import React from "react"
+import { HeadFC } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 const AboutPage = () => (
   <Layout>
-    <SEO title="About" />
     <div className="prose prose-lg max-w-none">
       <h1 className="text-display-md font-bold text-foreground mb-component">About Me</h1>
       <p className="text-body-lg text-muted-foreground mb-section-sm">Professional bio goes here...</p>
@@ -31,5 +31,7 @@ const AboutPage = () => (
     </div>
   </Layout>
 )
+
+export const Head: HeadFC = () => <SEO title="About" />
 
 export default AboutPage
