@@ -32,6 +32,16 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
   
   const headComponents = []
   
+  // Add CSP meta tag for New Relic in production
+  if (process.env.NODE_ENV === 'production') {
+    const cspMeta = React.createElement('meta', {
+      key: 'csp-meta',
+      httpEquiv: 'Content-Security-Policy',
+      content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com bam.nr-data.net; connect-src 'self' js-agent.newrelic.com bam.nr-data.net *.nr-data.net; img-src 'self' data: *.nr-data.net; style-src 'self' 'unsafe-inline';"
+    })
+    headComponents.push(cspMeta)
+  }
+  
   // Add New Relic script as first script in head for optimal performance
   const newRelicScript = loadNewRelicScript()
   if (newRelicScript) {

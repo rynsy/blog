@@ -1,6 +1,7 @@
 # Wrangler configuration for Cloudflare Pages
 name = "rynsy-personal-site"
 compatibility_date = "2024-10-01"
+pages_build_output_dir = "packages/site/public"
 
 # This file is primarily for Pages deployment
 # Custom domains and routes are configured in Cloudflare dashboard

@@ -74,33 +74,18 @@ interface LandingPageProps {
   imageUrl?: string
 }
 
-// Lazy load the background switcher to avoid SSR issues
-const BackgroundSwitcher = React.lazy(() => import('./BackgroundSwitcher'))
-
 export function LandingPageComponent({
   name = "Ryan Lindsey",
   imageUrl = "/placeholder.svg",
 }: LandingPageProps) {
-  const [isMounted, setIsMounted] = useState(false)
   console.log('🌟 LandingPage: Rendering LandingPageComponent')
-  
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
   
   return (
     <div className="relative min-h-[calc(100vh-theme(spacing.32))] flex flex-col">
-      {/* Client-only background switcher */}
-      {isMounted && (
-        <React.Suspense fallback={null}>
-          <BackgroundSwitcher module="knowledge" />
-        </React.Suspense>
-      )}
-      
       {/* Main Content */}
       <main className="flex-1 relative flex items-center justify-center">
-        {/* Hero Section with background knowledge graph */}
-        <div className="text-center relative" style={{ zIndex: 10 }}>
+        {/* Hero Section */}
+        <div className="text-center relative">
           <div className="mb-6">
             <h1 className={`text-display-lg font-bold text-foreground mb-4 ${fontClasses.header}`}>
               {name}
@@ -110,10 +95,9 @@ export function LandingPageComponent({
             </div>
           </div>
           
-          <p className="text-muted-foreground text-body-lg max-w-2xl mx-auto mb-8 backdrop-blur-sm bg-white/10 dark:bg-black/20 p-6 rounded-lg">
+          <p className="text-muted-foreground text-body-lg max-w-2xl mx-auto mb-8">
             Welcome to my digital space where ideas connect and evolve. 
-            Interact with the knowledge graph behind this text - right-click to add nodes, 
-            drag to explore, and click two nodes in sequence to create connections.
+            Explore my blog posts, portfolio projects, and thoughts on technology, algorithms, and software development.
           </p>
           
           {/* Navigation Links */}
@@ -140,9 +124,9 @@ export function LandingPageComponent({
         </div>
         
         {/* Profile image in corner */}
-        <div className="absolute bottom-8 right-8" style={{ zIndex: 10 }}>
+        <div className="absolute bottom-8 right-8">
           <img
-            className="h-20 w-20 rounded-full object-cover border-4 border-primary/30 backdrop-blur-sm shadow-xl"
+            className="h-20 w-20 rounded-full object-cover border-4 border-primary/30 shadow-xl"
             src={imageUrl}
             alt={name}
             width={80}

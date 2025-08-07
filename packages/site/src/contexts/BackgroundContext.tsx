@@ -59,7 +59,7 @@ const STORAGE_KEYS = {
 export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({ children }) => {
   const { theme } = useTheme()
   const [currentModule, setCurrentModuleState] = useState<string | null>(null)
-  const [isActive, setIsActive] = useState(true)
+  const [isActive, setIsActive] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [modules, setModules] = useState<ModuleRegistry>({})
   const [moduleInstance, setModuleInstance] = useState<BackgroundModule | null>(null)
@@ -74,10 +74,8 @@ export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({ children
 
     if (savedModule) {
       setCurrentModuleState(savedModule)
-    } else {
-      // Default to gradient module
-      setCurrentModuleState('gradient')
     }
+    // Default to no module (null) - user must explicitly enable
     if (savedActive !== null) setIsActive(savedActive === 'true')
     if (savedPaused !== null) setIsPaused(savedPaused === 'true')
   }, [])
