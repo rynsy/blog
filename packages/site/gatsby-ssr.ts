@@ -9,6 +9,10 @@ import RootWrapper from "./src/components/RootWrapper"
 
 // New Relic Browser Agent - only loaded in production
 const loadNewRelicScript = () => {
+  // Temporarily disabled due to network connectivity issues on Cloudflare Pages
+  // TODO: Replace with actual New Relic script content when properly configured
+  return null
+  
   // Only load in production builds
   if (process.env.NODE_ENV === 'production') {
     // Load the script from the static file - will be handled by webpack
@@ -32,12 +36,12 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
   
   const headComponents = []
   
-  // Add CSP meta tag for New Relic in production
+  // Add CSP meta tag for production analytics and monitoring
   if (process.env.NODE_ENV === 'production') {
     const cspMeta = React.createElement('meta', {
       key: 'csp-meta',
       httpEquiv: 'Content-Security-Policy',
-      content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com bam.nr-data.net; connect-src 'self' js-agent.newrelic.com bam.nr-data.net *.nr-data.net; img-src 'self' data: *.nr-data.net; style-src 'self' 'unsafe-inline';"
+      content: "default-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com js-agent.newrelic.com bam.nr-data.net; connect-src 'self' cloudflareinsights.com js-agent.newrelic.com bam.nr-data.net *.nr-data.net; img-src 'self' data: *.nr-data.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; worker-src 'self' blob:;"
     })
     headComponents.push(cspMeta)
   }
