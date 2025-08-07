@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["public/**", "dist/**"]
+    },
+    "build:cf": {
+      "dependsOn": ["^build"],
+      "outputs": ["public/**"]
+    },
+    "build:gh": {
+      "dependsOn": ["^build"],
+      "outputs": ["public/**"]
+    },
+    "develop": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:unit": {
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"]
+    },
+    "test:ci": {
+      "dependsOn": ["test:unit", "test:e2e"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "lint": {},
+    "typecheck": {}
+  }
+}

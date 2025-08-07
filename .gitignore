@@ -56,7 +56,24 @@ typings/
 
 # gatsby files
 .cache/
-public
+public/
+packages/*/public/
+packages/*/.cache/
+
+# Testing
+coverage/
+packages/*/coverage/
+test-results/
+packages/*/test-results/
+playwright-report/
+packages/*/playwright-report/
+
+# pnpm
+.pnpm-store/
+.pnpm-debug.log
+
+# Turborepo
+.turbo/
 
 # Mac files
 .DS_Store
@@ -67,3 +84,12 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Wrangler
+.wrangler/
