@@ -3,7 +3,7 @@ let Prism: any = null
 
 // Only run on client side and after DOM is ready
 if (typeof window !== "undefined" && typeof document !== "undefined") {
-  // Wait for DOM ready to avoid conflicts with gatsby-remark-prismjs
+  // Wait for DOM ready AND React hydration to avoid conflicts with gatsby-remark-prismjs
   const initializePrism = () => {
     try {
       // Check if Prism is already loaded by gatsby-remark-prismjs
@@ -34,12 +34,13 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
           }
         }
         
-        // Load languages in dependency order
+        // Load languages in dependency order - cpp depends on c
         loadLanguage('markup')
         loadLanguage('css')
         loadLanguage('javascript') 
         loadLanguage('typescript')
         loadLanguage('python')
+        loadLanguage('c')        // cpp depends on c
         loadLanguage('cpp')
         loadLanguage('rust')
         loadLanguage('go')
@@ -53,12 +54,17 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
     }
   }
   
-  // Initialize when DOM is ready
+  // Initialize after React hydration is complete to avoid hydration mismatches
+  const delayedInit = () => {
+    // Use setTimeout to ensure this runs after React hydration
+    setTimeout(initializePrism, 0)
+  }
+  
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializePrism)
+    document.addEventListener('DOMContentLoaded', delayedInit)
   } else {
-    // DOM already ready
-    initializePrism()
+    // DOM already ready, but still delay for hydration
+    delayedInit()
   }
 }
 
