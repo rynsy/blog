@@ -77,6 +77,9 @@ importers:
       gatsby-plugin-sharp:
         specifier: ^5.13.1
         version: 5.14.0(gatsby@5.14.6(babel-eslint@10.1.0(eslint@7.32.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(type-fest@0.21.3)(typescript@5.9.2))(graphql@16.11.0)
+      gatsby-plugin-typescript:
+        specifier: ^5.14.0
+        version: 5.14.0(gatsby@5.14.6(babel-eslint@10.1.0(eslint@7.32.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(type-fest@0.21.3)(typescript@5.9.2))
       gatsby-remark-katex:
         specifier: ^7.14.0
         version: 7.14.0(gatsby@5.14.6(babel-eslint@10.1.0(eslint@7.32.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(type-fest@0.21.3)(typescript@5.9.2))(katex@0.13.24)
