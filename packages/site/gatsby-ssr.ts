@@ -8,17 +8,26 @@ import React from "react"
 import RootWrapper from "./src/components/RootWrapper"
 
 // New Relic Browser Agent - only loaded in production
-const loadNewRelicScript = () => {
+const loadNewRelicScripts = () => {
   // Only load in production builds
   if (process.env.NODE_ENV === 'production') {
-    // Load the script from the static file - will be handled by webpack
-    return React.createElement('script', {
-      key: 'newrelic-browser-agent',
-      type: 'text/javascript',
-      src: '/scripts/newrelic-browser-agent.js'
-    })
+    return [
+      // New Relic configuration script (must load first)
+      React.createElement('script', {
+        key: 'nr-config',
+        dangerouslySetInnerHTML: {
+          __html: `;window.NREUM||(NREUM={});NREUM.init={distributed_tracing:{enabled:true},privacy:{cookies_enabled:true},ajax:{deny_list:["bam.nr-data.net"]}};NREUM.loader_config={accountID:"6576957",trustKey:"6576957",agentID:"1589121593",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593"};NREUM.info={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593",sa:1};`
+        }
+      }),
+      // New Relic CDN script (loads after config)
+      React.createElement('script', {
+        key: 'nr-loader',
+        src: 'https://js-agent.newrelic.com/nr-spa-1.293.0.min.js',
+        async: true
+      })
+    ]
   }
-  return null
+  return []
 }
 
 // Wrap the entire app with providers for SSR consistency
@@ -32,7 +41,7 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
   
   const headComponents = []
   
-  // Add CSP meta tag for production analytics and monitoring
+  // Add production-specific meta tags
   if (process.env.NODE_ENV === 'production') {
     // Disable Cloudflare Web Analytics script injection
     const disableCloudflareAnalytics = React.createElement('meta', {
@@ -41,19 +50,12 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
       content: 'false'
     })
     headComponents.push(disableCloudflareAnalytics)
-    
-    const cspMeta = React.createElement('meta', {
-      key: 'csp-meta',
-      httpEquiv: 'Content-Security-Policy',
-      content: "default-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; script-src-elem 'self' 'unsafe-inline' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; connect-src 'self' https://js-agent.newrelic.com https://bam.nr-data.net https://*.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; img-src 'self' data: https://*.nr-data.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob:;"
-    })
-    headComponents.push(cspMeta)
   }
   
-  // Add New Relic script as first script in head for optimal performance
-  const newRelicScript = loadNewRelicScript()
-  if (newRelicScript) {
-    headComponents.push(newRelicScript)
+  // Add New Relic scripts as first scripts in head for optimal performance
+  const newRelicScripts = loadNewRelicScripts()
+  if (newRelicScripts.length > 0) {
+    headComponents.push(...newRelicScripts)
   }
   
   if (headComponents.length > 0) {
