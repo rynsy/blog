@@ -39,18 +39,17 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
     console.log('🏠 RootWrapper: Initial render - SSR phase')
   }
 
-  // During SSR or initial render, don't wrap with providers
-  if (!isMounted) {
-    return <>{children}</>
-  }
-
+  // Always wrap with providers to ensure consistent server/client rendering
+  // Background components will handle their own client-only initialization
   return (
     <ThemeProvider>
       <BackgroundProvider>
         {/* Background engine at the root level - persists across page transitions */}
-        <React.Suspense fallback={null}>
-          <BackgroundClient />
-        </React.Suspense>
+        {isMounted && (
+          <React.Suspense fallback={null}>
+            <BackgroundClient />
+          </React.Suspense>
+        )}
         {children}
       </BackgroundProvider>
     </ThemeProvider>
