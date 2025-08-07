@@ -38,6 +38,14 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
   
   // Add CSP meta tag for production analytics and monitoring
   if (process.env.NODE_ENV === 'production') {
+    // Disable Cloudflare Web Analytics script injection
+    const disableCloudflareAnalytics = React.createElement('meta', {
+      key: 'disable-cf-analytics',
+      name: 'cloudflare-web-analytics',
+      content: 'false'
+    })
+    headComponents.push(disableCloudflareAnalytics)
+    
     const cspMeta = React.createElement('meta', {
       key: 'csp-meta',
       httpEquiv: 'Content-Security-Policy',

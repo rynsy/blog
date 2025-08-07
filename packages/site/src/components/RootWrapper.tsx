@@ -14,9 +14,13 @@ interface RootWrapperProps {
 }
 
 const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
-  const [isMounted, setIsMounted] = useState(false)
+  // Use a more specific client-only check to avoid hydration mismatches
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    // This only runs on the client
+    setIsClient(true)
+    
     if (!globalBackgroundInitialized) {
       console.log('🏠 RootWrapper: FIRST MOUNT - initializing background system')
       debug.log('🏠 RootWrapper:', 'FIRST MOUNT - initializing background system')
@@ -26,26 +30,19 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
       debug.log('🏠 RootWrapper:', 'REMOUNT - background system already initialized (React Strict Mode)')
     }
     
-    setIsMounted(true)
-    
     return () => {
       console.log('🏠 RootWrapper: UNMOUNTED - this is expected in React Strict Mode during development')
       debug.log('🏠 RootWrapper:', 'UNMOUNTED - this is expected in React Strict Mode during development')
     }
   }, [])
 
-  // Only log on significant state changes, not every render
-  if (!isMounted && !globalBackgroundInitialized) {
-    console.log('🏠 RootWrapper: Initial render - SSR phase')
-  }
-
-  // Always wrap with providers to ensure consistent server/client rendering
-  // Background components will handle their own client-only initialization
+  // Remove all console logs from render to avoid SSR/client mismatch
+  // The providers must always be present for consistent hydration
   return (
     <ThemeProvider>
       <BackgroundProvider>
-        {/* Background engine at the root level - persists across page transitions */}
-        {isMounted && (
+        {/* Only render BackgroundClient on the client to avoid hydration mismatch */}
+        {isClient && (
           <React.Suspense fallback={null}>
             <BackgroundClient />
           </React.Suspense>
