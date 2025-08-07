@@ -19,6 +19,9 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
   } = useBackground() as any // Type assertion needed for internal methods
   const { theme } = useTheme()
 
+  // Determine if current module needs interactivity (like knowledge graph)
+  const isInteractiveModule = currentModule === 'knowledge'
+
   // Initialize and manage module lifecycle
   useEffect(() => {
     debugBackground.canvas('Effect triggered', {
@@ -189,14 +192,14 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
       {/* Background canvas */}
       <canvas
         ref={canvasRef}
-        className={`fixed inset-0 pointer-events-none ${className}`}
+        className={`fixed inset-0 ${isInteractiveModule ? 'pointer-events-auto' : 'pointer-events-none'} ${className}`}
         style={{ 
-          zIndex: -1,  // Behind content
+          zIndex: isInteractiveModule ? 1 : -1,  // Interactive modules go above content
           width: '100vw',
           height: '100vh',
           transition: 'opacity 0.2s ease-in-out'
         }}
-        aria-hidden="true"
+        aria-hidden={!isInteractiveModule}
       />
       
       {/* Background overlay for text readability - temporarily disabled for testing */}

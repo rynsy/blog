@@ -8,13 +8,12 @@ export const moduleRegistry: ModuleRegistry = {
     icon: '🌈',
     load: () => import('./gradient')
   },
-  // Future modules will be added here:
-  // knowledge: {
-  //   name: 'Knowledge Graph',
-  //   description: 'Interactive site navigation graph',
-  //   icon: '🕸️',
-  //   load: () => import('./knowledge')
-  // },
+  knowledge: {
+    name: 'Knowledge Graph',
+    description: 'Interactive network of interconnected ideas and topics',
+    icon: '🕸️',
+    load: () => import('./knowledge')
+  },
   // fluid: {
   //   name: 'Fluid Simulation',
   //   description: 'Navier-Stokes ink swirling with theme colors',

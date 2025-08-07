@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react"
 import { Link } from "gatsby"
-import InteractiveGraph from "./InteractiveGraph"
-import { useBackground } from "../contexts/BackgroundContext"
 
 // Define font classes
 const fontClasses = {
@@ -76,61 +74,80 @@ interface LandingPageProps {
   imageUrl?: string
 }
 
+// Lazy load the background switcher to avoid SSR issues
+const BackgroundSwitcher = React.lazy(() => import('./BackgroundSwitcher'))
+
 export function LandingPageComponent({
   name = "Ryan Lindsey",
   imageUrl = "/placeholder.svg",
 }: LandingPageProps) {
+  const [isMounted, setIsMounted] = useState(false)
   console.log('🌟 LandingPage: Rendering LandingPageComponent')
   
-  // Test if background context is available
-  try {
-    const { currentModule, isActive, modules } = useBackground()
-    console.log('🌟 LandingPage: Background context available:', {
-      currentModule,
-      isActive,
-      moduleCount: Object.keys(modules).length
-    })
-  } catch (error) {
-    console.error('🌟 LandingPage: Background context NOT available:', error)
-  }
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
   
   return (
     <div className="relative min-h-[calc(100vh-theme(spacing.32))] flex flex-col">
-      {/* Main Content - Interactive Graph */}
+      {/* Client-only background switcher */}
+      {isMounted && (
+        <React.Suspense fallback={null}>
+          <BackgroundSwitcher module="knowledge" />
+        </React.Suspense>
+      )}
+      
+      {/* Main Content */}
       <main className="flex-1 relative flex items-center justify-center">
-        {/* Interactive Graph Visualization */}
-        <div className="text-center">
+        {/* Hero Section with background knowledge graph */}
+        <div className="text-center relative" style={{ zIndex: 10 }}>
           <div className="mb-6">
-            <h2 className={`text-display-sm font-bold text-foreground mb-4 ${fontClasses.header}`}>
-              Explore & Connect
-            </h2>
-          </div>
-          
-          {/* Interactive Graph Component */}
-          <InteractiveGraph />
-          
-          <p className="text-muted-foreground text-body-sm mt-4 max-w-lg mx-auto">
-            This interactive graph represents the interconnected nature of technology, learning, and creativity
-          </p>
-        </div>
-        
-        {/* Name/subtitle in bottom left of the main area */}
-        <div className="absolute bottom-0 left-0 flex items-center gap-4">
-          <img
-            className="h-16 w-16 rounded-full object-cover border-2 border-primary/20"
-            src={imageUrl}
-            alt={name}
-            width={64}
-            height={64}
-          />
-          <div>
-            <h1 className={`text-heading-lg font-bold text-foreground ${fontClasses.header}`}>
+            <h1 className={`text-display-lg font-bold text-foreground mb-4 ${fontClasses.header}`}>
               {name}
             </h1>
-            <p className="text-foreground/80 text-body-md font-medium drop-shadow-sm">
-              Software Engineer
-            </p>
+            <div className="text-xl text-foreground/80 mb-8">
+              <TypingAnimation />
+            </div>
           </div>
+          
+          <p className="text-muted-foreground text-body-lg max-w-2xl mx-auto mb-8 backdrop-blur-sm bg-white/10 dark:bg-black/20 p-6 rounded-lg">
+            Welcome to my digital space where ideas connect and evolve. 
+            Interact with the knowledge graph behind this text - right-click to add nodes, 
+            drag to explore, and click two nodes in sequence to create connections.
+          </p>
+          
+          {/* Navigation Links */}
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link
+              to="/blog"
+              className={`px-6 py-3 bg-primary text-primary-foreground rounded-lg transition-all duration-200 ${linkColors[0]} font-medium shadow-lg hover:shadow-xl hover:scale-105`}
+            >
+              Read Blog
+            </Link>
+            <Link
+              to="/portfolio"
+              className={`px-6 py-3 bg-secondary text-secondary-foreground rounded-lg transition-all duration-200 ${linkColors[1]} font-medium shadow-lg hover:shadow-xl hover:scale-105`}
+            >
+              View Portfolio
+            </Link>
+            <Link
+              to="/about"
+              className={`px-6 py-3 bg-accent text-accent-foreground rounded-lg transition-all duration-200 ${linkColors[2]} font-medium shadow-lg hover:shadow-xl hover:scale-105`}
+            >
+              About Me
+            </Link>
+          </div>
+        </div>
+        
+        {/* Profile image in corner */}
+        <div className="absolute bottom-8 right-8" style={{ zIndex: 10 }}>
+          <img
+            className="h-20 w-20 rounded-full object-cover border-4 border-primary/30 backdrop-blur-sm shadow-xl"
+            src={imageUrl}
+            alt={name}
+            width={80}
+            height={80}
+          />
         </div>
       </main>
     </div>
