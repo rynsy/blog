@@ -104,9 +104,6 @@ export function LandingPageComponent({
             <h2 className={`text-display-sm font-bold text-foreground mb-4 ${fontClasses.header}`}>
               Explore & Connect
             </h2>
-            <p className="text-muted-foreground text-body-md mb-6 max-w-md mx-auto">
-              Drag the nodes around and watch the connections come alive
-            </p>
           </div>
           
           {/* Interactive Graph Component */}
@@ -130,7 +127,7 @@ export function LandingPageComponent({
             <h1 className={`text-heading-lg font-bold text-foreground ${fontClasses.header}`}>
               {name}
             </h1>
-            <p className="text-muted-foreground text-body-md">
+            <p className="text-foreground/80 text-body-md font-medium drop-shadow-sm">
               Software Engineer
             </p>
           </div>

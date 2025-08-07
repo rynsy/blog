@@ -25,8 +25,10 @@ const BackgroundClient: React.FC = () => {
     }
   }, [registerModule])
 
-  console.log('🎨 BackgroundClient: Rendering, current state:', {
-    moduleCount: Object.keys(modules).length,
+  // Only log state changes, not every render
+  const moduleCount = Object.keys(modules).length
+  debugBackground.client('Rendering, current state:', {
+    moduleCount,
     currentModule,
     isActive
   })
@@ -40,8 +42,8 @@ const BackgroundClient: React.FC = () => {
     })
   }, [modules, currentModule, isActive])
 
-  // Only log on significant state changes, not every render
-  if (Object.keys(modules).length > 0) {
+  // Only log when modules are first ready
+  if (moduleCount > 0) {
     debugBackground.client('Ready with modules:', Object.keys(modules))
   }
 

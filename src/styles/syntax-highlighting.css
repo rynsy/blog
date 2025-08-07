@@ -242,12 +242,14 @@ p .math.math-display {
   border-radius: 0 !important;
   border: none !important;
   box-shadow: none !important;
-  overflow-x: auto !important;
-  font-size: 1.2em !important;
+  overflow-x: visible !important;
+  font-size: clamp(0.9em, 2.5vw, 1.2em) !important;
   position: relative;
   max-width: 100%;
   line-height: 1.4 !important;
   display: block !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Target standalone math paragraphs that should be display equations */
@@ -260,25 +262,27 @@ p > .math.math-inline:only-child {
   border-radius: 0 !important;
   border: none !important;
   box-shadow: none !important;
-  overflow-x: auto !important;
-  font-size: 1.2em !important;
+  overflow-x: visible !important;
+  font-size: clamp(0.9em, 2.5vw, 1.2em) !important;
   position: relative;
   max-width: 100%;
   line-height: 1.4 !important;
   display: block !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .katex-display .katex,
 .math.math-display .katex,
 p > .math.math-inline:only-child .katex {
-  font-size: 1.2em !important;
+  font-size: clamp(0.9em, 2.5vw, 1.2em) !important;
 }
 
 /* No decorative elements for clean display equations */
 
 /* Regular LaTeX sizing for non-display equations */
 .katex {
-  font-size: 1.2em !important;
+  font-size: clamp(0.9em, 2.5vw, 1.2em) !important;
 }
 
 /* Inline LaTeX - subtle background (only for truly inline math, not standalone equations) */
@@ -306,4 +310,43 @@ p .katex:not(:only-child) {
 
 .dark p .katex:not(:only-child) {
   background: rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Ensure KaTeX equations scale properly and don't create scroll bars */
+.katex-display {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.katex-html {
+  max-width: 100% !important;
+  overflow-x: visible !important;
+  transform-origin: center;
+}
+
+/* Scale down equations on smaller screens */
+@media (max-width: 768px) {
+  .katex-display .katex,
+  .math.math-display .katex,
+  p > .math.math-inline:only-child .katex {
+    font-size: clamp(0.8em, 3vw, 1em) !important;
+  }
+  
+  .katex {
+    font-size: clamp(0.8em, 3vw, 1em) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .katex-display .katex,
+  .math.math-display .katex,
+  p > .math.math-inline:only-child .katex {
+    font-size: clamp(0.7em, 4vw, 0.9em) !important;
+  }
+  
+  .katex {
+    font-size: clamp(0.7em, 4vw, 0.9em) !important;
+  }
 }

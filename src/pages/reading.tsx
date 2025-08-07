@@ -106,7 +106,7 @@ const ReadingPage: React.FC<PageProps<ReadingPageData>> = ({ data }) => {
         </div>
 
         {/* Filters */}
-        <div className="bg-card border rounded-lg p-component space-y-element">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-component space-y-element">
           {/* Search */}
           <div className="relative">
             <input

@@ -23,7 +23,7 @@ const BlogPostTemplate: React.FC<PageProps<Queries.BlogPostBySlugQuery>> = ({
       <article className="prose prose-lg max-w-none">
         <header className="mb-section">
           <h1 className="text-display-xl font-bold text-foreground mb-2 font-serif">{post.frontmatter.title}</h1>
-          <time className="text-body-sm text-muted-foreground">{post.frontmatter.date}</time>
+          <time className="text-body-sm text-foreground/70 font-medium drop-shadow-sm">{post.frontmatter.date}</time>
         </header>
         <div 
           className="prose prose-lg max-w-none text-body-md text-foreground leading-relaxed" 

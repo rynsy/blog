@@ -27,12 +27,12 @@ const InteractiveGraph: React.FC = () => {
 
   // Initial graph data
   const [nodes, setNodes] = useState<Node[]>([
-    { id: 'blog', label: 'Blog', color: '#6366f1', radius: 16, group: 1 },
-    { id: 'code', label: 'Code', color: '#8b5cf6', radius: 16, group: 1 },
-    { id: 'ideas', label: 'Ideas', color: '#ec4899', radius: 16, group: 2 },
-    { id: 'learn', label: 'Learn', color: '#06b6d4', radius: 14, group: 2 },
-    { id: 'build', label: 'Build', color: '#10b981', radius: 14, group: 3 },
-    { id: 'share', label: 'Share', color: '#f59e0b', radius: 14, group: 3 }
+    { id: 'blog', label: 'Blog', color: '#6366f1', radius: 24, group: 1 },
+    { id: 'code', label: 'Code', color: '#8b5cf6', radius: 24, group: 1 },
+    { id: 'ideas', label: 'Ideas', color: '#ec4899', radius: 24, group: 2 },
+    { id: 'learn', label: 'Learn', color: '#06b6d4', radius: 22, group: 2 },
+    { id: 'build', label: 'Build', color: '#10b981', radius: 22, group: 3 },
+    { id: 'share', label: 'Share', color: '#f59e0b', radius: 22, group: 3 }
   ])
 
   const [links, setLinks] = useState<Link[]>([
@@ -57,7 +57,7 @@ const InteractiveGraph: React.FC = () => {
       id: `node-${Date.now()}`,
       label: topics[Math.floor(Math.random() * topics.length)],
       color: colors[Math.floor(Math.random() * colors.length)],
-      radius: 12 + Math.random() * 8,
+      radius: 18 + Math.random() * 10,
       group: Math.floor(Math.random() * 4) + 1
     }
 
@@ -291,10 +291,6 @@ const InteractiveGraph: React.FC = () => {
         </button>
       </div>
 
-      {/* Instructions */}
-      <div className="mb-4 text-center text-xs text-muted-foreground max-w-md mx-auto">
-        <p>Drag nodes • Click "Add Connection" then click two nodes • Shift+click to remove • Scroll to zoom</p>
-      </div>
 
       {/* Graph */}
       <svg

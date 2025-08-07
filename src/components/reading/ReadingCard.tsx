@@ -61,7 +61,7 @@ const ReadingCard: React.FC<ReadingCardProps> = ({ entry, showExcerpt = true }) 
   }
 
   return (
-    <article className="bg-card p-component rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+    <article className="bg-white/10 backdrop-blur-sm p-component rounded-lg border border-white/20 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start gap-element">
         <div className="flex-shrink-0 text-2xl">
           {getTypeIcon(entry.frontmatter.type)}
@@ -86,13 +86,13 @@ const ReadingCard: React.FC<ReadingCardProps> = ({ entry, showExcerpt = true }) 
           </div>
 
           {showExcerpt && entry.excerpt && (
-            <p className="text-body-sm text-muted-foreground mb-element line-clamp-2">
+            <p className="text-body-sm text-foreground/70 mb-element line-clamp-2 drop-shadow-sm">
               {entry.excerpt}
             </p>
           )}
 
           <div className="flex items-center justify-between gap-element mb-element">
-            <div className="flex items-center gap-element text-body-sm text-muted-foreground">
+            <div className="flex items-center gap-element text-body-sm text-foreground/70 drop-shadow-sm">
               <span className={`font-medium capitalize ${getStatusColor(entry.frontmatter.status)}`}>
                 {entry.frontmatter.status.replace('-', ' ')}
               </span>
@@ -130,7 +130,7 @@ const ReadingCard: React.FC<ReadingCardProps> = ({ entry, showExcerpt = true }) 
                 </span>
               ))}
               {entry.frontmatter.tags.length > 4 && (
-                <span className="text-caption text-muted-foreground px-2 py-1">
+                <span className="text-caption text-foreground/70 px-2 py-1 drop-shadow-sm">
                   +{entry.frontmatter.tags.length - 4}
                 </span>
               )}

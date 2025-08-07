@@ -38,8 +38,8 @@ const BlogPage = ({ data }) => (
                 {node.frontmatter.title}
               </h2>
             </Link>
-            <p className="text-body-sm text-muted-foreground mb-element">{node.frontmatter.date}</p>
-            <p className="text-body-md text-muted-foreground">{node.excerpt}</p>
+            <p className="text-body-sm text-foreground/70 font-medium mb-element drop-shadow-sm">{node.frontmatter.date}</p>
+            <p className="text-body-md text-foreground/70 drop-shadow-sm">{node.excerpt}</p>
           </article>
         ))}
       </div>

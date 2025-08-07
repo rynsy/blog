@@ -8,7 +8,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 relative">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 transition-colors duration-200 relative">
       
       {/* Main content */}
       <div className="relative z-10 max-w-4xl mx-auto px-element py-section-sm font-sans">

@@ -86,7 +86,7 @@ const ReadingEntryTemplate: React.FC<PageProps<ReadingEntryData>> = ({
               </h1>
               
               {/* Metadata */}
-              <div className="flex flex-wrap items-center gap-element text-body-sm text-muted-foreground mb-element">
+              <div className="flex flex-wrap items-center gap-element text-body-sm text-foreground/70 mb-element drop-shadow-sm">
                 <time dateTime={entry.frontmatter.date}>
                   {new Date(entry.frontmatter.date).toLocaleDateString('en-US', {
                     year: 'numeric',
