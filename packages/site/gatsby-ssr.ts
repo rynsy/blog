@@ -45,7 +45,7 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
     const cspMeta = React.createElement('meta', {
       key: 'csp-meta',
       httpEquiv: 'Content-Security-Policy',
-      content: "default-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com bam.nr-data.net; connect-src 'self' js-agent.newrelic.com bam.nr-data.net *.nr-data.net; img-src 'self' data: *.nr-data.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; worker-src 'self' blob:;"
+      content: "default-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; script-src-elem 'self' 'unsafe-inline' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; connect-src 'self' https://js-agent.newrelic.com https://bam.nr-data.net https://*.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; img-src 'self' data: https://*.nr-data.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self' blob:;"
     })
     headComponents.push(cspMeta)
   }
