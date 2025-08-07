@@ -9,10 +9,6 @@ import RootWrapper from "./src/components/RootWrapper"
 
 // New Relic Browser Agent - only loaded in production
 const loadNewRelicScript = () => {
-  // Temporarily disabled due to network connectivity issues on Cloudflare Pages
-  // TODO: Replace with actual New Relic script content when properly configured
-  return null
-  
   // Only load in production builds
   if (process.env.NODE_ENV === 'production') {
     // Load the script from the static file - will be handled by webpack
