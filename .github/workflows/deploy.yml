@@ -17,24 +17,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          cache: 'pnpm'
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
         
       - name: Run tests
-        run: npm run test:ci
+        run: pnpm run test:ci
         
       - name: Run linting
-        run: npm run lint
+        run: pnpm run lint
         
       - name: Type check
-        run: npm run typecheck
+        run: pnpm run typecheck
 
   deploy-development:
     name: Deploy to GitHub Pages (Development)
@@ -55,20 +59,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          cache: 'pnpm'
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
         
       - name: Build for GitHub Pages (Development)
-        run: |
-          cd packages/site
-          npm run build:gh
+        run: pnpm run build:gh
         env:
           NODE_ENV: development
           GATSBY_ENV: development
@@ -99,20 +105,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'package-lock.json'
+          cache: 'pnpm'
           
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
         
       - name: Build for Cloudflare Pages (Production)
-        run: |
-          cd packages/site
-          npm run build:cf
+        run: pnpm run build:cf
         env:
           NODE_ENV: production
           GATSBY_ENV: production

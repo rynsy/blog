@@ -7,16 +7,18 @@ import "./src/styles/global.css"
 import React from "react"
 import RootWrapper from "./src/components/RootWrapper"
 
-// New Relic Browser Agent - disabled by default
+// New Relic Browser Agent - enabled by default in production
 const loadNewRelicScripts = () => {
-  // Only load if explicitly enabled with ENABLE_NEW_RELIC=true
-  if (process.env.NODE_ENV === "production" && process.env.ENABLE_NEW_RELIC === "true") {
+  // Load in production unless explicitly disabled with DISABLE_NEW_RELIC=true
+  if (process.env.NODE_ENV === "production" && process.env.DISABLE_NEW_RELIC !== "true") {
     return [
       // New Relic configuration script (must load first)
       React.createElement("script", {
         key: "nr-config",
         dangerouslySetInnerHTML: {
-          __html: `;window.NREUM||(NREUM={});NREUM.init={distributed_tracing:{enabled:true},privacy:{cookies_enabled:true},ajax:{deny_list:["bam.nr-data.net"]}};NREUM.loader_config={accountID:"6576957",trustKey:"6576957",agentID:"1589121593",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593"};NREUM.info={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593",sa:1};`,
+          __html: `;window.NREUM||(NREUM={});NREUM.init={distributed_tracing:{enabled:true},privacy:{cookies_enabled:true},ajax:{deny_list:["bam.nr-data.net"]}};
+;NREUM.loader_config={accountID:"6576957",trustKey:"6576957",agentID:"1589121593",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593"};
+;NREUM.info={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",licenseKey:"NRBR-1ee01d1479b9191d26e",applicationID:"1589121593",sa:1};`,
         },
       }),
       // New Relic CDN script (loads after config)

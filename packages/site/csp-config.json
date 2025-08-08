@@ -38,6 +38,11 @@
         "domain": "unpkg.com",
         "purpose": "CDN for npm packages",
         "category": "cdn"
+      },
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic browser monitoring",
+        "category": "analytics"
       }
     ],
     "script-src-elem": [
@@ -67,6 +72,11 @@
         "domain": "unpkg.com",
         "purpose": "CDN for npm packages",
         "category": "cdn"
+      },
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic browser monitoring",
+        "category": "analytics"
       }
     ],
     "connect-src": [
@@ -85,6 +95,16 @@
         "domain": "api.github.com",
         "purpose": "GitHub API for portfolio data",
         "category": "api"
+      },
+      {
+        "domain": "bam.nr-data.net",
+        "purpose": "New Relic RUM data collection",
+        "category": "analytics"
+      },
+      {
+        "domain": "bam-cell.nr-data.net",
+        "purpose": "New Relic RUM data collection (cellular)",
+        "category": "analytics"
       }
     ],
     "style-src": [
