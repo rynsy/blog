@@ -3,6 +3,8 @@ title: "Advanced Physics and Multimedia Content"
 date: "2025-01-19"
 slug: "advanced-physics-multimedia-content"
 draft: true
+categories: ["Physics", "Science"]
+tags: ["quantum-mechanics", "thermodynamics", "electromagnetic-theory"]
 ---
 
 # Quantum Mechanics and Media Demonstrations

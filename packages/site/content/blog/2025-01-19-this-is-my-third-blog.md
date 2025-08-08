@@ -2,6 +2,8 @@
 title: "Computer Science Algorithms and Interactive Media"
 date: "2025-01-19"
 slug: "computer-science-algorithms-interactive-media"
+categories: ["Computer Science", "Algorithms"]
+tags: ["machine-learning", "dynamic-programming", "complexity-analysis"]
 ---
 
 # Algorithm Analysis and Visual Computing

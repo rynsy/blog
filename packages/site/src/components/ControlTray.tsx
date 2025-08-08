@@ -98,8 +98,10 @@ const ControlTray: React.FC = () => {
       {/* Main control button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-3 shadow-lg hover:shadow-xl hover:bg-white/95 dark:hover:bg-gray-900/95 transition-all duration-300 z-50 group"
-        aria-label="Open background controls"
+        className="fixed top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-3 shadow-lg hover:shadow-xl hover:bg-white/95 dark:hover:bg-gray-900/95 transition-all duration-300 z-50 group focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        aria-label={`Open background controls dialog. Current module: ${selectedModule.name}. ${isActive ? 'Active' : 'Inactive'}.`}
+        aria-expanded={isOpen}
+        aria-describedby="controls-help"
         style={{ zIndex: 9999 }}
       >
         <Cog6ToothIcon className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:rotate-90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300" />
@@ -107,7 +109,14 @@ const ControlTray: React.FC = () => {
 
       {/* Control tray dialog */}
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={setIsOpen}>
+        <Dialog 
+          as="div" 
+          className="relative z-50" 
+          onClose={setIsOpen}
+          initialFocus={undefined}
+          aria-labelledby="dialog-title"
+          aria-describedby="dialog-description"
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -133,17 +142,23 @@ const ControlTray: React.FC = () => {
               >
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
+                    id="dialog-title"
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 flex items-center justify-between"
                   >
                     Background Controls
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="rounded-md p-1 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="rounded-md p-1 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-label="Close background controls dialog"
                     >
-                      <XMarkIcon className="w-5 h-5" />
+                      <XMarkIcon className="w-5 h-5" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
+                  
+                  <p id="dialog-description" className="sr-only">
+                    Configure background animations and modules for this website. Use the dropdown to select a background module, and toggles to control activation and animation state.
+                  </p>
 
                   <div className="mt-6 space-y-6">
                     {/* Module Selection */}

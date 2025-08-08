@@ -10,20 +10,10 @@
   },
   "csp": {
     "default-src": ["'self'"],
-    "script-src": [
+      "script-src": [
       "'self'",
       "'unsafe-inline'",
       "'unsafe-eval'",
-      {
-        "domain": "js-agent.newrelic.com",
-        "purpose": "New Relic monitoring",
-        "category": "analytics"
-      },
-      {
-        "domain": "bam.nr-data.net", 
-        "purpose": "New Relic data collection",
-        "category": "analytics"
-      },
       {
         "domain": "static.cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
@@ -38,22 +28,22 @@
         "domain": "cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
         "category": "analytics"
+      },
+      {
+        "domain": "cdn.jsdelivr.net",
+        "purpose": "CDN for libraries and demos",
+        "category": "cdn"
+      },
+      {
+        "domain": "unpkg.com",
+        "purpose": "CDN for npm packages",
+        "category": "cdn"
       }
     ],
     "script-src-elem": [
       "'self'",
       "'unsafe-inline'",
       {
-        "domain": "js-agent.newrelic.com",
-        "purpose": "New Relic monitoring",
-        "category": "analytics"
-      },
-      {
-        "domain": "bam.nr-data.net",
-        "purpose": "New Relic data collection", 
-        "category": "analytics"
-      },
-      {
         "domain": "static.cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
         "category": "analytics"
@@ -67,25 +57,20 @@
         "domain": "cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
         "category": "analytics"
+      },
+      {
+        "domain": "cdn.jsdelivr.net",
+        "purpose": "CDN for libraries and demos",
+        "category": "cdn"
+      },
+      {
+        "domain": "unpkg.com",
+        "purpose": "CDN for npm packages",
+        "category": "cdn"
       }
     ],
     "connect-src": [
       "'self'",
-      {
-        "domain": "js-agent.newrelic.com",
-        "purpose": "New Relic monitoring",
-        "category": "analytics"
-      },
-      {
-        "domain": "bam.nr-data.net",
-        "purpose": "New Relic data collection",
-        "category": "analytics"
-      },
-      {
-        "domain": "*.nr-data.net",
-        "purpose": "New Relic data endpoints",
-        "category": "analytics"
-      },
       {
         "domain": "static.cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
@@ -95,6 +80,11 @@
         "domain": "*.cloudflareinsights.com", 
         "purpose": "Cloudflare analytics (wildcard)",
         "category": "analytics"
+      },
+      {
+        "domain": "api.github.com",
+        "purpose": "GitHub API for portfolio data",
+        "category": "api"
       }
     ],
     "style-src": [
@@ -128,6 +118,7 @@
     "img-src": [
       "'self'",
       "data:",
+      "https:",
       {
         "domain": "via.placeholder.com",
         "purpose": "Placeholder images for blog posts",
@@ -137,10 +128,26 @@
         "domain": "media.giphy.com",
         "purpose": "Animated GIFs for educational content",
         "category": "media"
+      },
+      {
+        "domain": "*.giphy.com",
+        "purpose": "Giphy CDN for animated content",
+        "category": "media"
+      },
+      {
+        "domain": "i.imgur.com",
+        "purpose": "Imgur images for examples",
+        "category": "media"
+      },
+      {
+        "domain": "raw.githubusercontent.com",
+        "purpose": "GitHub hosted images",
+        "category": "media"
       }
     ],
     "media-src": [
       "'self'",
+      "https:",
       {
         "domain": "commondatastorage.googleapis.com",
         "purpose": "Google Cloud Storage videos for educational content",
@@ -154,6 +161,16 @@
       {
         "domain": "www.learningcontainer.com",
         "purpose": "Sample video files for development examples",
+        "category": "media"
+      },
+      {
+        "domain": "storage.googleapis.com",
+        "purpose": "Google Cloud Storage media files",
+        "category": "media"
+      },
+      {
+        "domain": "sample-videos.com",
+        "purpose": "Sample video content for demos",
         "category": "media"
       }
     ]

@@ -17,7 +17,6 @@ export const createPages: GatsbyNode["createPages"] = async ({
         frontmatter: { 
           slug: string
           draft?: boolean
-          published?: boolean
         }
         fileAbsolutePath: string
       }>
@@ -30,7 +29,6 @@ export const createPages: GatsbyNode["createPages"] = async ({
           frontmatter {
             slug
             draft
-            published
           }
           fileAbsolutePath
         }
@@ -50,9 +48,9 @@ export const createPages: GatsbyNode["createPages"] = async ({
 
   result.data.allMarkdownRemark.nodes.forEach(node => {
     if (node.frontmatter.slug) {
-      // Check draft/published status
+      // Check draft status
       const isDraft = node.frontmatter.draft === true
-      const isPublished = node.frontmatter.published !== false && !isDraft
+      const isPublished = !isDraft
       
       // In production, only show published posts
       // In development, show all posts but mark drafts

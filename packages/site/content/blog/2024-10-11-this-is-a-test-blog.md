@@ -2,6 +2,8 @@
 title: "Mathematical Foundations and Visual Media"
 date: "2024-10-11"
 slug: "mathematical-foundations-visual-media"
+categories: ["Mathematics", "Data Science"]
+tags: ["calculus", "statistics", "visualization"]
 ---
 
 # Lorem Ipsum with Mathematical Expressions

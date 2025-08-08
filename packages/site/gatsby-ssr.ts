@@ -7,10 +7,10 @@ import "./src/styles/global.css"
 import React from "react"
 import RootWrapper from "./src/components/RootWrapper"
 
-// New Relic Browser Agent - only loaded in production
+// New Relic Browser Agent - disabled by default
 const loadNewRelicScripts = () => {
-  // Only load in production builds
-  if (process.env.NODE_ENV === "production") {
+  // Only load if explicitly enabled with ENABLE_NEW_RELIC=true
+  if (process.env.NODE_ENV === "production" && process.env.ENABLE_NEW_RELIC === "true") {
     return [
       // New Relic configuration script (must load first)
       React.createElement("script", {
@@ -54,7 +54,7 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
     })
     headComponents.push(cloudflareAnalyticsScript)
 
-    // Add New Relic scripts as first scripts in head for optimal performance
+    // Add New Relic scripts only if enabled
     const newRelicScripts = loadNewRelicScripts()
     if (newRelicScripts.length > 0) {
       headComponents.push(...newRelicScripts)

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-08-08T08:58:44.327Z",
+  "summary": {
+    "totalViolations": 0,
+    "criticalViolations": 0,
+    "pages": [
+      {
+        "page": "Home",
+        "url": "http://localhost:8000/",
+        "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:8000/\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "page": "About",
+        "url": "http://localhost:8000/about",
+        "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:8000/about\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "page": "Blog",
+        "url": "http://localhost:8000/blog",
+        "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:8000/blog\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "page": "Portfolio",
+        "url": "http://localhost:8000/portfolio",
+        "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:8000/portfolio\", waiting until \"networkidle\"\u001b[22m\n"
+      }
+    ]
+  }
+}

@@ -26,8 +26,10 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode. Currently in ${theme} mode.`}
+      aria-pressed={theme === 'dark'}
+      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       {theme === 'light' ? (
         // Moon icon for dark mode
@@ -36,6 +38,7 @@ const ThemeToggle: React.FC = () => {
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
@@ -46,6 +49,7 @@ const ThemeToggle: React.FC = () => {
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <path
             fillRule="evenodd"
