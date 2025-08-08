@@ -3,7 +3,6 @@
   "private": true,
   "description": "Test suite for interactive background system",
   "version": "0.1.0",
-  "type": "module",
   "scripts": {
     "lint": "eslint '**/*.{ts,tsx}' --max-warnings=0",
     "typecheck": "tsc --noEmit",
@@ -27,6 +26,8 @@
     "eslint": "^8.50.0",
     "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "eslint-plugin-vitest": "^0.3.0",
     "happy-dom": "^12.10.0",
     "typescript": "^5.2.0",
     "vitest": "^1.0.0"

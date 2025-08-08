@@ -1,0 +1,107 @@
+name: CI - Testing Suite
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'packages/site/src/**'
+      - 'packages/tests/**'
+      - '.github/workflows/test.yml'
+
+# Allow only one concurrent CI run per PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run test -- npm run lint
+        working-directory: packages/tests
+
+      - name: Type check
+        run: npm run test -- npm run typecheck
+        working-directory: packages/tests
+
+      - name: Run unit tests with coverage
+        run: npm run test:unit
+        env:
+          CI: true
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: packages/tests/coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Install Playwright browsers
+        run: cd packages/tests && npx playwright install --with-deps chromium firefox webkit
+
+      - name: Build site for E2E tests
+        run: npm run build
+        env:
+          NODE_ENV: test
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: packages/tests/playwright-report/
+          retention-days: 30
+
+  bundle-size-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build
+
+      - name: Analyze bundle size
+        run: |
+          # Check if any JS chunks exceed 200KB
+          find packages/site/public -name "*.js" -size +200k -exec ls -lh {} \; | tee large_bundles.txt
+          if [ -s large_bundles.txt ]; then
+            echo "❌ Bundle size check failed - files larger than 200KB found:"
+            cat large_bundles.txt
+            exit 1
+          else
+            echo "✅ Bundle size check passed - all JS chunks under 200KB"
+          fi

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { injectAxe, checkA11y } from 'axe-playwright'
+import { axeConfig } from '../axe/custom-rules'
 
 const MODULES = ['gradient', 'knowledge']
 
@@ -83,12 +84,42 @@ test.describe('Background Module Smoke Tests', () => {
     // Inject axe-core
     await injectAxe(page)
     
-    // Run accessibility checks
+    // Run accessibility checks with custom config
     await checkA11y(page, null, {
       detailedReport: true,
-      detailedReportOptions: { html: true }
+      detailedReportOptions: { html: true },
+      axeOptions: axeConfig
     })
   })
+
+  // Test each module for accessibility
+  for (const moduleId of MODULES) {
+    test(`${moduleId} module accessibility compliance`, async ({ page }) => {
+      // Listen for console errors during accessibility test
+      const consoleErrors: string[] = []
+      page.on('console', (msg) => {
+        if (msg.type() === 'error') {
+          consoleErrors.push(msg.text())
+        }
+      })
+
+      await page.goto(`/?egg=${moduleId}`)
+      await page.waitForTimeout(500)
+      
+      // Inject axe-core
+      await injectAxe(page)
+      
+      // Run accessibility checks for this specific module
+      await checkA11y(page, null, {
+        detailedReport: true,
+        detailedReportOptions: { html: true },
+        axeOptions: axeConfig
+      })
+      
+      // Ensure no console errors during accessibility test
+      expect(consoleErrors).toHaveLength(0)
+    })
+  }
 
   test('performance - modules pause when page hidden', async ({ page }) => {
     await page.goto('/?egg=gradient')

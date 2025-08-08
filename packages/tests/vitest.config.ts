@@ -9,6 +9,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      include: [
+        '../site/src/**/*.{ts,tsx}',
+        '../site/src/bgModules/**/*.{ts,tsx}',
+        '../site/src/contexts/**/*.{ts,tsx}',
+        '../site/src/components/**/*.{ts,tsx}'
+      ],
       exclude: [
         'node_modules/',
         'coverage/',
@@ -16,7 +22,10 @@ export default defineConfig({
         '**/*.test.{ts,tsx}',
         '**/*.spec.{ts,tsx}',
         '**/fixtures/**',
-        '**/e2e/**'
+        '**/e2e/**',
+        '**/*.config.{ts,js}',
+        '**/.eslintrc.js',
+        '**/gatsby-*.{ts,js}'
       ],
       thresholds: {
         global: {

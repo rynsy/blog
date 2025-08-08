@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
-import { CanvasHost } from '@site/components/CanvasHost'
+import CanvasHost from '@site/components/CanvasHost'
 import { BackgroundProvider } from '@site/contexts/BackgroundContext'
 
 // Mock the background modules registry
@@ -75,10 +75,7 @@ describe('CanvasHost', () => {
     expect(screen.getByRole('img', { hidden: true })).toBeInTheDocument()
   })
 
-  it('handles visibility changes correctly', () => {
-    const pauseMock = vi.fn()
-    const resumeMock = vi.fn()
-    
+  it('handles visibility changes correctly', () => {    
     // Mock module with pause/resume
     vi.mocked(global.requestAnimationFrame).mockImplementation((callback) => {
       callback(0)

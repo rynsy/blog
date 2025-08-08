@@ -52,6 +52,10 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 }))
 
 // Mock canvas context for background modules
+const mockGradient = {
+  addColorStop: vi.fn()
+}
+
 const mockContext = {
   fillRect: vi.fn(),
   clearRect: vi.fn(),
@@ -68,6 +72,26 @@ const mockContext = {
   closePath: vi.fn(),
   stroke: vi.fn(),
   fill: vi.fn(),
+  // Canvas gradient methods
+  createLinearGradient: vi.fn(() => mockGradient),
+  createRadialGradient: vi.fn(() => mockGradient),
+  createPattern: vi.fn(),
+  // Additional canvas properties
+  fillStyle: '',
+  strokeStyle: '',
+  lineWidth: 1,
+  globalAlpha: 1,
+  globalCompositeOperation: 'source-over',
+  // Text methods
+  fillText: vi.fn(),
+  strokeText: vi.fn(),
+  measureText: vi.fn(() => ({ width: 0 })),
+  // Path methods
+  arc: vi.fn(),
+  arcTo: vi.fn(),
+  bezierCurveTo: vi.fn(),
+  quadraticCurveTo: vi.fn(),
+  rect: vi.fn(),
 }
 
 HTMLCanvasElement.prototype.getContext = vi.fn(() => mockContext)
