@@ -35,18 +35,18 @@ describe('Gradient Module Implementation', () => {
 
     // Use the mock class that properly extends HTMLCanvasElement
     mockCanvas = new (global as any).MockHTMLCanvasElement()
-    mockCanvas.getContext = vi.fn(() => mockContext)
+    mockCanvas.getContext = vi.fn(() => mockContext) as any
 
     // Mock animation frame functions
-    mockRequestAnimationFrame = vi.fn((callback) => {
+    mockRequestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
       // Immediately call callback for synchronous testing
       setTimeout(callback, 16)
       return 1
-    })
+    }) as any
     mockCancelAnimationFrame = vi.fn()
 
-    global.requestAnimationFrame = mockRequestAnimationFrame
-    global.cancelAnimationFrame = mockCancelAnimationFrame
+    global.requestAnimationFrame = mockRequestAnimationFrame as any
+    global.cancelAnimationFrame = mockCancelAnimationFrame as any
   })
 
   afterEach(() => {
@@ -101,6 +101,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Setup starts animation automatically
       expect(mockRequestAnimationFrame).toHaveBeenCalled()
@@ -156,6 +157,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Wait for animation frame
       await new Promise(resolve => setTimeout(resolve, 20))
@@ -171,6 +173,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -184,6 +187,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -199,6 +203,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -214,6 +219,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Module should be created with light theme
       expect(mockCanvas.getContext).toHaveBeenCalled()
@@ -226,6 +232,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'dark'
       })
+      expect(module).toBeDefined()
 
       expect(mockCanvas.getContext).toHaveBeenCalled()
     })
@@ -240,7 +247,7 @@ describe('Gradient Module Implementation', () => {
 
       const initialCallCount = mockRequestAnimationFrame.mock.calls.length
 
-      module.onThemeChange('dark')
+      module.onThemeChange!('dark')
 
       // Should not trigger new animation start
       expect(mockRequestAnimationFrame.mock.calls.length).toBe(initialCallCount)
@@ -255,6 +262,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -269,6 +277,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -283,6 +292,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -300,6 +310,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Mock Date.now for consistent timing
       const mockDate = vi.spyOn(Date, 'now')
@@ -340,6 +351,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Should not throw error
       expect(() => module.onResize?.(1000, 800)).not.toThrow()
@@ -366,6 +378,7 @@ describe('Gradient Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       module.pause()
       vi.clearAllMocks()

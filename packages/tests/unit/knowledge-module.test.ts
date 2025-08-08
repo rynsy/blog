@@ -87,17 +87,17 @@ describe('Knowledge Graph Module Implementation', () => {
 
     // Use the mock class that properly extends HTMLCanvasElement
     mockCanvas = new (global as any).MockHTMLCanvasElement()
-    mockCanvas.getContext = vi.fn(() => mockContext)
+    mockCanvas.getContext = vi.fn(() => mockContext) as any
 
     // Mock animation frame functions
-    mockRequestAnimationFrame = vi.fn((callback) => {
+    mockRequestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
       setTimeout(callback, 16)
       return 1
-    })
+    }) as any
     mockCancelAnimationFrame = vi.fn()
 
-    global.requestAnimationFrame = mockRequestAnimationFrame
-    global.cancelAnimationFrame = mockCancelAnimationFrame
+    global.requestAnimationFrame = mockRequestAnimationFrame as any
+    global.cancelAnimationFrame = mockCancelAnimationFrame as any
   })
 
   afterEach(() => {
@@ -128,6 +128,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 800,
         theme: 'dark'
       })
+      expect(module).toBeDefined()
 
       expect(mockCanvas.getContext).toHaveBeenCalled()
     })
@@ -208,6 +209,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Wait for animation to start
       await new Promise(resolve => setTimeout(resolve, 20))
@@ -266,6 +268,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
       expect(mockContext.clearRect).toHaveBeenCalledWith(0, 0, 800, 600)
@@ -278,6 +281,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -293,6 +297,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -308,6 +313,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -325,8 +331,8 @@ describe('Knowledge Graph Module Implementation', () => {
       })
 
       // Should not throw error
-      expect(() => module.onThemeChange('dark')).not.toThrow()
-      expect(() => module.onThemeChange('light')).not.toThrow()
+      expect(() => module.onThemeChange!('dark')).not.toThrow()
+      expect(() => module.onThemeChange!('light')).not.toThrow()
     })
 
     it('uses appropriate theme colors for nodes and links', async () => {
@@ -336,6 +342,7 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'dark'
       })
+      expect(module).toBeDefined()
 
       await new Promise(resolve => setTimeout(resolve, 20))
 
@@ -353,10 +360,11 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Get the event listeners that were added
       const mousedownListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'mousedown')?.[1]
+        .find((call: any) => call[0] === 'mousedown')?.[1]
 
       if (mousedownListener) {
         const mockEvent = {
@@ -377,9 +385,10 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       const mousemoveListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'mousemove')?.[1]
+        .find((call: any) => call[0] === 'mousemove')?.[1]
 
       if (mousemoveListener) {
         const mockEvent = {
@@ -399,9 +408,10 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       const contextMenuListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'contextmenu')?.[1]
+        .find((call: any) => call[0] === 'contextmenu')?.[1]
 
       if (contextMenuListener) {
         const mockEvent = {
@@ -425,7 +435,7 @@ describe('Knowledge Graph Module Implementation', () => {
         theme: 'light'
       })
 
-      expect(() => module.onResize(1000, 800)).not.toThrow()
+      expect(() => module.onResize!(1000, 800)).not.toThrow()
     })
 
     it('repositions nodes after resize', () => {
@@ -437,7 +447,7 @@ describe('Knowledge Graph Module Implementation', () => {
       })
 
       // Should handle resize gracefully
-      module.onResize(1200, 900)
+      module.onResize!(1200, 900)
 
       // The simulation should be updated (we can't directly test internal state)
       expect(module).toBeDefined()
@@ -452,10 +462,11 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       // Test drag start
       const mousedownListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'mousedown')?.[1]
+        .find((call: any) => call[0] === 'mousedown')?.[1]
 
       if (mousedownListener) {
         const startEvent = {
@@ -469,7 +480,7 @@ describe('Knowledge Graph Module Implementation', () => {
 
         // Test drag move
         const mousemoveListener = (mockCanvas.addEventListener as any).mock.calls
-          .find(call => call[0] === 'mousemove')?.[1]
+          .find((call: any) => call[0] === 'mousemove')?.[1]
 
         if (mousemoveListener) {
           const moveEvent = {
@@ -490,9 +501,10 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       const wheelListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'wheel')?.[1]
+        .find((call: any) => call[0] === 'wheel')?.[1]
 
       if (wheelListener) {
         const mockEvent = {
@@ -533,8 +545,6 @@ describe('Knowledge Graph Module Implementation', () => {
         theme: 'light'
       })
 
-      const initialCallCount = mockRequestAnimationFrame.mock.calls.length
-
       module.pause()
       vi.clearAllMocks()
 
@@ -566,9 +576,10 @@ describe('Knowledge Graph Module Implementation', () => {
         height: 600,
         theme: 'light'
       })
+      expect(module).toBeDefined()
 
       const mousemoveListener = (mockCanvas.addEventListener as any).mock.calls
-        .find(call => call[0] === 'mousemove')?.[1]
+        .find((call: any) => call[0] === 'mousemove')?.[1]
 
       if (mousemoveListener) {
         const invalidEvent = {

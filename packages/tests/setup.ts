@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 
 // Mock requestAnimationFrame for animations
@@ -92,6 +93,12 @@ const mockContext = {
   bezierCurveTo: vi.fn(),
   quadraticCurveTo: vi.fn(),
   rect: vi.fn(),
+  translate: vi.fn(),
+  scale: vi.fn(),
+  // Additional canvas properties needed for knowledge graph
+  font: '',
+  textAlign: 'center',
+  textBaseline: 'middle'
 }
 
 // Create a proper HTMLCanvasElement mock

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test'
-import { injectAxe, checkA11y } from 'axe-playwright'
 
 // Configuration for test modules
 const TEST_MODULES = [

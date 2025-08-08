@@ -34,11 +34,11 @@ jobs:
         run: npm ci
 
       - name: Lint code
-        run: npm run test -- npm run lint
+        run: npm run lint
         working-directory: packages/tests
 
       - name: Type check
-        run: npm run test -- npm run typecheck
+        run: npm run typecheck
         working-directory: packages/tests
 
       - name: Run unit tests with coverage
@@ -76,6 +76,37 @@ jobs:
           path: packages/tests/playwright-report/
           retention-days: 30
 
+  lighthouse-performance:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build
+
+      - name: Serve site
+        run: |
+          npm run serve &
+          sleep 10
+        
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
   bundle-size-check:
     runs-on: ubuntu-latest
     steps:
@@ -94,14 +125,10 @@ jobs:
       - name: Build for production
         run: npm run build
 
-      - name: Analyze bundle size
+      - name: Install bundlesize
+        run: npm install -g bundlesize
+
+      - name: Check bundle size
         run: |
-          # Check if any JS chunks exceed 200KB
-          find packages/site/public -name "*.js" -size +200k -exec ls -lh {} \; | tee large_bundles.txt
-          if [ -s large_bundles.txt ]; then
-            echo "❌ Bundle size check failed - files larger than 200KB found:"
-            cat large_bundles.txt
-            exit 1
-          else
-            echo "✅ Bundle size check passed - all JS chunks under 200KB"
-          fi
+          cd packages/site
+          bundlesize

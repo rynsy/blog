@@ -269,7 +269,7 @@ describe('BackgroundProvider', () => {
         
         React.useEffect(() => {
           context._setModuleInstance(mockModuleInstance)
-        }, [])
+        }, [context])
 
         return <div data-testid="test-with-module" />
       }
@@ -304,7 +304,7 @@ describe('BackgroundProvider', () => {
         React.useEffect(() => {
           context._setModuleInstance(mockModuleInstance)
           context.toggleActive() // Make it active
-        }, [])
+        }, [context])
 
         return <div data-testid="test-with-active-module" />
       }
@@ -373,7 +373,7 @@ describe('BackgroundProvider', () => {
         
         React.useEffect(() => {
           context._setModuleInstance(mockModuleInstance)
-        }, [])
+        }, [context])
 
         return <div data-testid="test-with-module-theme" />
       }
@@ -417,7 +417,7 @@ describe('BackgroundProvider', () => {
         
         React.useEffect(() => {
           context._setModuleInstance(mockModuleInstance)
-        }, [])
+        }, [context])
 
         return <div data-testid="test-with-module-resize" />
       }

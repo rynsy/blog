@@ -10,6 +10,10 @@ interface Node extends d3Force.SimulationNodeDatum {
   color: string
   radius: number
   group?: number
+  x?: number
+  y?: number
+  fx?: number | null
+  fy?: number | null
 }
 
 interface Link extends d3Force.SimulationLinkDatum<Node> {
@@ -339,26 +343,26 @@ class KnowledgeGraphModule implements BackgroundModule {
     if (!this.ctx) return
 
     // Clear canvas
-    this.ctx.clearRect(0, 0, this.width, this.height)
+    this.ctx!.clearRect(0, 0, this.width, this.height)
     
     // Apply transform
-    this.ctx.save()
-    this.ctx.translate(this.viewTransform.x, this.viewTransform.y)
-    this.ctx.scale(this.viewTransform.k, this.viewTransform.k)
+    this.ctx!.save()
+    this.ctx!.translate(this.viewTransform.x, this.viewTransform.y)
+    this.ctx!.scale(this.viewTransform.k, this.viewTransform.k)
 
     // Draw links
-    this.ctx.strokeStyle = this.theme === 'dark' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(79, 70, 229, 0.4)'
-    this.ctx.lineWidth = 2
+    this.ctx!.strokeStyle = this.theme === 'dark' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(79, 70, 229, 0.4)'
+    this.ctx!.lineWidth = 2
     
     this.links.forEach(link => {
       const source = typeof link.source === 'object' ? link.source : this.nodes.find(n => n.id === link.source)
       const target = typeof link.target === 'object' ? link.target : this.nodes.find(n => n.id === link.target)
       
       if (source && target && source.x !== undefined && source.y !== undefined && target.x !== undefined && target.y !== undefined) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(source.x, source.y)
-        this.ctx.lineTo(target.x, target.y)
-        this.ctx.stroke()
+        this.ctx!.beginPath()
+        this.ctx!.moveTo(source.x, source.y)
+        this.ctx!.lineTo(target.x, target.y)
+        this.ctx!.stroke()
       }
     })
 
@@ -371,31 +375,31 @@ class KnowledgeGraphModule implements BackgroundModule {
       const isLastClicked = this.lastClickNode === node.id
       
       // Node shadow
-      this.ctx.beginPath()
-      this.ctx.arc(node.x + 2, node.y + 2, node.radius, 0, 2 * Math.PI)
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
-      this.ctx.fill()
+      this.ctx!.beginPath()
+      this.ctx!.arc(node.x + 2, node.y + 2, node.radius, 0, 2 * Math.PI)
+      this.ctx!.fillStyle = 'rgba(0, 0, 0, 0.1)'
+      this.ctx!.fill()
       
       // Node circle
-      this.ctx.beginPath()
-      this.ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI)
-      this.ctx.fillStyle = node.color
-      this.ctx.fill()
+      this.ctx!.beginPath()
+      this.ctx!.arc(node.x, node.y, node.radius, 0, 2 * Math.PI)
+      this.ctx!.fillStyle = node.color
+      this.ctx!.fill()
       
       // Node border
-      this.ctx.strokeStyle = isHovered || isSelected || isLastClicked ? '#ffffff' : this.theme === 'dark' ? '#374151' : '#ffffff'
-      this.ctx.lineWidth = isHovered ? 4 : isSelected || isLastClicked ? 3 : 2
-      this.ctx.stroke()
+      this.ctx!.strokeStyle = isHovered || isSelected || isLastClicked ? '#ffffff' : this.theme === 'dark' ? '#374151' : '#ffffff'
+      this.ctx!.lineWidth = isHovered ? 4 : isSelected || isLastClicked ? 3 : 2
+      this.ctx!.stroke()
       
       // Node label
-      this.ctx.fillStyle = '#ffffff'
-      this.ctx.font = `bold ${Math.max(10, node.radius / 2.5)}px sans-serif`
-      this.ctx.textAlign = 'center'
-      this.ctx.textBaseline = 'middle'
-      this.ctx.fillText(node.label, node.x, node.y)
+      this.ctx!.fillStyle = '#ffffff'
+      this.ctx!.font = `bold ${Math.max(10, node.radius / 2.5)}px sans-serif`
+      this.ctx!.textAlign = 'center'
+      this.ctx!.textBaseline = 'middle'
+      this.ctx!.fillText(node.label, node.x, node.y)
     })
 
-    this.ctx.restore()
+    this.ctx!.restore()
 
     if (this.isRunning) {
       this.animationId = requestAnimationFrame(() => this.render())

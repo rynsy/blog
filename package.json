@@ -35,7 +35,8 @@
     "test": "pnpm -F tests test:ci",
     "test:unit": "pnpm -F tests test:unit",
     "test:e2e": "pnpm -F tests test:e2e",
-    "test:watch": "pnpm -F tests test:unit:watch"
+    "test:watch": "pnpm -F tests test:unit:watch",
+    "test:local-ci": "chmod +x scripts/local-ci.sh && ./scripts/local-ci.sh"
   },
   "repository": {
     "type": "git",

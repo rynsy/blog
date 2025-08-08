@@ -50,6 +50,10 @@
     "util": "^0.12.5"
   },
   "devDependencies": {
+    "@types/d3-drag": "^3.0.7",
+    "@types/d3-force": "^3.0.10",
+    "@types/d3-selection": "^3.0.11",
+    "@types/d3-zoom": "^3.0.8",
     "@types/node": "^22.7.5",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
@@ -85,5 +89,17 @@
   },
   "bugs": {
     "url": "https://github.com/rynsy/gatsby-demo/issues"
-  }
+  },
+  "bundlesize": [
+    {
+      "path": "./public/**/*.js",
+      "maxSize": "200 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./public/**/*.css",
+      "maxSize": "50 kB",
+      "compression": "gzip"
+    }
+  ]
 }

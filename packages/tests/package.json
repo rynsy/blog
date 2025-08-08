@@ -10,7 +10,8 @@
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list",
     "test:e2e:headed": "playwright test --headed",
-    "test:ci": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e"
+    "test:ci": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e",
+    "test:local-ci": "bash ../../scripts/local-ci.sh"
   },
   "dependencies": {},
   "devDependencies": {

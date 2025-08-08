@@ -256,7 +256,7 @@ describe('ControlTray Component (C-01)', () => {
 
           // Set initial module instance
           backgroundContext._setModuleInstance(mockModuleInstance)
-        }, [])
+        }, [backgroundContext])
 
         return <ControlTray />
       }
@@ -391,7 +391,7 @@ describe('ControlTray Component (C-01)', () => {
             description: 'Second module',
             load: () => Promise.resolve({ setup: () => ({}) })
           })
-        }, [])
+        }, [backgroundContext])
 
         return <ControlTray />
       }
