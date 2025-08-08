@@ -71,9 +71,9 @@
   ],
   "license": "0BSD",
   "scripts": {
-    "build": "gatsby build",
-    "build:gh": "DEPLOY_TARGET=github gatsby build --prefix-paths",
-    "build:cf": "gatsby build",
+    "build": "node scripts/generate-headers.js && gatsby build",
+    "build:gh": "node scripts/generate-headers.js && DEPLOY_TARGET=github gatsby build --prefix-paths",
+    "build:cf": "node scripts/generate-headers.js && gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,css}\"",
     "start": "gatsby develop",
@@ -81,7 +81,10 @@
     "clean": "gatsby clean",
     "deploy:cf": "npm run build:cf && npx wrangler pages deploy public --project-name rynsy-personal-site",
     "deploy:cf:preview": "npm run build:cf && npx wrangler pages deploy public --project-name rynsy-personal-site --compatibility-date 2024-10-01",
-    "new-blog": "node scripts/new-blog.js"
+    "new-blog": "node scripts/new-blog.js",
+    "generate-headers": "node scripts/generate-headers.js",
+    "update-csp": "node scripts/generate-headers.js",
+    "add-csp-domain": "node scripts/add-csp-domain.js"
   },
   "repository": {
     "type": "git",

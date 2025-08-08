@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "description": "Content Security Policy configuration for maintainable header management",
+    "lastUpdated": "2025-08-08",
+    "docs": "Add domains to appropriate categories. Rebuild site to regenerate _headers file."
+  },
+  "environments": {
+    "production": true,
+    "development": true
+  },
+  "csp": {
+    "default-src": ["'self'"],
+    "script-src": [
+      "'self'",
+      "'unsafe-inline'",
+      "'unsafe-eval'",
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic monitoring",
+        "category": "analytics"
+      },
+      {
+        "domain": "bam.nr-data.net", 
+        "purpose": "New Relic data collection",
+        "category": "analytics"
+      },
+      {
+        "domain": "static.cloudflareinsights.com",
+        "purpose": "Cloudflare analytics",
+        "category": "analytics"
+      },
+      {
+        "domain": "*.cloudflareinsights.com",
+        "purpose": "Cloudflare analytics (wildcard)",
+        "category": "analytics"
+      },
+      {
+        "domain": "cloudflareinsights.com",
+        "purpose": "Cloudflare analytics",
+        "category": "analytics"
+      }
+    ],
+    "script-src-elem": [
+      "'self'",
+      "'unsafe-inline'",
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic monitoring",
+        "category": "analytics"
+      },
+      {
+        "domain": "bam.nr-data.net",
+        "purpose": "New Relic data collection", 
+        "category": "analytics"
+      },
+      {
+        "domain": "static.cloudflareinsights.com",
+        "purpose": "Cloudflare analytics",
+        "category": "analytics"
+      },
+      {
+        "domain": "*.cloudflareinsights.com",
+        "purpose": "Cloudflare analytics (wildcard)",
+        "category": "analytics"
+      },
+      {
+        "domain": "cloudflareinsights.com",
+        "purpose": "Cloudflare analytics",
+        "category": "analytics"
+      }
+    ],
+    "connect-src": [
+      "'self'",
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic monitoring",
+        "category": "analytics"
+      },
+      {
+        "domain": "bam.nr-data.net",
+        "purpose": "New Relic data collection",
+        "category": "analytics"
+      },
+      {
+        "domain": "*.nr-data.net",
+        "purpose": "New Relic data endpoints",
+        "category": "analytics"
+      },
+      {
+        "domain": "static.cloudflareinsights.com",
+        "purpose": "Cloudflare analytics",
+        "category": "analytics"
+      },
+      {
+        "domain": "*.cloudflareinsights.com", 
+        "purpose": "Cloudflare analytics (wildcard)",
+        "category": "analytics"
+      }
+    ],
+    "style-src": [
+      "'self'",
+      "'unsafe-inline'",
+      {
+        "domain": "fonts.googleapis.com",
+        "purpose": "Google Fonts CSS",
+        "category": "fonts"
+      }
+    ],
+    "style-src-attr": ["'unsafe-inline'"],
+    "style-src-elem": [
+      "'self'",
+      "'unsafe-inline'",
+      {
+        "domain": "fonts.googleapis.com",
+        "purpose": "Google Fonts CSS",
+        "category": "fonts"
+      }
+    ],
+    "font-src": [
+      "'self'",
+      "data:",
+      {
+        "domain": "fonts.gstatic.com",
+        "purpose": "Google Fonts files",
+        "category": "fonts"
+      }
+    ],
+    "img-src": [
+      "'self'",
+      "data:",
+      {
+        "domain": "via.placeholder.com",
+        "purpose": "Placeholder images for blog posts",
+        "category": "media"
+      },
+      {
+        "domain": "media.giphy.com",
+        "purpose": "Animated GIFs for educational content",
+        "category": "media"
+      }
+    ],
+    "media-src": [
+      "'self'",
+      {
+        "domain": "commondatastorage.googleapis.com",
+        "purpose": "Google Cloud Storage videos for educational content",
+        "category": "media"
+      },
+      {
+        "domain": "www.w3schools.com",
+        "purpose": "Educational video examples",
+        "category": "media"
+      },
+      {
+        "domain": "www.learningcontainer.com",
+        "purpose": "Sample video files for development examples",
+        "category": "media"
+      }
+    ]
+  },
+  "otherHeaders": {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff", 
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "cf-web-analytics": "off"
+  },
+  "cacheRules": {
+    "staticAssets": {
+      "paths": ["/static/*"],
+      "maxAge": "31536000",
+      "immutable": true
+    },
+    "images": {
+      "extensions": ["*.png", "*.jpg", "*.jpeg", "*.webp"],
+      "maxAge": "31536000"
+    },
+    "cssJs": {
+      "extensions": ["*.css", "*.js"],
+      "maxAge": "31536000"
+    }
+  }
+}

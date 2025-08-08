@@ -98,11 +98,11 @@ const ControlTray: React.FC = () => {
       {/* Main control button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-lg hover:shadow-xl transition-all duration-200 z-50"
+        className="fixed top-4 right-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 rounded-xl p-3 shadow-lg hover:shadow-xl hover:bg-white/95 dark:hover:bg-gray-900/95 transition-all duration-300 z-50 group"
         aria-label="Open background controls"
         style={{ zIndex: 9999 }}
       >
-        <Cog6ToothIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+        <Cog6ToothIcon className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:rotate-90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300" />
       </button>
 
       {/* Control tray dialog */}

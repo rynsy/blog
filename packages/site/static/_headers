@@ -1,32 +1,61 @@
 # Security headers for Cloudflare Pages
-# CSP allows:
-# - img-src: via.placeholder.com (placeholder images), media.giphy.com (animated GIFs)  
-# - media-src: commondatastorage.googleapis.com, w3schools.com, learningcontainer.com (educational videos)
+# Generated automatically from csp-config.json
+# Last generated: 2025-08-08T02:48:54.486Z
+
+# CSP Configuration:
+# ANALYTICS:
+#   js-agent.newrelic.com - New Relic monitoring
+#   bam.nr-data.net - New Relic data collection
+#   static.cloudflareinsights.com - Cloudflare analytics
+#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
+#   cloudflareinsights.com - Cloudflare analytics
+#   js-agent.newrelic.com - New Relic monitoring
+#   bam.nr-data.net - New Relic data collection
+#   static.cloudflareinsights.com - Cloudflare analytics
+#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
+#   cloudflareinsights.com - Cloudflare analytics
+#   js-agent.newrelic.com - New Relic monitoring
+#   bam.nr-data.net - New Relic data collection
+#   *.nr-data.net - New Relic data endpoints
+#   static.cloudflareinsights.com - Cloudflare analytics
+#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
+# FONTS:
+#   fonts.googleapis.com - Google Fonts CSS
+#   fonts.googleapis.com - Google Fonts CSS
+#   fonts.gstatic.com - Google Fonts files
+# MEDIA:
+#   via.placeholder.com - Placeholder images for blog posts
+#   media.giphy.com - Animated GIFs for educational content
+#   commondatastorage.googleapis.com - Google Cloud Storage videos for educational content
+#   www.w3schools.com - Educational video examples
+#   www.learningcontainer.com - Sample video files for development examples
+
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://cloudflareinsights.com; script-src-elem 'self' 'unsafe-inline' https://js-agent.newrelic.com https://bam.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com https://cloudflareinsights.com; connect-src 'self' https://js-agent.newrelic.com https://bam.nr-data.net https://*.nr-data.net https://static.cloudflareinsights.com https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://via.placeholder.com https://media.giphy.com; media-src 'self' https://commondatastorage.googleapis.com https://www.w3schools.com https://www.learningcontainer.com
   cf-web-analytics: off
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com bam.nr-data.net static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com; script-src-elem 'self' 'unsafe-inline' js-agent.newrelic.com bam.nr-data.net static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com; connect-src 'self' js-agent.newrelic.com bam.nr-data.net *.nr-data.net static.cloudflareinsights.com *.cloudflareinsights.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; style-src-attr 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: via.placeholder.com media.giphy.com; media-src 'self' commondatastorage.googleapis.com www.w3schools.com www.learningcontainer.com
 
-# Cache static assets
 /static/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Cache images
 *.png
   Cache-Control: public, max-age=31536000
+
 *.jpg
   Cache-Control: public, max-age=31536000
+
 *.jpeg
   Cache-Control: public, max-age=31536000
+
 *.webp
   Cache-Control: public, max-age=31536000
 
-# Cache CSS and JS
 *.css
   Cache-Control: public, max-age=31536000
+
 *.js
   Cache-Control: public, max-age=31536000
