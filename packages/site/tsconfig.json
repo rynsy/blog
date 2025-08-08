@@ -1,32 +1,86 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2020",
     "module": "esnext",
     "jsx": "react-jsx",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "dom.iterable", "es2020", "webworker"],
     "moduleResolution": "node",
+    
+    // Strict type checking
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    
+    // Enhanced error checking
     "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    
+    // Module resolution and compatibility
+    "esModuleInterop": true,
     "allowJs": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    
+    // Performance optimizations
+    "incremental": true,
+    "tsBuildInfoFile": ".cache/tsbuildinfo.json",
+    "importsNotUsedAsValues": "remove",
+    
+    // Build configuration
+    "noEmit": true,
+    "declaration": false,
+    "sourceMap": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    
+    // Path mapping with enhanced aliases
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/contexts/*": ["./src/contexts/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/bgModules/*": ["./src/bgModules/*"],
+      "@/interfaces/*": ["../../interfaces/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/assets/*": ["./src/assets/*"]
+    },
+    
+    // Type definitions
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "react", "react-dom", "d3", "webgl2"]
   },
   "include": [
     "src/**/*",
     "gatsby-node.ts",
     "gatsby-config.ts",
     "gatsby-browser.ts",
-    "gatsby-ssr.ts"
+    "gatsby-ssr.ts",
+    "../../interfaces/**/*"
   ],
-  "exclude": ["node_modules", "public", ".cache"]
+  "exclude": [
+    "node_modules",
+    "public",
+    ".cache",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
+    "coverage",
+    "dist",
+    "build"
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

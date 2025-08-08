@@ -1,4 +1,5 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
+import { BackgroundModuleV3, ModuleSetupParamsV3, PerformanceMetrics, MemoryStats, ModuleConfiguration, ValidationResult, SerializableState, ModuleMessage, ModuleResponse, CanvasRequirements } from '../../../interfaces/BackgroundSystemV3'
 import * as d3Force from 'd3-force'
 import { select, pointer } from 'd3-selection'
 import { drag } from 'd3-drag'
@@ -21,12 +22,50 @@ interface Link extends d3Force.SimulationLinkDatum<Node> {
   target: string | Node
 }
 
-class KnowledgeGraphModule implements BackgroundModule {
+class KnowledgeGraphModule implements BackgroundModule, BackgroundModuleV3 {
   private canvas: HTMLCanvasElement | null = null
   private ctx: CanvasRenderingContext2D | null = null
+  private gl: WebGLRenderingContext | null = null
+  private useWebGL = false
   private width = 0
   private height = 0
   private theme: 'light' | 'dark' = 'light'
+  private deviceCapabilities: any = null
+  private resourceManager: any = null
+  private performanceMetrics: PerformanceMetrics = {
+    fps: 0,
+    frameTime: 0,
+    memoryUsage: 0,
+    renderTime: 0,
+    timestamp: Date.now()
+  }
+  private frameCount = 0
+  private lastFrameTime = 0
+  private config: ModuleConfiguration = {
+    enabled: true,
+    quality: 'medium',
+    nodes: 25,
+    connections: 'medium',
+    physics: {
+      enabled: true,
+      gravity: 0.1,
+      damping: 0.9,
+      collisionDetection: false,
+      forces: {
+        attraction: 0.1,
+        repulsion: 100,
+        centering: 0.05
+      }
+    },
+    interactions: {
+      enableDrag: true,
+      enableClick: true,
+      enableHover: true,
+      enableKeyboard: true,
+      clickToCreate: true,
+      doubleClickAction: 'delete'
+    }
+  }
   private nodes: Node[] = []
   private links: Link[] = []
   private simulation: d3Force.Simulation<Node, Link> | null = null
@@ -45,16 +84,77 @@ class KnowledgeGraphModule implements BackgroundModule {
   private mousePos = { x: 0, y: 0 }
   private isMouseDown = false
 
-  constructor(params: ModuleSetupParams) {
+  constructor(params: ModuleSetupParams | ModuleSetupParamsV3) {
     this.canvas = params.canvas as HTMLCanvasElement
-    this.ctx = this.canvas.getContext('2d')
     this.width = params.width
     this.height = params.height
     this.theme = params.theme
-
+    
+    // Enhanced V3 parameters
+    if ('deviceCapabilities' in params) {
+      this.deviceCapabilities = params.deviceCapabilities
+      this.resourceManager = params.resourceManager
+      
+      // Determine if we should use WebGL based on capabilities and node count
+      const nodeCount = this.config.nodes || 25
+      this.useWebGL = this.shouldUseWebGL(nodeCount, params.deviceCapabilities)
+    }
+    
+    this.initializeCanvas()
     this.initializeGraph()
     this.setupEventListeners()
     this.startSimulation()
+  }
+
+  private initializeCanvas() {
+    if (!this.canvas) return
+    
+    if (this.useWebGL && this.deviceCapabilities?.webgl) {
+      try {
+        this.gl = this.canvas.getContext('webgl', {
+          alpha: true,
+          antialias: this.config.quality === 'high',
+          preserveDrawingBuffer: false
+        })
+        
+        if (this.gl) {
+          console.log('🎮 KnowledgeGraph: WebGL context initialized')
+          this.initializeWebGL()
+        } else {
+          console.warn('⚠️ KnowledgeGraph: WebGL context creation failed, falling back to Canvas2D')
+          this.useWebGL = false
+        }
+      } catch (error) {
+        console.warn('⚠️ KnowledgeGraph: WebGL initialization failed:', error)
+        this.useWebGL = false
+      }
+    }
+    
+    if (!this.useWebGL) {
+      this.ctx = this.canvas.getContext('2d')
+      if (!this.ctx) {
+        throw new Error('Failed to get 2D context from canvas')
+      }
+    }
+  }
+
+  private initializeWebGL() {
+    if (!this.gl) return
+    
+    // Basic WebGL setup for future enhancement
+    this.gl.clearColor(0.0, 0.0, 0.0, 0.0)
+    this.gl.enable(this.gl.BLEND)
+    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)
+  }
+
+  private shouldUseWebGL(nodeCount: number, deviceCapabilities: any): boolean {
+    // Use Canvas2D for small graphs or limited devices
+    if (nodeCount < 50 || !deviceCapabilities?.webgl || deviceCapabilities?.isLowEnd) {
+      return false
+    }
+    
+    // Use WebGL for larger graphs with capable devices
+    return nodeCount >= 50 && deviceCapabilities.webgl
   }
 
   private initializeGraph() {
@@ -70,8 +170,9 @@ class KnowledgeGraphModule implements BackgroundModule {
       ? ['#6366f1', '#8b5cf6', '#ec4899', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#84cc16', '#f97316', '#a855f7']
       : ['#4f46e5', '#7c3aed', '#db2777', '#0891b2', '#059669', '#d97706', '#dc2626', '#65a30d', '#ea580c', '#9333ea']
 
-    // Create more nodes with varied sizes and positions
-    this.nodes = Array.from({ length: 15 + Math.floor(Math.random() * 10) }, (_, i) => {
+    // Use configured node count or default
+    const nodeCount = this.config.nodes || 25
+    this.nodes = Array.from({ length: nodeCount }, (_, i) => {
       const radius = 12 + Math.random() * 20
       return {
         id: `node-${i}`,
@@ -340,10 +441,27 @@ class KnowledgeGraphModule implements BackgroundModule {
   }
 
   private render() {
+    const startTime = performance.now()
+    
+    if (this.useWebGL && this.gl) {
+      this.renderWebGL()
+    } else if (this.ctx) {
+      this.renderCanvas2D()
+    }
+    
+    // Update performance metrics
+    this.updatePerformanceMetrics(performance.now() - startTime)
+    
+    if (this.isRunning) {
+      this.animationId = requestAnimationFrame(() => this.render())
+    }
+  }
+
+  private renderCanvas2D() {
     if (!this.ctx) return
 
     // Clear canvas
-    this.ctx!.clearRect(0, 0, this.width, this.height)
+    this.ctx.clearRect(0, 0, this.width, this.height)
     
     // Apply transform
     this.ctx!.save()
@@ -399,10 +517,190 @@ class KnowledgeGraphModule implements BackgroundModule {
       this.ctx!.fillText(node.label, node.x, node.y)
     })
 
-    this.ctx!.restore()
+    this.ctx.restore()
+  }
 
-    if (this.isRunning) {
-      this.animationId = requestAnimationFrame(() => this.render())
+  private renderWebGL() {
+    if (!this.gl) return
+    
+    // Clear WebGL viewport
+    this.gl.viewport(0, 0, this.width, this.height)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+    
+    // For now, fall back to 2D rendering even in WebGL mode
+    // This would be enhanced with actual WebGL shaders for better performance
+    if (this.ctx) {
+      this.renderCanvas2D()
+    }
+  }
+
+  private updatePerformanceMetrics(renderTime: number) {
+    this.frameCount++
+    const now = performance.now()
+    
+    if (now - this.lastFrameTime >= 1000) {
+      this.performanceMetrics.fps = Math.round((this.frameCount * 1000) / (now - this.lastFrameTime))
+      this.performanceMetrics.frameTime = renderTime
+      this.performanceMetrics.renderTime = renderTime
+      this.performanceMetrics.timestamp = now
+      this.performanceMetrics.memoryUsage = this.resourceManager?.getMemoryUsage()?.used || 0
+      
+      this.frameCount = 0
+      this.lastFrameTime = now
+    }
+  }
+
+  // V3 Interface Implementation
+  async initialize(params: ModuleSetupParamsV3): Promise<void> {
+    // Module is already initialized in constructor
+    console.log('🎯 KnowledgeGraph: V3 Initialize called')
+  }
+
+  async preload(): Promise<void> {
+    // Preload any required assets
+    console.log('📦 KnowledgeGraph: Preloading assets')
+  }
+
+  async activate(): Promise<void> {
+    console.log('▶️ KnowledgeGraph: Activating module')
+    this.resume()
+  }
+
+  async deactivate(): Promise<void> {
+    console.log('⏹️ KnowledgeGraph: Deactivating module')
+    this.pause()
+  }
+
+  getMemoryUsage(): MemoryStats {
+    const nodeMemory = this.nodes.length * 0.001 // ~1KB per node
+    const linkMemory = this.links.length * 0.0005 // ~0.5KB per link
+    const estimated = nodeMemory + linkMemory
+    
+    return {
+      used: estimated,
+      allocated: estimated * 1.2,
+      peak: estimated * 1.5,
+      leaks: 0
+    }
+  }
+
+  getPerformanceMetrics(): PerformanceMetrics {
+    return { ...this.performanceMetrics }
+  }
+
+  getConfiguration(): ModuleConfiguration {
+    return { ...this.config }
+  }
+
+  async setConfiguration(config: Partial<ModuleConfiguration>): Promise<void> {
+    this.config = { ...this.config, ...config }
+    
+    // Apply configuration changes
+    if (config.nodes && config.nodes !== this.nodes.length) {
+      this.initializeGraph()
+    }
+    
+    if (config.physics && this.simulation) {
+      this.updateSimulationForces()
+    }
+    
+    console.log('⚙️ KnowledgeGraph: Configuration updated', config)
+  }
+
+  validateConfiguration(config: unknown): ValidationResult {
+    const errors: any[] = []
+    const warnings: any[] = []
+    
+    if (typeof config !== 'object' || !config) {
+      errors.push({ path: 'root', message: 'Configuration must be an object' })
+      return { valid: false, errors, warnings }
+    }
+    
+    const cfg = config as any
+    
+    if (cfg.nodes && (typeof cfg.nodes !== 'number' || cfg.nodes < 5 || cfg.nodes > 200)) {
+      errors.push({ path: 'nodes', message: 'Node count must be between 5 and 200' })
+    }
+    
+    if (cfg.quality && !['low', 'medium', 'high'].includes(cfg.quality)) {
+      errors.push({ path: 'quality', message: 'Quality must be low, medium, or high' })
+    }
+    
+    return { valid: errors.length === 0, errors, warnings }
+  }
+
+  getCanvasRequirements(): CanvasRequirements {
+    return {
+      dedicated: false,
+      interactive: true,
+      zIndex: 10,
+      alpha: true,
+      preserveDrawingBuffer: false,
+      contextType: this.useWebGL ? 'webgl' : 'canvas2d'
+    }
+  }
+
+  async onMessage(message: ModuleMessage): Promise<ModuleResponse> {
+    // Handle inter-module communication
+    return {
+      messageId: message.id,
+      success: true,
+      payload: null,
+      timestamp: Date.now()
+    }
+  }
+
+  async sendMessage(targetModule: string, message: ModuleMessage): Promise<ModuleResponse> {
+    // Send message to other modules
+    return {
+      messageId: message.id,
+      success: false,
+      error: 'Message sending not implemented',
+      timestamp: Date.now()
+    }
+  }
+
+  serializeState(): SerializableState {
+    return {
+      version: 1,
+      moduleId: 'knowledge',
+      config: this.config,
+      data: {
+        nodes: this.nodes,
+        links: this.links,
+        viewTransform: this.viewTransform
+      },
+      timestamp: Date.now()
+    }
+  }
+
+  async deserializeState(state: SerializableState): Promise<void> {
+    if (state.config) {
+      await this.setConfiguration(state.config)
+    }
+    
+    if (state.data) {
+      const data = state.data as any
+      if (data.viewTransform) {
+        this.viewTransform = data.viewTransform
+      }
+    }
+  }
+
+  private updateSimulationForces() {
+    if (!this.simulation || !this.config.physics) return
+    
+    const physics = this.config.physics
+    
+    this.simulation
+      .force('charge', d3Force.forceManyBody().strength(-physics.forces.repulsion).distanceMax(300))
+      .force('center', d3Force.forceCenter(this.width / 2, this.height / 2).strength(physics.forces.centering))
+      .velocityDecay(physics.damping)
+    
+    if (physics.collisionDetection) {
+      this.simulation.force('collision', d3Force.forceCollide().radius((d: any) => d.radius + 8))
+    } else {
+      this.simulation.force('collision', null)
     }
   }
 

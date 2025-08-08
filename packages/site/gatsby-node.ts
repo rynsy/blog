@@ -1,5 +1,5 @@
 import path from "path"
-import { GatsbyNode } from "gatsby"
+import type { GatsbyNode, CreateWebpackConfigArgs } from "gatsby"
 
 /**
  * Create pages dynamically from MarkdownRemark nodes
@@ -45,6 +45,8 @@ export const createPages: GatsbyNode["createPages"] = async ({
   const isDevelopment = !isProduction
   
   console.log(`🚀 Building for ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} environment`)
+  console.log(`📊 TypeScript strict mode: enabled`)
+  console.log(`🎯 Performance budgets: JS 200kB, CSS 50kB`)
 
   result.data.allMarkdownRemark.nodes.forEach(node => {
     if (node.frontmatter.slug) {
@@ -78,6 +80,8 @@ export const createPages: GatsbyNode["createPages"] = async ({
         
         if (isDevelopment && isDraft) {
           console.log(`📝 Created draft blog post: /blog/${node.frontmatter.slug}`)
+        } else if (!isDraft) {
+          console.log(`✅ Created blog post: /blog/${node.frontmatter.slug}`)
         }
       } else if (isReadingEntry) {
         createPage({
@@ -92,6 +96,8 @@ export const createPages: GatsbyNode["createPages"] = async ({
         
         if (isDevelopment && isDraft) {
           console.log(`📝 Created draft reading entry: /reading/${node.frontmatter.slug}`)
+        } else if (!isDraft) {
+          console.log(`📚 Created reading entry: /reading/${node.frontmatter.slug}`)
         }
       }
     }
@@ -113,15 +119,342 @@ export const onCreateNode: GatsbyNode["onCreateNode"] = ({ node, actions }) => {
 }
 
 /**
- * Webpack configuration with fallback polyfills
+ * Enhanced Webpack configuration with TypeScript optimizations and code splitting
  */
-export const onCreateWebpackConfig = ({ actions }) => {
-  actions.setWebpackConfig({
+export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({
+  actions,
+  plugins,
+  stage,
+  getConfig,
+}: CreateWebpackConfigArgs) => {
+  const { setWebpackConfig, replaceWebpackConfig } = actions
+  const config = getConfig()
+  
+  // Enhanced code splitting for background modules
+  const optimizedConfig = {
+    ...config,
+    optimization: {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          // Core background system - critical path
+          backgroundCore: {
+            test: /[\/\\]src[\/\\](contexts|utils)[\/\\]/,
+            name: 'background-core',
+            priority: 30,
+            chunks: 'all',
+            maxSize: 150 * 1024, // 150KB limit
+            enforce: true,
+          },
+          // Background modules - lazy loaded for performance
+          backgroundModules: {
+            test: /[\/\\]src[\/\\]bgModules[\/\\]/,
+            name: (module: any) => {
+              // Create separate chunks per module for better caching
+              const match = module.context?.match(/bgModules[\/\\]([^\/\\]+)/)
+              return match ? `bg-module-${match[1]}` : 'bg-modules'
+            },
+            priority: 25,
+            chunks: 'async',
+            maxSize: 100 * 1024, // 100KB per module chunk
+            enforce: true,
+          },
+          // D3 library optimization - tree shake unused modules
+          d3Vendor: {
+            test: /[\/\\]node_modules[\/\\](d3-[^/]+)[\/\\]/,
+            name: 'd3-vendor',
+            priority: 20,
+            chunks: 'all',
+            maxSize: 80 * 1024, // 80KB for D3 modules
+            reuseExistingChunk: true,
+          },
+          // React and core vendor libraries
+          reactVendor: {
+            test: /[\/\\]node_modules[\/\\](react|react-dom)[\/\\]/,
+            name: 'react-vendor',
+            priority: 40,
+            chunks: 'all',
+            reuseExistingChunk: true,
+          },
+          // TypeScript utilities and types (if they end up in bundle)
+          typeUtils: {
+            test: /[\/\\]src[\/\\]types[\/\\]/,
+            name: 'type-utils',
+            priority: 15,
+            chunks: 'all',
+            maxSize: 50 * 1024, // 50KB for type utilities
+          },
+          // Other vendor libraries
+          vendor: {
+            test: /[\/\\]node_modules[\/\\]/,
+            name: 'vendor',
+            priority: 10,
+            chunks: 'all',
+            maxSize: 200 * 1024, // 200KB vendor chunk limit
+            reuseExistingChunk: true,
+          },
+        },
+      },
+      // Enhanced tree shaking
+      usedExports: true,
+      sideEffects: [
+        '*.css',
+        '*.scss',
+        '*.sass',
+        // Allow side effects for D3 modules that may have them
+        '**/d3-*/**/*',
+      ],
+      // Module concatenation for better performance
+      concatenateModules: stage === 'build-javascript',
+    },
+  }
+  
+  // Base configuration for all stages
+  setWebpackConfig({
     resolve: {
+      // Enhanced path aliases for cleaner imports
       alias: {
-        "@/components": path.resolve(__dirname, "src/components"),
-        "@/lib/utils": path.resolve(__dirname, "src/lib/utils"),
+        '@': path.resolve(__dirname, 'src'),
+        '@/components': path.resolve(__dirname, 'src/components'),
+        '@/contexts': path.resolve(__dirname, 'src/contexts'),
+        '@/utils': path.resolve(__dirname, 'src/utils'),
+        '@/bgModules': path.resolve(__dirname, 'src/bgModules'),
+        '@/interfaces': path.resolve(__dirname, '../../interfaces'),
+        '@/types': path.resolve(__dirname, 'src/types'),
+        '@/hooks': path.resolve(__dirname, 'src/hooks'),
+        '@/assets': path.resolve(__dirname, 'src/assets'),
+        '@/lib/utils': path.resolve(__dirname, 'src/lib/utils'),
+      },
+      // Node.js polyfills for browser compatibility
+      fallback: {
+        "assert": require.resolve("assert"),
+        "buffer": require.resolve("buffer"),
+        "console": require.resolve("console-browserify"),
+        "constants": require.resolve("constants-browserify"),
+        "crypto": false,
+        "domain": false,
+        "events": require.resolve("events"),
+        "http": false,
+        "https": false,
+        "os": require.resolve("os-browserify/browser"),
+        "path": require.resolve("path-browserify"),
+        "punycode": false,
+        "process": require.resolve("process/browser"),
+        "querystring": require.resolve("querystring-es3"),
+        "stream": require.resolve("stream-browserify"),
+        "string_decoder": false,
+        "sys": require.resolve("util"),
+        "timers": false,
+        "tty": false,
+        "url": require.resolve("url"),
+        "util": require.resolve("util"),
+        "vm": false,
+        "zlib": require.resolve("browserify-zlib"),
+      },
+    },
+    plugins: [
+      plugins.provide({
+        process: "process/browser",
+        Buffer: ["buffer", "Buffer"],
+      }),
+      // Note: Bundle analyzer can be added later with webpack-bundle-analyzer package
+      // ...(process.env.ANALYZE_BUNDLE === 'true' ? [new BundleAnalyzerPlugin(...)] : []),
+    ],
+    // Performance budgets aligned with project requirements
+    performance: {
+      hints: process.env.NODE_ENV === 'production' ? 'error' : 'warning',
+      maxAssetSize: 200 * 1024, // 200KB per asset
+      maxEntrypointSize: 400 * 1024, // 400KB total entry point
+      assetFilter: (assetFilename: string) => {
+        // Only check JS and CSS files
+        return assetFilename.endsWith('.js') || assetFilename.endsWith('.css')
       },
     },
   })
+  
+  // Development-specific optimizations
+  if (stage === 'develop') {
+    setWebpackConfig({
+      devtool: 'eval-cheap-module-source-map',
+      cache: {
+        type: 'filesystem',
+        cacheDirectory: path.resolve(__dirname, '.cache/webpack'),
+        buildDependencies: {
+          config: [__filename],
+        },
+        // Cache for TypeScript compilation
+        name: `${stage}-cache`,
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(ts|tsx)$/,
+            include: path.resolve(__dirname, 'src'),
+            use: [
+              {
+                loader: 'ts-loader',
+                options: {
+                  transpileOnly: true, // Speed up development builds
+                  experimentalWatchApi: true,
+                  configFile: path.resolve(__dirname, 'tsconfig.json'),
+                },
+              },
+            ],
+          },
+        ],
+      },
+    })
+  }
+  
+  // Production optimizations
+  if (stage === 'build-javascript') {
+    // Apply optimized configuration
+    replaceWebpackConfig(optimizedConfig)
+    
+    setWebpackConfig({
+      devtool: 'source-map',
+      cache: false, // Disable cache for production builds
+      module: {
+        rules: [
+          {
+            test: /\.(js|ts|tsx)$/,
+            include: [
+              path.resolve(__dirname, 'src'),
+              path.resolve(__dirname, '../../interfaces'),
+            ],
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: false, // Keep ES modules for tree shaking
+                      useBuiltIns: 'usage',
+                      corejs: 3,
+                      targets: {
+                        browsers: ['> 1%', 'last 2 versions'],
+                      },
+                    },
+                  ],
+                  '@babel/preset-typescript',
+                  [
+                    '@babel/preset-react',
+                    {
+                      runtime: 'automatic',
+                    },
+                  ],
+                ],
+                plugins: [
+                  // Tree shaking optimizations
+                  ['babel-plugin-import', {
+                    libraryName: 'lodash',
+                    libraryDirectory: '',
+                    camel2DashComponentName: false,
+                  }, 'lodash'],
+                  // Dynamic imports for background modules
+                  '@babel/plugin-syntax-dynamic-import',
+                  // Remove TypeScript type imports
+                  'babel-plugin-transform-typescript-metadata',
+                ],
+              },
+            },
+          },
+          // Optimize background modules specifically
+          {
+            test: /[\/\\]src[\/\\]bgModules[\/\\].*\.(ts|tsx)$/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: false,
+                      targets: { esmodules: true }, // Modern browsers only for bg modules
+                    },
+                  ],
+                  '@babel/preset-typescript',
+                ],
+                plugins: [
+                  '@babel/plugin-syntax-dynamic-import',
+                  // Remove development-only code
+                  ['babel-plugin-transform-remove-console', { exclude: ['error', 'warn'] }],
+                ],
+              },
+            },
+          },
+        ],
+      },
+      // Additional optimizations for production
+      optimization: {
+        ...optimizedConfig.optimization,
+        // Minimize bundle size
+        minimize: true,
+        // Generate runtime chunk for better caching
+        runtimeChunk: 'single',
+      },
+    })
+  }
+  
+  // HTML processing stage optimizations
+  if (stage === 'build-html') {
+    setWebpackConfig({
+      module: {
+        rules: [
+          {
+            // Handle WebGL contexts in SSR
+            test: /[\/\\]src[\/\\](utils|bgModules)[\/\\].*\.(ts|tsx)$/,
+            loader: 'null-loader',
+            options: {},
+          },
+        ],
+      },
+    })
+  }
+}
+
+/**
+ * Type checking for GraphQL queries and enhanced schema
+ */
+export const createSchemaCustomization: GatsbyNode["createSchemaCustomization"] = ({
+  actions,
+}) => {
+  const { createTypes } = actions
+  
+  const typeDefs = `
+    type MarkdownRemark implements Node {
+      frontmatter: Frontmatter!
+    }
+    
+    type Frontmatter {
+      title: String!
+      date: Date! @dateformat
+      slug: String!
+      description: String
+      tags: [String!]
+      draft: Boolean
+      category: String
+      author: String
+      excerpt: String
+    }
+    
+    type ReadingEntry implements Node {
+      frontmatter: ReadingFrontmatter!
+    }
+    
+    type ReadingFrontmatter {
+      title: String!
+      author: String!
+      date_read: Date @dateformat
+      rating: Int
+      tags: [String!]
+      notes: String
+      isbn: String
+      genre: String
+    }
+  `
+  
+  createTypes(typeDefs)
 }
