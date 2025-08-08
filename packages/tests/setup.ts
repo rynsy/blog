@@ -94,5 +94,30 @@ const mockContext = {
   rect: vi.fn(),
 }
 
+// Create a proper HTMLCanvasElement mock
+class MockHTMLCanvasElement {
+  width = 800
+  height = 600
+  tagName = 'CANVAS'
+  
+  getContext = vi.fn(() => mockContext)
+  toDataURL = vi.fn(() => 'data:image/png;base64,mock')
+  addEventListener = vi.fn()
+  removeEventListener = vi.fn()
+  getBoundingClientRect = vi.fn(() => ({
+    left: 0,
+    top: 0,
+    width: this.width,
+    height: this.height
+  }))
+}
+
+// Make MockHTMLCanvasElement inherit from HTMLCanvasElement for instanceof checks
+Object.setPrototypeOf(MockHTMLCanvasElement.prototype, HTMLCanvasElement.prototype)
+Object.setPrototypeOf(MockHTMLCanvasElement, HTMLCanvasElement)
+
+// Set up the mock constructor
+global.MockHTMLCanvasElement = MockHTMLCanvasElement
+
 HTMLCanvasElement.prototype.getContext = vi.fn(() => mockContext)
 HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,mock')
