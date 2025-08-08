@@ -110,6 +110,16 @@ class MockHTMLCanvasElement {
     width: this.width,
     height: this.height
   }))
+  
+  constructor() {
+    // Create a simple style mock that can be set
+    Object.defineProperty(this, 'style', {
+      value: { cursor: 'default' },
+      writable: true,
+      enumerable: true,
+      configurable: true
+    })
+  }
 }
 
 // Make MockHTMLCanvasElement inherit from HTMLCanvasElement for instanceof checks
@@ -121,3 +131,6 @@ global.MockHTMLCanvasElement = MockHTMLCanvasElement
 
 HTMLCanvasElement.prototype.getContext = vi.fn(() => mockContext)
 HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,mock')
+
+// Mock document.elementsFromPoint for knowledge graph tests
+global.document.elementsFromPoint = vi.fn(() => [])
