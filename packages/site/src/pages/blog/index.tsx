@@ -45,6 +45,7 @@ const BlogPage = ({ data }) => (
       </div>
     </div>
   </Layout>
-)
+  )
+}
 
 export default BlogPage

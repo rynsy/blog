@@ -2,6 +2,7 @@
 title: "Advanced Physics and Multimedia Content"
 date: "2025-01-19"
 slug: "advanced-physics-multimedia-content"
+draft: true
 ---
 
 # Quantum Mechanics and Media Demonstrations
