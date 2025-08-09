@@ -1,7 +1,7 @@
 import React from "react"
 import { Link } from "gatsby"
 import ThemeToggle from "./ThemeToggle"
-// import { BackgroundProvider } from "../bgModules/core/BackgroundProvider"
+import { BackgroundProvider } from "../bgModules/core/BackgroundProvider"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -9,7 +9,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    // <BackgroundProvider>
+    <BackgroundProvider>
       <div className="min-h-screen text-gray-900 dark:text-gray-100 transition-colors duration-200 relative">
         {/* Skip Navigation Links */}
         <a 
@@ -79,7 +79,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Controls */}
         <ThemeToggle />
       </div>
-    // </BackgroundProvider>
+    </BackgroundProvider>
   )
 }
 

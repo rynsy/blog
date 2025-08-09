@@ -3,6 +3,7 @@
  * Comprehensive tests for GDPR, CCPA, and privacy-first analytics
  */
 
+import React from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ConsentManager } from '../components/ConsentManager'

@@ -385,7 +385,7 @@ export const ConsentManager: React.FC<ConsentManagerProps> = ({
                     <p>We do not sell personal information.</p>
                   </div>
                 )}
-              </div>
+              </details>
             </div>
           )}
 
