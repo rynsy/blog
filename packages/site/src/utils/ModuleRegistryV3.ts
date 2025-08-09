@@ -5,7 +5,7 @@ import {
   ValidationResult,
   DeviceCapabilities,
   ModuleDependency
-} from '../../interfaces/BackgroundSystemV3'
+} from '../interfaces/BackgroundSystemV3'
 
 /**
  * Enhanced module registry with dependency resolution and smart discovery

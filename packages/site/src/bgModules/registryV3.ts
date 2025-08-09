@@ -6,6 +6,15 @@ import {
   ModuleSetupParamsV3
 } from '../../interfaces/BackgroundSystemV3'
 
+// Extend ModuleCapability enum for advanced features
+declare module '../../interfaces/BackgroundSystemV3' {
+  namespace ModuleCapability {
+    const THEME_AWARE = 'theme-aware';
+    const REAL_TIME_PHYSICS = 'real-time-physics';
+    const PHYSICS = 'physics';
+  }
+}
+
 // Global registry instance
 const moduleRegistry = new ModuleRegistryV3()
 
@@ -163,8 +172,252 @@ const moduleEntries: ModuleRegistryEntryV3[] = [
     },
     thumbnail: '🕸️',
     previewVideo: '/assets/previews/knowledge-graph.mp4'
+  },
+  {
+    id: 'fluid-simulation-enhanced',
+    version: '2.0.0',
+    name: 'Enhanced Fluid Simulation',
+    description: 'WebGL-based Navier-Stokes fluid dynamics with advanced mouse interaction and theme adaptation',
+    category: ModuleCategory.SIMULATION,
+    capabilities: [
+      ModuleCapability.WEBGL,
+      ModuleCapability.MOUSE,
+      ModuleCapability.TOUCH,
+      ModuleCapability.THEME_AWARE
+    ],
+    tags: ['fluid', 'simulation', 'webgl', 'interactive', 'physics', 'advanced'],
+    memoryBudget: 35, // MB
+    cpuIntensity: 'high',
+    requiresWebGL: true,
+    preferredCanvas: 'webgl',
+    dependencies: [],
+    conflicts: ['heavy-particle-system'],
+    load: () => import('./advanced/FluidSimulation'),
+    configSchema: {
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean', default: true },
+        quality: { 
+          type: 'string', 
+          enum: ['low', 'medium', 'high'],
+          default: 'medium'
+        },
+        viscosity: {
+          type: 'number',
+          minimum: 0.01,
+          maximum: 0.1,
+          default: 0.03
+        },
+        iterations: {
+          type: 'number',
+          minimum: 5,
+          maximum: 30,
+          default: 12
+        },
+        gridResolution: {
+          type: 'number',
+          minimum: 1,
+          maximum: 4,
+          default: 2
+        }
+      }
+    },
+    defaultConfig: {
+      enabled: true,
+      quality: 'medium',
+      viscosity: 0.03,
+      iterations: 12,
+      gridResolution: 2
+    },
+    thumbnail: '💧',
+    easterEggConfig: {
+      id: 'fluid-maestro',
+      difficulty: 4,
+      triggers: [{
+        type: 'interaction',
+        condition: { count: 50, pattern: 'spiral' }
+      }],
+      reward: {
+        type: 'visual',
+        unlock: 'aurora-fluid-mode',
+        notification: {
+          title: 'Fluid Maestro!',
+          description: 'You have mastered the art of fluid manipulation!',
+          icon: '🌊',
+          duration: 5000
+        },
+        persistentEffect: {
+          type: 'timed',
+          duration: 15000
+        }
+      },
+      discoveryHint: 'Draw spirals in the fluid to unlock its true potential...'
+    }
+  },
+  {
+    id: 'falling-sand',
+    version: '1.0.0',
+    name: 'Falling Sand',
+    description: 'Interactive cellular automata with multi-material physics simulation',
+    category: ModuleCategory.SIMULATION,
+    capabilities: [
+      ModuleCapability.WEBGL,
+      ModuleCapability.MOUSE,
+      ModuleCapability.KEYBOARD,
+      ModuleCapability.REAL_TIME_PHYSICS
+    ],
+    tags: ['cellular-automata', 'physics', 'interactive', 'elements', 'sandbox'],
+    memoryBudget: 45, // MB
+    cpuIntensity: 'high',
+    requiresWebGL: true,
+    preferredCanvas: 'webgl',
+    dependencies: [],
+    conflicts: [],
+    load: () => import('./advanced/FallingSand'),
+    configSchema: {
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean', default: true },
+        quality: { 
+          type: 'string', 
+          enum: ['low', 'medium', 'high'],
+          default: 'medium'
+        },
+        cellSize: {
+          type: 'number',
+          minimum: 2,
+          maximum: 8,
+          default: 4
+        },
+        gravity: {
+          type: 'number',
+          minimum: 0.1,
+          maximum: 2.0,
+          default: 0.8
+        },
+        enableInteractions: {
+          type: 'boolean',
+          default: true
+        }
+      }
+    },
+    defaultConfig: {
+      enabled: true,
+      quality: 'medium',
+      cellSize: 4,
+      gravity: 0.8,
+      enableInteractions: true
+    },
+    thumbnail: '🏖️',
+    easterEggConfig: {
+      id: 'alchemist-master',
+      difficulty: 5,
+      triggers: [{
+        type: 'interaction',
+        condition: { count: 20, type: 'element-combinations' }
+      }],
+      reward: {
+        type: 'visual',
+        unlock: 'rainbow-elements-mode',
+        notification: {
+          title: 'Alchemist Master!',
+          description: 'You have discovered the secrets of elemental combinations!',
+          icon: '🧙‍♂️',
+          duration: 7000
+        },
+        persistentEffect: {
+          type: 'timed',
+          duration: 20000
+        }
+      },
+      discoveryHint: 'Experiment with all element combinations to unlock the secret...'
+    }
+  },
+  {
+    id: 'dvd-logo-bouncer',
+    version: '1.0.0',
+    name: 'DVD Logo Bouncer',
+    description: 'Classic DVD logo bouncing animation with physics and easter eggs',
+    category: ModuleCategory.INTERACTIVE,
+    capabilities: [
+      ModuleCapability.WEBGL,
+      ModuleCapability.MOUSE,
+      ModuleCapability.PHYSICS
+    ],
+    tags: ['animation', 'physics', 'nostalgia', 'bouncing', 'interactive'],
+    memoryBudget: 20, // MB
+    cpuIntensity: 'medium',
+    requiresWebGL: true,
+    preferredCanvas: 'webgl',
+    dependencies: [],
+    conflicts: [],
+    load: () => import('./advanced/DVDLogoBouncer'),
+    configSchema: {
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean', default: true },
+        quality: { 
+          type: 'string', 
+          enum: ['low', 'medium', 'high'],
+          default: 'medium'
+        },
+        logoCount: {
+          type: 'number',
+          minimum: 1,
+          maximum: 10,
+          default: 2
+        },
+        speed: {
+          type: 'number',
+          minimum: 1.0,
+          maximum: 8.0,
+          default: 3.0
+        },
+        gravity: {
+          type: 'number',
+          minimum: 0.0,
+          maximum: 1.0,
+          default: 0.0
+        },
+        colorChangeOnBounce: {
+          type: 'boolean',
+          default: true
+        }
+      }
+    },
+    defaultConfig: {
+      enabled: true,
+      quality: 'medium',
+      logoCount: 2,
+      speed: 3.0,
+      gravity: 0.0,
+      colorChangeOnBounce: true
+    },
+    thumbnail: '📀',
+    easterEggConfig: {
+      id: 'corner-hunter',
+      difficulty: 3,
+      triggers: [{
+        type: 'performance',
+        condition: { count: 3, type: 'corner-hits' }
+      }],
+      reward: {
+        type: 'visual',
+        unlock: 'rainbow-logo-mode',
+        notification: {
+          title: 'Corner Hunter!',
+          description: 'You witnessed the legendary perfect corner hit!',
+          icon: '🎯',
+          duration: 5000
+        },
+        persistentEffect: {
+          type: 'timed',
+          duration: 10000
+        }
+      },
+      discoveryHint: 'Wait for the perfect corner collision...'
+    }
   }
-  // More modules can be added here in the future
 ]
 
 /**

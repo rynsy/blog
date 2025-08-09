@@ -1,4 +1,4 @@
-import { DeviceCapabilities, WebGLCapabilities, ModuleConfiguration, QualityPreset } from '../../interfaces/BackgroundSystemV3'
+import { DeviceCapabilities, WebGLCapabilities, ModuleConfiguration, QualityPreset } from '../interfaces/BackgroundSystemV3'
 
 /**
  * Manages device capability detection and performance optimization

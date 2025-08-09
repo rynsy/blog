@@ -1,0 +1,799 @@
+/**
+ * Easter Egg Dashboard Styles
+ * 
+ * Sophisticated styling for the AI-powered easter egg discovery system
+ * with proper accessibility, theming, and responsive design.
+ */
+
+/* ============================================================================
+   Base Dashboard Styles
+   ============================================================================ */
+
+.easter-egg-dashboard {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 16px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.easter-egg-dashboard:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.easter-egg-dashboard.compact {
+  padding: 16px;
+  margin: 8px 0;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .easter-egg-dashboard {
+  background: var(--background-secondary, #1a1a1a);
+  border-color: var(--border-color, #333);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================
+   Header Section
+   ============================================================================ */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-header h2,
+.dashboard-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.dashboard-header h2 {
+  font-size: 1.5rem;
+}
+
+.dashboard-header h3 {
+  font-size: 1.2rem;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.status-indicator.inactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.status-indicator::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.toggle-system,
+.toggle-button {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.toggle-system:hover,
+.toggle-button:hover {
+  background: var(--background-secondary);
+  transform: translateY(-1px);
+}
+
+.toggle-button.enabled {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border-color: #16a34a;
+}
+
+.toggle-button.disabled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* ============================================================================
+   Progress Overview
+   ============================================================================ */
+
+.progress-overview {
+  margin-bottom: 32px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--background-tertiary, #f0f0f0);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.discovery-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+.discovery-rate {
+  font-weight: 600;
+  color: var(--accent-primary, #3b82f6);
+}
+
+.discovery-count {
+  color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Achievement Gallery
+   ============================================================================ */
+
+.achievement-gallery {
+  margin-bottom: 32px;
+}
+
+.achievement-gallery h3 {
+  margin: 0 0 20px 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.rarity-group {
+  margin-bottom: 24px;
+}
+
+.rarity-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.rarity-title .count {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.rarity-group.common .rarity-title {
+  color: #6b7280;
+}
+
+.rarity-group.rare .rarity-title {
+  color: #3b82f6;
+}
+
+.rarity-group.legendary .rarity-title {
+  color: #f59e0b;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.achievement-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.achievement-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+}
+
+.achievement-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievement-info h5 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.achievement-info p {
+  margin: 0 0 8px 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.achievement-info time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.recent-achievements {
+  margin-bottom: 16px;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 4px;
+  background: var(--background-primary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.achievement-item.common {
+  border-left: 3px solid #6b7280;
+}
+
+.achievement-item.rare {
+  border-left: 3px solid #3b82f6;
+}
+
+.achievement-item.legendary {
+  border-left: 3px solid #f59e0b;
+}
+
+.achievement-item .achievement-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 1.2rem;
+  background: none;
+}
+
+.achievement-item .achievement-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.no-achievements {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ============================================================================
+   Active Progress Section
+   ============================================================================ */
+
+.active-progress {
+  margin-bottom: 32px;
+}
+
+.active-progress h3 {
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.progress-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.egg-id {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.confidence {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.progress-bar-small {
+  width: 100px;
+  height: 4px;
+  background: var(--background-tertiary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill-small {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.reset-button {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-button:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* ============================================================================
+   Configuration and Controls
+   ============================================================================ */
+
+.accessibility-section,
+.configuration-section,
+.sharing-section {
+  margin-bottom: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.accessibility-section h3,
+.configuration-section h3,
+.sharing-section h3 {
+  margin: 0 0 16px 0;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.accessibility-controls,
+.sharing-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.accessibility-controls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.show-alternatives,
+.share-button,
+.export-button {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-alternatives:hover,
+.share-button:hover,
+.export-button:hover {
+  background: var(--background-secondary);
+  transform: translateY(-1px);
+}
+
+.keyboard-alternatives {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+}
+
+.keyboard-alternatives h4 {
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.keyboard-alternatives ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.keyboard-alternatives li {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.config-item label {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.config-item select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.config-item input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.export-import-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.export-section,
+.import-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-section h4,
+.import-section h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.import-section textarea {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.import-section button,
+.export-section button {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.import-section button:hover,
+.export-section button:hover {
+  background: var(--background-secondary);
+}
+
+.import-section button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   Debug Actions
+   ============================================================================ */
+
+.debug-actions {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reset-all {
+  padding: 8px 16px;
+  border: 1px solid #dc2626;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-all:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ============================================================================
+   Dashboard Controls (Compact Mode)
+   ============================================================================ */
+
+.dashboard-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .easter-egg-dashboard {
+    padding: 16px;
+    margin: 8px 0;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .system-status {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .export-import-panel {
+    grid-template-columns: 1fr;
+  }
+  
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .progress-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .progress-bar-small {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .easter-egg-dashboard {
+    padding: 12px;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .achievement-card {
+    padding: 12px;
+  }
+  
+  .accessibility-controls,
+  .sharing-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ============================================================================
+   Animation and Effects
+   ============================================================================ */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40%, 43% {
+    transform: translateY(-4px);
+  }
+  70% {
+    transform: translateY(-2px);
+  }
+}
+
+.achievement-card:hover .achievement-icon {
+  animation: bounce 0.6s ease;
+}
+
+.status-indicator.active {
+  animation: pulse 2s infinite;
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .progress-fill::after {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-primary: #0f0f0f;
+    --background-secondary: #1a1a1a;
+    --background-tertiary: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #666666;
+    --border-color: #333333;
+    --accent-primary: #3b82f6;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary, #3b82f6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: 1px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .easter-egg-dashboard {
+    border: 2px solid currentColor;
+  }
+  
+  .achievement-card,
+  .progress-item {
+    border: 1px solid currentColor;
+  }
+  
+  button,
+  select {
+    border: 2px solid currentColor;
+  }
+}

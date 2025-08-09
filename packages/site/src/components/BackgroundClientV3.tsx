@@ -4,6 +4,11 @@ import { registerDefaultModulesV3 } from '../bgModules/registryV3'
 import { debugBackground } from '../utils/debug'
 import CanvasHostV3 from './CanvasHostV3'
 import ControlTrayV3 from './ControlTrayV3'
+import PerformanceDashboard from './PerformanceDashboard'
+import { TypeSafePerformanceMonitor } from '../utils/TypeSafePerformanceMonitor'
+
+// Create a singleton performance monitor for the background system
+const backgroundPerformanceMonitor = new TypeSafePerformanceMonitor();
 
 const BackgroundClientV3: React.FC = () => {
   const { 
@@ -15,8 +20,15 @@ const BackgroundClientV3: React.FC = () => {
     performanceMetrics,
     deviceCapabilities
   } = useBackgroundV3()
+  
+  const [showPerformanceDashboard, setShowPerformanceDashboard] = React.useState(
+    process.env.NODE_ENV === 'development'
+  )
 
   useEffect(() => {
+    // Start performance monitoring
+    backgroundPerformanceMonitor.startMonitoring();
+    
     // Register default modules on mount
     if (registeredModules.size === 0) {
       console.log('🎨 BackgroundClientV3: Registering background modules')
@@ -34,6 +46,7 @@ const BackgroundClientV3: React.FC = () => {
     return () => {
       console.log('🎨 BackgroundClientV3: Component unmounting')
       debugBackground.client('💥 BackgroundClientV3 UNMOUNTING - cleaning up')
+      backgroundPerformanceMonitor.stopMonitoring();
     }
   }, [])
 
@@ -118,9 +131,39 @@ const BackgroundClientV3: React.FC = () => {
               </>
             )}
             <div>Device: {deviceCapabilities.isLowEnd ? 'Low-end' : deviceCapabilities.isMobile ? 'Mobile' : 'Desktop'}</div>
+            <button
+              onClick={() => setShowPerformanceDashboard(!showPerformanceDashboard)}
+              style={{
+                marginTop: '8px',
+                padding: '4px 8px',
+                backgroundColor: showPerformanceDashboard ? '#0088ff' : '#333',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '10px',
+                cursor: 'pointer'
+              }}
+            >
+              {showPerformanceDashboard ? 'Hide' : 'Show'} Perf Dashboard
+            </button>
           </div>
         </div>
       )}
+      
+      {/* Performance Dashboard */}
+      <PerformanceDashboard
+        performanceMonitor={backgroundPerformanceMonitor}
+        deviceCapabilities={deviceCapabilities}
+        visible={showPerformanceDashboard}
+        position="bottom-right"
+        initialConfig={{
+          displayMode: 'compact',
+          enableNewRelicCorrelation: process.env.NODE_ENV === 'production',
+          showNetworkMetrics: true,
+          showGpuMetrics: true,
+          privacyMode: true
+        }}
+      />
     </>
   )
 }

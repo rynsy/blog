@@ -1,5 +1,5 @@
 import { UrlParameterManager } from '../UrlParameterManager'
-import { BackgroundUrlParams } from '../../../interfaces/BackgroundSystemV3'
+import { BackgroundUrlParams } from '../../interfaces/BackgroundSystemV3'
 
 // Mock window and location
 const mockLocation = {

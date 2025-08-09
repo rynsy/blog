@@ -1,4 +1,4 @@
-import { ResourceManager as IResourceManager, MemoryStats, PerformanceMetrics, AssetType } from '../../interfaces/BackgroundSystemV3'
+import { ResourceManager as IResourceManager, MemoryStats, PerformanceMetrics, AssetType } from '../interfaces/BackgroundSystemV3'
 
 /**
  * Manages resource allocation, memory usage, and asset caching for background modules

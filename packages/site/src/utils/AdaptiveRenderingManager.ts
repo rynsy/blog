@@ -1,4 +1,4 @@
-import { DeviceCapabilities, PerformanceMetrics } from '../../interfaces/BackgroundSystemV3'
+import { DeviceCapabilities, PerformanceMetrics } from '../interfaces/BackgroundSystemV3'
 
 /**
  * Abstract base class for rendering strategies

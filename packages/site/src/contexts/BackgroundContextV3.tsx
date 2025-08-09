@@ -12,7 +12,7 @@ import {
   SerializableState,
   ModuleRegistryEntryV3,
   QualityPreset
-} from '../../interfaces/BackgroundSystemV3'
+} from '../interfaces/BackgroundSystemV3'
 import { UrlParameterManager } from '../utils/UrlParameterManager'
 import { PerformanceMonitor } from '../utils/PerformanceMonitor'
 import { DeviceCapabilityManager } from '../utils/DeviceCapabilityManager'
