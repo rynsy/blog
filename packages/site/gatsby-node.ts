@@ -297,7 +297,7 @@ export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({
     })
   }
   
-  // Production optimizations
+  // Production optimizations - simplified to avoid babel conflicts
   if (stage === 'build-javascript') {
     // Apply optimized configuration
     replaceWebpackConfig(optimizedConfig)
@@ -305,69 +305,7 @@ export const onCreateWebpackConfig: GatsbyNode["onCreateWebpackConfig"] = ({
     setWebpackConfig({
       devtool: 'source-map',
       cache: false, // Disable cache for production builds
-      module: {
-        rules: [
-          {
-            test: /\.(js|ts|tsx)$/,
-            include: [
-              path.resolve(__dirname, 'src'),
-              path.resolve(__dirname, '../../interfaces'),
-            ],
-            use: {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      modules: false, // Keep ES modules for tree shaking
-                      useBuiltIns: 'usage',
-                      corejs: 3,
-                      targets: {
-                        browsers: ['> 1%', 'last 2 versions'],
-                      },
-                    },
-                  ],
-                  '@babel/preset-typescript',
-                  [
-                    '@babel/preset-react',
-                    {
-                      runtime: 'automatic',
-                    },
-                  ],
-                ],
-                plugins: [
-                  // Dynamic imports for background modules
-                  '@babel/plugin-syntax-dynamic-import',
-                ],
-              },
-            },
-          },
-          // Optimize background modules specifically
-          {
-            test: /[\/\\]src[\/\\]bgModules[\/\\].*\.(ts|tsx)$/,
-            use: {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      modules: false,
-                      targets: { esmodules: true }, // Modern browsers only for bg modules
-                    },
-                  ],
-                  '@babel/preset-typescript',
-                ],
-                plugins: [
-                  '@babel/plugin-syntax-dynamic-import',
-                ],
-              },
-            },
-          },
-        ],
-      },
-      // Additional optimizations for production
+      // Let Gatsby handle babel configuration to avoid GraphQL processing issues
       optimization: {
         ...optimizedConfig.optimization,
         // Minimize bundle size

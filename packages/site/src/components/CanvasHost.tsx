@@ -50,8 +50,14 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
       try {
         debugBackground.canvas('Loading module:', currentModule)
         
-        // Load the module
+        // Load the module with error handling
         const moduleExport = await modules[currentModule].load()
+        
+        // Validate module export
+        if (!moduleExport || typeof moduleExport.setup !== 'function') {
+          throw new Error(`Module ${currentModule} is invalid: missing setup function`)
+        }
+        
         debugBackground.canvas('Module loaded successfully:', moduleExport)
         
         // Check if component is still mounted and module is still current

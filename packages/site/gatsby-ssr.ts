@@ -43,19 +43,8 @@ export const onRenderBody = ({ setHtmlAttributes, setHeadComponents }) => {
 
   const headComponents = []
 
-  // Add production-specific meta tags and scripts
+  // Add production-specific scripts
   if (process.env.NODE_ENV === "production") {
-    const cloudflareAnalyticsScript = React.createElement("script", {
-      key: "cf-analytics",
-      "data-cfasync": "false",
-      defer: true,
-      src: "https://static.cloudflareinsights.com/beacon.min.js",
-      "data-cf-beacon": JSON.stringify({
-        token: "ba346433f65245448292503690a9ee24",
-      }),
-    })
-    headComponents.push(cloudflareAnalyticsScript)
-
     // Add New Relic scripts only if enabled
     const newRelicScripts = loadNewRelicScripts()
     if (newRelicScripts.length > 0) {

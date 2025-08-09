@@ -23,7 +23,7 @@ COPY packages/site/package.json ./packages/site/
 COPY packages/tests/package.json ./packages/tests/
 
 # Install all dependencies (including dev dependencies for build)
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --force
 
 # Copy source code
 COPY . .

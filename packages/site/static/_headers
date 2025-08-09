@@ -1,6 +1,6 @@
 # Security headers for Cloudflare Pages
 # Generated automatically from csp-config.json
-# Last generated: 2025-08-09T14:17:53.748Z
+# Last generated: 2025-08-09T16:33:41.758Z
 
 # CSP Configuration:
 # ANALYTICS:
@@ -45,7 +45,7 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  cf-web-analytics: off
+  cf-web-analytics: on
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com cdn.jsdelivr.net unpkg.com js-agent.newrelic.com; script-src-elem 'self' 'unsafe-inline' static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com cdn.jsdelivr.net unpkg.com js-agent.newrelic.com; connect-src 'self' static.cloudflareinsights.com *.cloudflareinsights.com api.github.com bam.nr-data.net bam-cell.nr-data.net; style-src 'self' 'unsafe-inline' fonts.googleapis.com; style-src-attr 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: https: via.placeholder.com media.giphy.com *.giphy.com i.imgur.com raw.githubusercontent.com; media-src 'self' https: commondatastorage.googleapis.com www.w3schools.com www.learningcontainer.com storage.googleapis.com sample-videos.com
 
 /static/*
