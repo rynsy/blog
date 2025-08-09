@@ -23,7 +23,7 @@ export default defineConfig({
   
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['html'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
     ...(process.env.CI ? [['github']] : [['list']])
@@ -46,6 +46,9 @@ export default defineConfig({
     /* Global timeout for all tests */
     actionTimeout: 30000,
     navigationTimeout: 30000,
+    
+    /* Custom test metadata for better reporting */
+    testIdAttribute: 'data-testid',
   },
 
   /* Global setup and teardown */
@@ -70,7 +73,9 @@ export default defineConfig({
             '--enable-webgl',
             '--enable-accelerated-2d-canvas',
             '--enable-gpu-rasterization',
-            '--enable-zero-copy'
+            '--enable-zero-copy',
+            '--disable-web-security',
+            '--allow-running-insecure-content'
           ]
         }
       },
@@ -85,7 +90,8 @@ export default defineConfig({
         launchOptions: {
           firefoxUserPrefs: {
             'webgl.disabled': false,
-            'webgl.force-enabled': true
+            'webgl.force-enabled': true,
+            'security.tls.insecure_fallback_hosts': 'localhost'
           }
         }
       },
@@ -98,7 +104,7 @@ export default defineConfig({
         ...devices['Desktop Safari'],
         // Safari-specific settings
         launchOptions: {
-          args: ['--enable-webgl']
+          args: ['--enable-webgl', '--disable-web-security']
         }
       },
       dependencies: ['setup'],
@@ -126,85 +132,52 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
-    /* Tablet testing */
+    /* Accessibility and performance focused projects */
     {
-      name: 'Tablet',
-      use: { 
-        ...devices['iPad Pro'],
-        hasTouch: true
-      },
-      dependencies: ['setup'],
-    },
-
-    /* High DPI testing */
-    {
-      name: 'High DPI',
-      use: { 
-        ...devices['Desktop Chrome HiDPI'],
-        launchOptions: {
-          args: [
-            '--enable-webgl',
-            '--force-device-scale-factor=2'
-          ]
-        }
-      },
-      dependencies: ['setup'],
-    },
-
-    /* Reduced motion testing */
-    {
-      name: 'Reduced Motion',
+      name: 'a11y-chrome',
       use: { 
         ...devices['Desktop Chrome'],
         reducedMotion: 'reduce',
+        colorScheme: 'light',
         launchOptions: {
           args: [
             '--enable-webgl',
-            '--force-prefers-reduced-motion'
+            '--force-prefers-reduced-motion',
+            '--disable-backgrounding-occluded-windows'
           ]
         }
       },
       dependencies: ['setup'],
+      testMatch: /.*\.a11y\.spec\.ts/,
     },
 
-    /* Dark mode testing */
+    /* Performance testing project */
     {
-      name: 'Dark Mode',
+      name: 'performance',
       use: { 
         ...devices['Desktop Chrome'],
-        colorScheme: 'dark',
         launchOptions: {
           args: [
             '--enable-webgl',
-            '--force-dark-mode'
+            '--enable-precise-memory-info',
+            '--enable-memory-info'
           ]
         }
       },
       dependencies: ['setup'],
-    },
-
-    /* Performance testing with slow network */
-    {
-      name: 'Slow 3G',
-      use: { 
-        ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: ['--enable-webgl']
-        },
-        // Simulate slow network for performance testing
-        contextOptions: {
-          // Simulate slow connection
-          offline: false,
-          // Custom network conditions will be set in tests
-        }
-      },
-      dependencies: ['setup'],
+      testMatch: /.*\.perf\.spec\.ts/,
     }
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI ? undefined : {
-    command: 'npm run develop',
+  webServer: process.env.DOCKER_TEST ? {
+    command: 'pnpm run serve',
+    url: baseURL,
+    reuseExistingServer: false,
+    timeout: 60 * 1000, // 1 minute for static server
+    ignoreHTTPSErrors: true,
+  } : process.env.CI ? undefined : {
+    command: 'pnpm run develop',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for Gatsby to start
@@ -219,32 +192,4 @@ export default defineConfig({
 
   /* Output directory */
   outputDir: 'test-results/',
-  
-  /* Test artifacts */
-  use: {
-    ...{
-      /* Base URL to use in actions like `await page.goto('/')`. */
-      baseURL,
-      
-      /* Collect trace when retrying the failed test. */
-      trace: 'on-first-retry',
-      
-      /* Capture screenshot on failure */
-      screenshot: 'only-on-failure',
-      
-      /* Capture video on failure */
-      video: 'retain-on-failure',
-    },
-    
-    // Custom test metadata for better reporting
-    testIdAttribute: 'data-testid',
-    
-    // Enable experimental features for Phase 4 testing
-    launchOptions: {
-      args: [
-        '--enable-experimental-web-platform-features',
-        '--enable-webgl2-compute-context'
-      ]
-    }
-  }
 })

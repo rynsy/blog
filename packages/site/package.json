@@ -140,6 +140,8 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
+    "test:e2e:docker": "DOCKER_TEST=true playwright test --config=playwright.config.ts",
+    "test:production-errors": "playwright test tests/e2e/production-validation/ --config=playwright.config.ts",
     "test:accessibility": "playwright test --grep=\"@accessibility\"",
     "test:performance": "playwright test --grep=\"@performance\"",
     "test:mobile": "playwright test --project=Mobile",

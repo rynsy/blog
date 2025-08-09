@@ -1,59 +1,79 @@
-/**
- * Global test setup for Phase 4 comprehensive testing
- * Initializes performance monitoring, device emulation, and accessibility testing
- */
-
-import { chromium, type FullConfig } from '@playwright/test';
+import { chromium, FullConfig } from '@playwright/test'
+import fs from 'fs'
+import path from 'path'
 
 async function globalSetup(config: FullConfig) {
-  console.log('🚀 Phase 4 Test Setup: Initializing comprehensive test environment');
+  console.log('🔧 Starting global test setup...')
   
-  // Launch browser for global setup tasks
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
+  // Ensure test results directory exists
+  const testResultsDir = path.join(process.cwd(), 'test-results')
+  if (!fs.existsSync(testResultsDir)) {
+    fs.mkdirSync(testResultsDir, { recursive: true })
+  }
+  
+  // Get the base URL from config
+  const baseURL = config.projects[0].use.baseURL || 'http://localhost:8000'
+  
   try {
-    // 1. Performance baseline establishment
-    console.log('📊 Establishing performance baselines...');
+    // Launch a browser to verify the application is running
+    const browser = await chromium.launch()
+    const page = await browser.newPage()
     
-    // Navigate to the site to establish baseline metrics
-    const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:8000';
-    await page.goto(baseURL);
+    console.log(`🌐 Checking if application is available at ${baseURL}`)
     
-    // Wait for initial load and measure baseline performance
-    await page.waitForLoadState('networkidle');
+    // Wait for the application to be ready
+    let retries = 0
+    const maxRetries = 30 // 30 seconds
+    
+    while (retries < maxRetries) {
+      try {
+        const response = await page.goto(baseURL, { 
+          waitUntil: 'networkidle',
+          timeout: 5000 
+        })
+        
+        if (response && response.ok()) {
+          console.log('✅ Application is ready!')
+          break
+        }
+        throw new Error(`HTTP ${response?.status()}`)
+      } catch (error) {
+        retries++
+        if (retries >= maxRetries) {
+          throw new Error(`Application not ready after ${maxRetries} seconds: ${error}`)
+        }
+        console.log(`⏳ Waiting for application... (${retries}/${maxRetries})`)
+        await page.waitForTimeout(1000)
+      }
+    }
+    
+    // Establish performance baselines
+    console.log('📊 Establishing performance baselines...')
+    
+    await page.waitForLoadState('networkidle')
     
     const performanceMetrics = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
       return {
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
         domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
         firstPaint: performance.getEntriesByName('first-paint')[0]?.startTime || 0,
         firstContentfulPaint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0,
-        largestContentfulPaint: performance.getEntriesByName('largest-contentful-paint')[0]?.startTime || 0,
-      };
-    });
+      }
+    })
     
-    console.log('🎯 Baseline performance metrics:', performanceMetrics);
+    console.log('🎯 Baseline performance metrics:', performanceMetrics)
     
-    // Store baseline for comparison in tests
-    process.env.BASELINE_LOAD_TIME = performanceMetrics.loadTime.toString();
-    process.env.BASELINE_FCP = performanceMetrics.firstContentfulPaint.toString();
-    process.env.BASELINE_LCP = performanceMetrics.largestContentfulPaint.toString();
-    
-    // 2. WebGL capabilities detection
-    console.log('🎮 Detecting WebGL capabilities...');
-    
+    // Verify WebGL support
+    console.log('🎨 Checking WebGL support...')
     const webglCapabilities = await page.evaluate(() => {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      const gl2 = canvas.getContext('webgl2');
+      const canvas = document.createElement('canvas')
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+      const gl2 = canvas.getContext('webgl2')
       
-      if (!gl) return { supported: false };
+      if (!gl) return { supported: false, webgl2: false }
       
-      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-      const extensions = gl.getSupportedExtensions();
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
       
       return {
         supported: true,
@@ -62,117 +82,76 @@ async function globalSetup(config: FullConfig) {
         vendor: gl.getParameter(gl.VENDOR),
         renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'unknown',
         maxTextureSize: gl.getParameter(gl.MAX_TEXTURE_SIZE),
-        maxVertexAttributes: gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
-        maxViewportDimensions: gl.getParameter(gl.MAX_VIEWPORT_DIMS),
-        extensions: extensions || []
-      };
-    });
+      }
+    })
     
-    console.log('🖼️ WebGL capabilities:', webglCapabilities);
-    process.env.WEBGL_SUPPORTED = webglCapabilities.supported.toString();
-    process.env.WEBGL2_SUPPORTED = webglCapabilities.webgl2.toString();
+    if (webglCapabilities.supported) {
+      console.log('✅ WebGL is supported:', webglCapabilities)
+    } else {
+      console.log('⚠️  WebGL support not detected - some visual tests may be skipped')
+    }
     
-    // 3. Memory and performance budgets
-    console.log('💾 Setting performance budgets...');
-    
+    // Check memory capabilities
     const memoryInfo = await page.evaluate(() => {
-      const memory = (performance as any).memory;
+      const memory = (performance as any).memory
       return memory ? {
         usedJSHeapSize: memory.usedJSHeapSize,
         totalJSHeapSize: memory.totalJSHeapSize,
         jsHeapSizeLimit: memory.jsHeapSizeLimit
-      } : null;
-    });
+      } : null
+    })
     
     if (memoryInfo) {
-      console.log('🧠 Memory baseline:', memoryInfo);
-      process.env.BASELINE_MEMORY = memoryInfo.usedJSHeapSize.toString();
-      process.env.MEMORY_LIMIT = (memoryInfo.usedJSHeapSize * 2).toString(); // 2x baseline as limit
+      console.log('🧠 Memory baseline:', memoryInfo)
     }
     
-    // 4. Device capabilities matrix
-    console.log('📱 Building device capabilities matrix...');
-    
-    const deviceCapabilities = {
-      desktop: {
-        webgl: webglCapabilities.supported,
-        webgl2: webglCapabilities.webgl2,
-        performanceProfile: 'high',
-        memoryProfile: 'high',
-        touchSupport: false
-      },
-      mobile: {
-        webgl: true, // Will be tested per device
-        webgl2: false, // Conservative assumption
-        performanceProfile: 'medium',
-        memoryProfile: 'medium',
-        touchSupport: true
-      },
-      tablet: {
-        webgl: true,
-        webgl2: webglCapabilities.webgl2,
-        performanceProfile: 'medium',
-        memoryProfile: 'medium',
-        touchSupport: true
+    // Check for analytics mock service in Docker environment
+    if (process.env.DOCKER_TEST === 'true') {
+      console.log('🔍 Checking analytics mock service...')
+      try {
+        await page.goto('http://analytics-mock/health', { timeout: 5000 })
+        console.log('✅ Analytics mock service is available')
+        process.env.ANALYTICS_MOCK_AVAILABLE = 'true'
+      } catch (error) {
+        console.log('⚠️  Analytics mock service not available')
+        process.env.ANALYTICS_MOCK_AVAILABLE = 'false'
       }
-    };
+    }
     
-    process.env.DEVICE_CAPABILITIES = JSON.stringify(deviceCapabilities);
-    
-    // 5. Accessibility testing setup
-    console.log('♿ Initializing accessibility testing...');
-    
-    // Check for system-level accessibility preferences
-    const accessibilityFeatures = await page.evaluate(() => ({
-      reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      highContrast: window.matchMedia('(prefers-contrast: high)').matches,
-      darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
-      forcedColors: window.matchMedia('(forced-colors: active)').matches
-    }));
-    
-    process.env.ACCESSIBILITY_FEATURES = JSON.stringify(accessibilityFeatures);
-    
-    // 6. Analytics and privacy compliance setup
-    console.log('🔒 Setting up privacy compliance testing...');
-    
-    // Check for existing analytics configurations
-    const analyticsConfig = await page.evaluate(() => ({
-      umamiFound: !!window.umami,
-      cookiesPresent: document.cookie.length > 0,
-      localStorageKeys: Object.keys(localStorage),
-      sessionStorageKeys: Object.keys(sessionStorage)
-    }));
-    
-    process.env.ANALYTICS_BASELINE = JSON.stringify(analyticsConfig);
-    
-    console.log('✅ Phase 4 test environment initialized successfully');
-    
-    // Save test configuration for use in tests
+    // Store global configuration for tests
     const testConfig = {
       baseURL,
       performance: performanceMetrics,
       webgl: webglCapabilities,
       memory: memoryInfo,
-      devices: deviceCapabilities,
-      accessibility: accessibilityFeatures,
-      analytics: analyticsConfig,
-      timestamp: new Date().toISOString()
-    };
+      timestamp: new Date().toISOString(),
+      dockerTest: process.env.DOCKER_TEST === 'true',
+      analyticsAvailable: process.env.ANALYTICS_MOCK_AVAILABLE === 'true'
+    }
     
     // Write configuration file for tests to reference
-    const fs = await import('fs');
     await fs.promises.writeFile(
-      'test-results/test-config.json', 
+      path.join(testResultsDir, 'test-config.json'),
       JSON.stringify(testConfig, null, 2)
-    );
+    )
+    
+    // Set environment variables for test access
+    process.env.WEBGL_SUPPORTED = webglCapabilities.supported ? 'true' : 'false'
+    process.env.WEBGL2_SUPPORTED = webglCapabilities.webgl2 ? 'true' : 'false'
+    process.env.BASELINE_LOAD_TIME = performanceMetrics.loadTime.toString()
+    process.env.BASELINE_FCP = performanceMetrics.firstContentfulPaint.toString()
+    
+    if (memoryInfo) {
+      process.env.BASELINE_MEMORY = memoryInfo.usedJSHeapSize.toString()
+    }
+    
+    await browser.close()
+    console.log('✅ Global setup completed successfully')
     
   } catch (error) {
-    console.error('❌ Global setup failed:', error);
-    throw error;
-  } finally {
-    await context.close();
-    await browser.close();
+    console.error('❌ Global setup failed:', error)
+    throw error
   }
 }
 
-export default globalSetup;
+export default globalSetup

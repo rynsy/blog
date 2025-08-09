@@ -1,0 +1,34 @@
+# Lightweight Dockerfile for running Playwright tests only
+FROM mcr.microsoft.com/playwright:v1.49.0-focal
+
+# Install Node.js and pnpm
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm@8 && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy only test-related files
+COPY packages/tests/package.json ./packages/tests/
+COPY packages/site/package.json ./packages/site/
+COPY package*.json pnpm-*.yaml ./
+
+# Install test dependencies only
+RUN pnpm install --filter tests --frozen-lockfile
+
+# Copy test files and configuration
+COPY packages/tests/ ./packages/tests/
+COPY packages/site/tests/ ./packages/site/tests/
+COPY packages/site/playwright.config.ts ./packages/site/
+COPY packages/site/tsconfig.json ./packages/site/
+
+# Set environment
+ENV NODE_ENV=test
+ENV CI=true
+
+WORKDIR /app/packages/site
+
+# Run tests by default
+CMD ["npx", "playwright", "test", "--reporter=list,html,json"]

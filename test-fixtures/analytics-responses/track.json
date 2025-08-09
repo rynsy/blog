@@ -1,0 +1,6 @@
+{
+  "status": "ok",
+  "message": "Mock analytics endpoint",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "service": "analytics-mock"
+}

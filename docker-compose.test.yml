@@ -1,0 +1,74 @@
+
+services:
+  # Simplified main testing service
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - NODE_ENV=test
+      - DOCKER_TEST=true
+      - PLAYWRIGHT_TEST_BASE_URL=http://localhost:8000
+      - CI=true
+    volumes:
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+    ports:
+      - "8000:8000"
+      - "9323:9323" # Debug port
+    networks:
+      - test-network
+    depends_on:
+      analytics-mock:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo '🚀 Starting test environment...' &&
+        echo '📦 Building application...' &&
+        pnpm run build &&
+        echo '🌐 Starting test server...' &&
+        pnpm run serve &
+        echo '⏳ Waiting for server to be ready...' &&
+        timeout 60 sh -c 'until curl -f http://localhost:8000 > /dev/null 2>&1; do sleep 2; done' &&
+        echo '🎭 Running Playwright tests...' &&
+        cd packages/site &&
+        npx playwright test --config=playwright.config.ts
+      "
+
+  # Simplified analytics mock service
+  analytics-mock:
+    image: nginx:alpine
+    ports:
+      - "3001:80"
+    volumes:
+      - ./test-fixtures/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./test-fixtures/analytics-responses:/usr/share/nginx/html:ro
+    networks:
+      - test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    command: >
+      sh -c "
+        echo '🔧 Setting up analytics mock...' &&
+        mkdir -p /usr/share/nginx/html &&
+        echo '{\"status\":\"ok\",\"message\":\"Mock analytics endpoint\"}' > /usr/share/nginx/html/track.json &&
+        echo '{\"status\":\"healthy\"}' > /usr/share/nginx/html/health &&
+        nginx -g 'daemon off;'
+      "
+
+networks:
+  test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  test-results:
+    driver: local
+  playwright-report:
+    driver: local

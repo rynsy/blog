@@ -1,0 +1,181 @@
+{
+  "testUsers": [
+    {
+      "id": "test-user-1",
+      "name": "Test User",
+      "email": "test@example.com",
+      "role": "visitor"
+    },
+    {
+      "id": "test-user-2",
+      "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "role": "admin"
+    }
+  ],
+  "contactFormData": {
+    "valid": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "subject": "Test Subject",
+      "message": "This is a test message for form validation."
+    },
+    "invalid": {
+      "email": "invalid-email",
+      "name": "",
+      "message": ""
+    }
+  },
+  "analyticsEvents": [
+    {
+      "event": "page_view",
+      "properties": {
+        "url": "/",
+        "title": "Home",
+        "timestamp": "2025-01-01T00:00:00.000Z"
+      }
+    },
+    {
+      "event": "click",
+      "properties": {
+        "element": "navigation",
+        "target": "/about",
+        "timestamp": "2025-01-01T00:01:00.000Z"
+      }
+    },
+    {
+      "event": "form_submit",
+      "properties": {
+        "form": "contact",
+        "success": true,
+        "timestamp": "2025-01-01T00:02:00.000Z"
+      }
+    }
+  ],
+  "performanceThresholds": {
+    "loadTime": {
+      "good": 2500,
+      "needs_improvement": 4000,
+      "poor": 4000
+    },
+    "firstContentfulPaint": {
+      "good": 1800,
+      "needs_improvement": 3000,
+      "poor": 3000
+    },
+    "cumulativeLayoutShift": {
+      "good": 0.1,
+      "needs_improvement": 0.25,
+      "poor": 0.25
+    },
+    "timeToInteractive": {
+      "good": 3800,
+      "needs_improvement": 7300,
+      "poor": 7300
+    },
+    "memoryUsage": {
+      "maxHeapSize": 104857600,
+      "warningThreshold": 52428800
+    }
+  },
+  "accessibilityTestData": {
+    "colorContrast": {
+      "minimumRatio": 4.5,
+      "largeTextRatio": 3.0
+    },
+    "keyboardNavigation": {
+      "focusableElements": ["a", "button", "input", "textarea", "select", "[tabindex]:not([tabindex='-1'])"],
+      "skipLinks": true
+    },
+    "screenReader": {
+      "requiredAttributes": ["alt", "aria-label", "aria-labelledby", "aria-describedby"],
+      "landmarks": ["main", "nav", "header", "footer", "aside"]
+    }
+  },
+  "webglTestData": {
+    "supportedExtensions": [
+      "ANGLE_instanced_arrays",
+      "EXT_blend_minmax",
+      "EXT_color_buffer_half_float",
+      "EXT_disjoint_timer_query",
+      "EXT_frag_depth",
+      "EXT_shader_texture_lod",
+      "EXT_texture_filter_anisotropic",
+      "OES_element_index_uint",
+      "OES_standard_derivatives",
+      "OES_texture_float",
+      "OES_texture_float_linear",
+      "OES_texture_half_float",
+      "OES_texture_half_float_linear",
+      "OES_vertex_array_object",
+      "WEBGL_color_buffer_float",
+      "WEBGL_compressed_texture_s3tc",
+      "WEBGL_debug_renderer_info",
+      "WEBGL_depth_texture",
+      "WEBGL_lose_context"
+    ],
+    "minimumCapabilities": {
+      "maxTextureSize": 4096,
+      "maxViewportDims": [4096, 4096],
+      "maxVertexAttribs": 16,
+      "maxVaryingVectors": 8,
+      "maxFragmentUniformVectors": 16,
+      "maxVertexUniformVectors": 128
+    }
+  },
+  "deviceTestMatrix": [
+    {
+      "name": "Desktop Chrome",
+      "viewport": { "width": 1920, "height": 1080 },
+      "userAgent": "Chrome/96.0.4664.110",
+      "features": ["webgl", "webgl2", "touch:false"]
+    },
+    {
+      "name": "Desktop Firefox",
+      "viewport": { "width": 1920, "height": 1080 },
+      "userAgent": "Firefox/95.0",
+      "features": ["webgl", "webgl2", "touch:false"]
+    },
+    {
+      "name": "Desktop Safari",
+      "viewport": { "width": 1920, "height": 1080 },
+      "userAgent": "Safari/14.1",
+      "features": ["webgl", "touch:false"]
+    },
+    {
+      "name": "Mobile Chrome",
+      "viewport": { "width": 375, "height": 812 },
+      "userAgent": "Chrome Mobile/96.0.4664.110",
+      "features": ["webgl", "touch:true"]
+    },
+    {
+      "name": "Mobile Safari",
+      "viewport": { "width": 375, "height": 812 },
+      "userAgent": "Mobile Safari/14.1",
+      "features": ["webgl", "touch:true"]
+    },
+    {
+      "name": "Tablet iPad",
+      "viewport": { "width": 768, "height": 1024 },
+      "userAgent": "iPad Safari/14.1",
+      "features": ["webgl", "touch:true"]
+    }
+  ],
+  "networkConditions": {
+    "fast3G": {
+      "downloadThroughput": 1600000,
+      "uploadThroughput": 750000,
+      "latency": 150
+    },
+    "slow3G": {
+      "downloadThroughput": 500000,
+      "uploadThroughput": 500000,
+      "latency": 300
+    },
+    "offline": {
+      "downloadThroughput": 0,
+      "uploadThroughput": 0,
+      "latency": 0
+    }
+  }
+}

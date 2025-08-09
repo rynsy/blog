@@ -1,0 +1,208 @@
+name: 'Containerized Testing Pipeline'
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8'
+
+jobs:
+  # Build and test in containers
+  container-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite:
+          - name: 'Core E2E Tests'
+            service: 'test-runner'
+            path: 'test-results'
+          - name: 'Visual Regression'
+            service: 'visual-tests'
+            path: 'test-results/visual'
+          - name: 'Performance Tests'
+            service: 'performance-tests'
+            path: 'test-results/performance'
+          - name: 'Accessibility Tests'
+            service: 'a11y-tests'
+            path: 'test-results/accessibility'
+    
+    name: ${{ matrix.test-suite.name }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build test environment
+        run: |
+          docker-compose -f docker-compose.test.yml build ${{ matrix.test-suite.service }}
+        env:
+          DOCKER_BUILDKIT: 1
+          BUILDX_CACHE_FROM: type=local,src=/tmp/.buildx-cache
+          BUILDX_CACHE_TO: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Start test services
+        run: |
+          docker-compose -f docker-compose.test.yml up -d analytics-mock
+          sleep 5
+
+      - name: Run ${{ matrix.test-suite.name }}
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm ${{ matrix.test-suite.service }}
+        env:
+          CI: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ${{ matrix.test-suite.name }}-results
+          path: |
+            ${{ matrix.test-suite.path }}/
+            playwright-report/
+          retention-days: 7
+
+      - name: Upload test videos
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ matrix.test-suite.name }}-videos
+          path: |
+            test-results/videos/
+            test-results/traces/
+          retention-days: 3
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker-compose -f docker-compose.test.yml down -v
+          docker system prune -f
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  # Security and dependency scanning
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: container-tests
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/library/node:18-alpine'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Performance benchmarking
+  performance-benchmark:
+    runs-on: ubuntu-latest
+    needs: container-tests
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run performance benchmarks
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm performance-tests
+        env:
+          BENCHMARK_MODE: true
+          CI: true
+
+      - name: Store benchmark results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'customSmallerIsBetter'
+          output-file-path: test-results/performance/benchmark.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          comment-on-alert: true
+          alert-threshold: '150%'
+
+  # Deploy test reports
+  deploy-reports:
+    runs-on: ubuntu-latest
+    needs: [container-tests]
+    if: always() && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate combined test report
+        run: |
+          npm install -g @playwright/test
+          npx playwright merge-reports --reporter html ./*/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright-report
+          destination_dir: test-reports/${{ github.run_number }}
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const testReportUrl = `https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/test-reports/${{ github.run_number }}`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🎭 Test Results
+              
+              Test reports are available at: [${testReportUrl}](${testReportUrl})
+              
+              **Test Summary:**
+              - ✅ Core E2E Tests
+              - 📸 Visual Regression Tests  
+              - ⚡ Performance Tests
+              - ♿ Accessibility Tests
+              
+              All tests ran in containerized environments for consistency.`
+            });

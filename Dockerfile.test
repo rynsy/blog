@@ -1,0 +1,69 @@
+# Dockerfile for Testing Environment
+# Use Ubuntu-based Node image for better native module compatibility
+FROM node:18-bookworm-slim
+
+# Install system dependencies for Playwright and native modules
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    curl \
+    git \
+    python3 \
+    python3-pip \
+    build-essential \
+    libnss3-dev \
+    libatk-bridge2.0-dev \
+    libdrm2 \
+    libxkbcommon0 \
+    libgtk-3-dev \
+    libgbm-dev \
+    libasound2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Install pnpm globally
+RUN npm install -g pnpm@8
+
+# Set environment variables to avoid native module compilation issues
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=false
+ENV NODE_ENV=production
+ENV GATSBY_TELEMETRY_DISABLED=1
+ENV GATSBY_CPU_COUNT=1
+ENV CI=true
+
+# Copy package files first for better caching
+COPY package*.json pnpm-*.yaml ./
+COPY packages/site/package.json ./packages/site/
+COPY packages/tests/package.json ./packages/tests/
+
+# Install dependencies with flags to handle native modules properly
+RUN pnpm install --frozen-lockfile --prefer-offline
+
+# Install Playwright browsers after dependencies
+RUN cd packages/site && npx playwright install chromium --with-deps
+
+# Copy source code (excluding node_modules via .dockerignore)
+COPY . .
+
+# Re-run install to ensure workspace linking
+RUN pnpm install --offline --frozen-lockfile
+
+# Build the application with error handling
+RUN pnpm run build || (echo "Build failed, checking for common issues..." && \
+    ls -la packages/site/node_modules/.pnpm/ | head -20 && \
+    npm ls lmdb || echo "lmdb not found" && \
+    exit 1)
+
+# Expose ports for development server and debugging
+EXPOSE 8000 9323
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8000 || exit 1
+
+# Default command runs the full test suite
+CMD ["sh", "-c", "pnpm run serve & sleep 10 && cd packages/site && npx playwright test"]

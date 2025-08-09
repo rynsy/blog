@@ -1,0 +1,40 @@
+# Ignore node_modules to prevent conflicts
+node_modules
+**/node_modules
+
+# Ignore build outputs that will be regenerated
+packages/site/public
+packages/site/.cache
+packages/site/playwright-report
+packages/site/test-results
+
+# Ignore local test artifacts
+test-results
+playwright-report
+coverage
+
+# Ignore logs
+*.log
+logs
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore git
+.git
+.gitignore
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore temporary files
+tmp
+temp
+
+# Ignore Docker files from being copied into themselves
+Dockerfile*
+docker-compose*
