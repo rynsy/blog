@@ -420,14 +420,14 @@ export interface AnalyticsPerformance {
 }
 
 export interface AnalyticsOptimization {
-  lazy Loading: boolean
+  lazyLoading: boolean
   preconnect: boolean
   prefetch: boolean
   defer: boolean
   compression: boolean
   minification: boolean
   treeshaking: boolean
-  codeShplitting: boolean
+  codeSplitting: boolean
   serviceWorker: boolean
 }
 
