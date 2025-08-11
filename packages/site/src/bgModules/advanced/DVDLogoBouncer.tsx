@@ -11,7 +11,7 @@ import {
   PerformanceMetrics,
   DVDLogoConfig,
   DVDLogo
-} from '@/types/background';
+} from '../../types/background';
 
 // Physics constants
 const GRAVITY = 0.3;
@@ -198,11 +198,11 @@ class DVDLogoBouncer {
   private textRenderer: TextRenderer;
   
   private logos: DVDLogo[] = [];
-  private program: WebGLProgram;
-  private vertexBuffer: WebGLBuffer;
-  private texCoordBuffer: WebGLBuffer;
-  private colorBuffer: WebGLBuffer;
-  private indexBuffer: WebGLBuffer;
+  private program!: WebGLProgram;
+  private vertexBuffer!: WebGLBuffer;
+  private texCoordBuffer!: WebGLBuffer;
+  private colorBuffer!: WebGLBuffer;
+  private indexBuffer!: WebGLBuffer;
   
   private textures = new Map<string, WebGLTexture>();
   
@@ -613,7 +613,12 @@ class DVDLogoBouncerInstance implements ModuleInstance {
 
   constructor(canvas: HTMLCanvasElement, options: ModuleOptions) {
     const config: DVDLogoConfig = {
-      logos: DEFAULT_LOGOS.slice(0, options.performance === 'high' ? 4 : options.performance === 'medium' ? 2 : 1),
+      logos: DEFAULT_LOGOS.slice(0, options.performance === 'high' ? 4 : options.performance === 'medium' ? 2 : 1).map(logo => ({
+        ...logo,
+        position: { x: 0, y: 0 },
+        velocity: { x: 0, y: 0 },
+        color: COLORS[0]
+      })),
       physics: {
         speed: options.performance === 'high' ? 4.0 : options.performance === 'medium' ? 3.0 : 2.0,
         bounce: BOUNCE_DAMPING,

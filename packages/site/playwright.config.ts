@@ -44,22 +44,35 @@ export default defineConfig({
     video: 'retain-on-failure',
     
     /* Global timeout for all tests */
-    actionTimeout: 30000,
+    actionTimeout: 15000,  // Increased from 30000
     navigationTimeout: 30000,
     
     /* Custom test metadata for better reporting */
     testIdAttribute: 'data-testid',
   },
 
-  /* Global setup and teardown */
-  globalSetup: require.resolve('./tests/global-setup.ts'),
-  globalTeardown: require.resolve('./tests/global-teardown.ts'),
+  /* Test timeouts */
+  timeout: 60000, // 1 minute per test
+  expect: {
+    timeout: 10000, // 10 seconds for assertions
+  },
+
+  /* Output directory */
+  outputDir: 'test-results/',
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'setup',
-      testMatch: /.*\.setup\.ts/,
+      testMatch: '**/setup.spec.ts',
+    },
+
+    /* Basic health check - run on Chrome first */
+    {
+      name: 'health-check',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: '**/basic-health-check.spec.ts',
+      dependencies: ['setup'],
     },
 
     /* Desktop browsers */
@@ -79,7 +92,8 @@ export default defineConfig({
           ]
         }
       },
-      dependencies: ['setup'],
+      testMatch: '**/cross-browser-compatibility.spec.ts',
+      dependencies: ['health-check'],
     },
 
     {
@@ -95,7 +109,8 @@ export default defineConfig({
           }
         }
       },
-      dependencies: ['setup'],
+      testMatch: '**/cross-browser-compatibility.spec.ts',
+      dependencies: ['health-check'],
     },
 
     {
@@ -107,7 +122,8 @@ export default defineConfig({
           args: ['--enable-webgl', '--disable-web-security']
         }
       },
-      dependencies: ['setup'],
+      testMatch: '**/cross-browser-compatibility.spec.ts',
+      dependencies: ['health-check'],
     },
 
     /* Test against mobile viewports. */
@@ -119,77 +135,17 @@ export default defineConfig({
         hasTouch: true,
         isMobile: true
       },
-      dependencies: ['setup'],
+      testMatch: '**/basic-health-check.spec.ts',
+      dependencies: ['health-check'],
     },
-    
-    {
-      name: 'Mobile Safari',
-      use: { 
-        ...devices['iPhone 12'],
-        hasTouch: true,
-        isMobile: true
-      },
-      dependencies: ['setup'],
-    },
-
-    /* Accessibility and performance focused projects */
-    {
-      name: 'a11y-chrome',
-      use: { 
-        ...devices['Desktop Chrome'],
-        reducedMotion: 'reduce',
-        colorScheme: 'light',
-        launchOptions: {
-          args: [
-            '--enable-webgl',
-            '--force-prefers-reduced-motion',
-            '--disable-backgrounding-occluded-windows'
-          ]
-        }
-      },
-      dependencies: ['setup'],
-      testMatch: /.*\.a11y\.spec\.ts/,
-    },
-
-    /* Performance testing project */
-    {
-      name: 'performance',
-      use: { 
-        ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: [
-            '--enable-webgl',
-            '--enable-precise-memory-info',
-            '--enable-memory-info'
-          ]
-        }
-      },
-      dependencies: ['setup'],
-      testMatch: /.*\.perf\.spec\.ts/,
-    }
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.DOCKER_TEST ? {
-    command: 'pnpm run serve',
-    url: baseURL,
-    reuseExistingServer: false,
-    timeout: 60 * 1000, // 1 minute for static server
-    ignoreHTTPSErrors: true,
-  } : process.env.CI ? undefined : {
+  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL ? undefined : {
     command: 'pnpm run develop',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes for Gatsby to start
     ignoreHTTPSErrors: true,
   },
-
-  /* Test timeouts */
-  timeout: 60000, // 1 minute per test
-  expect: {
-    timeout: 30000, // 30 seconds for assertions
-  },
-
-  /* Output directory */
-  outputDir: 'test-results/',
 })

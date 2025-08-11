@@ -154,7 +154,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     this.canvas.addEventListener('touchstart', handlePointerDown)
     
     // Easter egg event listener
-    window.addEventListener('easterEggEvent', this.handleEasterEggEvent.bind(this))
+    window.addEventListener('easterEggEvent', this.handleEasterEggEventInternal.bind(this))
   }
   
   private handleInteraction(x: number, y: number, type: 'move' | 'down'): void {
@@ -200,7 +200,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     this.emitEasterEggEvent(easterEggEvent)
   }
   
-  private handleEasterEggEvent(event: CustomEvent): void {
+  private handleEasterEggEventInternal(event: CustomEvent): void {
     const { type, data, confidence } = event.detail
     
     if (confidence && confidence > 0.7) {
@@ -460,7 +460,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     this.pause()
     
     // Clean up event listeners
-    window.removeEventListener('easterEggEvent', this.handleEasterEggEvent.bind(this))
+    window.removeEventListener('easterEggEvent', this.handleEasterEggEventInternal.bind(this))
     
     // Clear state
     this.state.particles = []
@@ -486,7 +486,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     this.setupCanvas()
   }
   
-  async handleEasterEggEvent(event: EasterEggEvent): Promise<void> {
+  public async handleEasterEggEvent(event: EasterEggEvent): Promise<void> {
     // Handle specific easter egg events for this module
     if (event.type === 'achievement') {
       // Create celebration particles

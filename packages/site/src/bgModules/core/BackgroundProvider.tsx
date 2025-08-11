@@ -15,7 +15,7 @@ import {
   UserPreferences,
   AnalyticsEvent,
   PerformanceAlert
-} from '@/types/background';
+} from '../../types/background';
 
 // Performance monitoring
 const PERFORMANCE_SAMPLE_INTERVAL = 1000; // 1 second
@@ -133,7 +133,7 @@ function usePerformanceMonitoring(dispatch: React.Dispatch<BackgroundAction>) {
   const performanceRef = useRef<{
     lastTime: number;
     frames: number;
-    memory?: MemoryInfo;
+    memory?: any;
   }>({ lastTime: 0, frames: 0 });
 
   const measurePerformance = useCallback((): PerformanceMetrics => {
@@ -426,7 +426,7 @@ export function BackgroundProvider({ children }: BackgroundProviderProps) {
           moduleSettings: { 
             ...state.userPreferences.moduleSettings,
             [state.activeModule || 'global']: { 
-              ...state.userPreferences.moduleSettings[state.activeModule || 'global'],
+              ...(state.userPreferences.moduleSettings[state.activeModule || 'global'] || {}),
               performance: mode 
             }
           }

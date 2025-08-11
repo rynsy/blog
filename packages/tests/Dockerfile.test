@@ -1,0 +1,67 @@
+# Dockerfile for UI Testing with Playwright
+FROM mcr.microsoft.com/playwright:v1.40.0-focal
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@8
+
+# Set environment variables
+ENV CI=true
+ENV NODE_ENV=test
+
+# Copy package files
+COPY package*.json pnpm-*.yaml ./
+COPY packages/tests/package.json ./packages/tests/
+COPY packages/site/package.json ./packages/site/
+
+# Install dependencies  
+RUN pnpm install --no-frozen-lockfile
+
+# Copy source code
+COPY packages/tests ./packages/tests
+COPY packages/site ./packages/site
+
+# Build the site for testing
+WORKDIR /app/packages/site
+RUN pnpm build
+
+# Switch to tests directory
+WORKDIR /app/packages/tests
+
+# Install browsers
+RUN pnpm exec playwright install --with-deps
+
+# Set up environment for testing
+ENV PLAYWRIGHT_TEST_BASE_URL=http://localhost:3000
+
+# Create entrypoint script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Start the built site in background\n\
+cd /app/packages/site\n\
+npx serve public -l 3000 &\n\
+SERVER_PID=$!\n\
+\n\
+# Wait for server to be ready\n\
+echo "Waiting for server to start..."\n\
+timeout 30 bash -c "until curl -s http://localhost:3000 > /dev/null; do sleep 1; done"\n\
+\n\
+# Run tests\n\
+cd /app/packages/tests\n\
+pnpm test:e2e "$@"\n\
+TEST_EXIT_CODE=$?\n\
+\n\
+# Cleanup\n\
+kill $SERVER_PID 2>/dev/null || true\n\
+\n\
+exit $TEST_EXIT_CODE\n\
+' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command
+CMD ["--reporter=list"]

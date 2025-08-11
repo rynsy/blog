@@ -9,7 +9,7 @@ import {
   ModuleOptions, 
   PerformanceMetrics,
   FluidSimulationConfig 
-} from '@/types/background';
+} from '../../types/background';
 
 // WebGL shader sources
 const VERTEX_SHADER_SOURCE = `
@@ -153,12 +153,12 @@ class FluidSimulation {
   private pressureTextures: WebGLTexture[];
   private colorTextures: WebGLTexture[];
   
-  private velocityProgram: WebGLProgram;
-  private pressureProgram: WebGLProgram;
-  private colorProgram: WebGLProgram;
-  private displayProgram: WebGLProgram;
+  private velocityProgram!: WebGLProgram;
+  private pressureProgram!: WebGLProgram;
+  private colorProgram!: WebGLProgram;
+  private displayProgram!: WebGLProgram;
   
-  private quadBuffer: WebGLBuffer;
+  private quadBuffer!: WebGLBuffer;
   private currentFrame = 0;
   private mousePos = { x: 0, y: 0 };
   private mousePressed = false;

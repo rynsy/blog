@@ -12,7 +12,7 @@ import {
   FallingSandConfig,
   SandElement,
   ElementInteraction
-} from '@/types/background';
+} from '../../types/background';
 
 // Cellular automata constants
 const CELL_SIZE = 4; // pixels per cell
@@ -357,14 +357,14 @@ class FallingSandSimulation {
   private width: number;
   private height: number;
   
-  private currentTexture: WebGLTexture;
-  private nextTexture: WebGLTexture;
-  private currentFramebuffer: WebGLFramebuffer;
-  private nextFramebuffer: WebGLFramebuffer;
+  private currentTexture!: WebGLTexture;
+  private nextTexture!: WebGLTexture;
+  private currentFramebuffer!: WebGLFramebuffer;
+  private nextFramebuffer!: WebGLFramebuffer;
   
-  private updateProgram: WebGLProgram;
-  private renderProgram: WebGLProgram;
-  private quadBuffer: WebGLBuffer;
+  private updateProgram!: WebGLProgram;
+  private renderProgram!: WebGLProgram;
+  private quadBuffer!: WebGLBuffer;
   
   private selectedElement = 1; // Default to sand
   private mousePos = { x: 0, y: 0 };

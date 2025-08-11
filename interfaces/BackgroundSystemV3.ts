@@ -11,7 +11,7 @@ import { JSONSchema7 } from 'json-schema'
 // Core Module Interfaces
 // ============================================================================
 
-export interface ModuleSetupParamsV3 extends ModuleSetupParams {
+export interface ModuleSetupParamsV3 {
   canvas: HTMLCanvasElement | OffscreenCanvas
   width: number
   height: number

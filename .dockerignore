@@ -2,8 +2,8 @@
 node_modules
 **/node_modules
 
-# Ignore build outputs that will be regenerated
-packages/site/public
+# Ignore build outputs that will be regenerated (but not public for production builds)
+# packages/site/public  # Allow public for production Docker builds
 packages/site/.cache
 packages/site/playwright-report
 packages/site/test-results

@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import FluidSimulation from './FluidSimulation';
 import FallingSand from './FallingSand';
 import DVDLogoBouncer from './DVDLogoBouncer';
-import type { ModuleOptions } from '@/types/background';
+import type { ModuleOptions } from '../../types/background';
 
 // Mock WebGL context
 class MockWebGLRenderingContext {

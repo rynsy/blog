@@ -15,4 +15,4 @@ export type {
   SandElement,
   ElementInteraction,
   DVDLogo
-} from '@/types/background';
+} from '../../types/background';

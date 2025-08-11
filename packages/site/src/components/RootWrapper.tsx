@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { ThemeProvider } from '../contexts/ThemeContext'
-import { BackgroundProvider } from '../contexts/BackgroundContext'
+// import { BackgroundProvider } from '../contexts/BackgroundContext' // Temporarily disabled
 import { debug } from '../utils/debug'
 
-// Lazy load background components to avoid SSR issues
-const BackgroundClient = React.lazy(() => import("./BackgroundClient"))
+// BackgroundClient temporarily removed
+// const BackgroundClient = React.lazy(() => import("./BackgroundClient"))
 
 // Global flag to track if we've ever initialized the background system
 let globalBackgroundInitialized = false
@@ -40,15 +40,8 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
   // The providers must always be present for consistent hydration
   return (
     <ThemeProvider>
-      <BackgroundProvider>
-        {/* Only render BackgroundClient on the client to avoid hydration mismatch */}
-        {isClient && (
-          <React.Suspense fallback={null}>
-            <BackgroundClient />
-          </React.Suspense>
-        )}
-        {children}
-      </BackgroundProvider>
+      {/* BackgroundProvider moved to layout.tsx, BackgroundClient temporarily disabled */}
+      {children}
     </ThemeProvider>
   )
 }

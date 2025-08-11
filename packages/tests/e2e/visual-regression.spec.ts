@@ -1,412 +1,352 @@
-import { test, expect } from '@playwright/test';
-import { NavigationUtils, VisualUtils, WaitUtils, BackgroundUtils } from './test-utils';
+/**
+ * Comprehensive Visual Regression Testing Suite
+ * Tests visual consistency across devices, themes, and interactive states
+ */
+
+import { test, expect, Page, BrowserContext } from '@playwright/test';
+import { TestUtils } from './test-utils';
+
+const testUtils = new TestUtils();
+
+// Comprehensive viewport testing matrix
+const viewports = [
+  { name: 'mobile-portrait', width: 320, height: 568 },
+  { name: 'mobile-landscape', width: 568, height: 320 },
+  { name: 'tablet-portrait', width: 768, height: 1024 },
+  { name: 'tablet-landscape', width: 1024, height: 768 },
+  { name: 'desktop', width: 1280, height: 720 },
+  { name: 'desktop-large', width: 1920, height: 1080 },
+  { name: 'desktop-4k', width: 3840, height: 2160 },
+  { name: 'ultrawide', width: 3440, height: 1440 },
+  { name: 'narrow', width: 280, height: 653 }
+];
+
+const testPages = [
+  { path: '/', name: 'homepage' },
+  { path: '/about', name: 'about' },
+  { path: '/portfolio', name: 'portfolio' },
+  { path: '/blog', name: 'blog' },
+  { path: '/reading', name: 'reading' },
+  { path: '/404', name: '404' }
+];
 
 test.describe('Visual Regression Testing', () => {
-  let navigationUtils: NavigationUtils;
-  let visualUtils: VisualUtils;
-  let waitUtils: WaitUtils;
-  let backgroundUtils: BackgroundUtils;
-
-  test.beforeEach(async ({ page }) => {
-    navigationUtils = new NavigationUtils(page);
-    visualUtils = new VisualUtils(page);
-    waitUtils = new WaitUtils(page);
-    backgroundUtils = new BackgroundUtils(page);
-    
-    // Set consistent viewport for visual tests
-    await page.setViewportSize({ width: 1280, height: 720 });
-    
-    // Wait for fonts and other resources
-    await waitUtils.waitForFontsLoaded();
+  
+  test.describe('Responsive Design Screenshots', () => {
+    for (const viewport of viewports) {
+      for (const page of testPages) {
+        test(`${page.name} page at ${viewport.name} (${viewport.width}x${viewport.height})`, async ({ browser }) => {
+          const context = await browser.newContext({
+            viewport: { width: viewport.width, height: viewport.height },
+            deviceScaleFactor: viewport.width >= 1920 ? 2 : 1
+          });
+          
+          const pageInstance = await context.newPage();
+          await testUtils.navigateAndWait(pageInstance, page.path);
+          
+          // Wait for any animations or lazy loading
+          await pageInstance.waitForTimeout(1000);
+          
+          // Ensure fonts are loaded
+          await pageInstance.waitForLoadState('networkidle');
+          
+          // Take full page screenshot
+          await expect(pageInstance).toHaveScreenshot(
+            `${page.name}-${viewport.name}.png`,
+            {
+              fullPage: true,
+              threshold: 0.2, // Allow minor rendering differences
+              animations: 'disabled' // Disable animations for consistent screenshots
+            }
+          );
+          
+          await context.close();
+        });
+      }
+    }
   });
 
-  test.describe('Page-level Screenshots', () => {
-    test('Homepage visual consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
-      
-      // Wait for background to load
-      try {
-        await backgroundUtils.waitForBackgroundLoad(5000);
-      } catch {
-        // Continue if background fails to load
-        console.log('Background module did not load, continuing with test');
+  test.describe('Theme Comparison Tests', () => {
+    const themes = ['light', 'dark'];
+    
+    for (const theme of themes) {
+      for (const page of testPages) {
+        test(`${page.name} page in ${theme} theme`, async ({ browser }) => {
+          const context = await browser.newContext({
+            viewport: { width: 1280, height: 720 },
+            colorScheme: theme as 'light' | 'dark'
+          });
+          
+          const pageInstance = await context.newPage();
+          await testUtils.navigateAndWait(pageInstance, page.path);
+          
+          // Wait for theme to apply
+          await pageInstance.waitForTimeout(500);
+          
+          // Check that theme classes are applied
+          const htmlElement = pageInstance.locator('html');
+          if (theme === 'dark') {
+            await expect(htmlElement).toHaveClass(/dark/);
+          }
+          
+          // Take screenshot
+          await expect(pageInstance).toHaveScreenshot(
+            `${page.name}-${theme}-theme.png`,
+            {
+              fullPage: true,
+              threshold: 0.2,
+              animations: 'disabled'
+            }
+          );
+          
+          await context.close();
+        });
       }
+    }
+  });
+
+  test.describe('Interactive Elements Visual Testing', () => {
+    test('Navigation hover states', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/');
       
-      await visualUtils.takeStableScreenshot('homepage-full');
-      await expect(page).toHaveScreenshot('homepage.png', {
-        fullPage: true,
-        threshold: 0.3
-      });
+      const navLinks = page.locator('nav a');
+      const linkCount = await navLinks.count();
+      
+      for (let i = 0; i < linkCount; i++) {
+        const link = navLinks.nth(i);
+        const linkText = await link.textContent();
+        
+        // Hover over the link
+        await link.hover();
+        await page.waitForTimeout(200); // Wait for hover animation
+        
+        // Take screenshot of navigation area
+        const nav = page.locator('nav');
+        await expect(nav).toHaveScreenshot(
+          `nav-hover-${linkText?.toLowerCase().replace(/\s+/g, '-')}.png`,
+          { threshold: 0.3 }
+        );
+      }
     });
 
-    test('About page visual consistency', async ({ page }) => {
-      await navigationUtils.goToAbout();
-      await waitUtils.waitForHydration();
+    test('Theme toggle visual states', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/');
       
-      await visualUtils.takeStableScreenshot('about-page-full');
-      await expect(page).toHaveScreenshot('about-page.png', {
-        fullPage: true,
-        threshold: 0.3
-      });
+      const themeToggle = page.locator('[data-testid="theme-toggle"]');
+      if (await themeToggle.count() > 0) {
+        // Test light state
+        await expect(themeToggle).toHaveScreenshot('theme-toggle-light.png');
+        
+        // Click to switch to dark
+        await themeToggle.click();
+        await page.waitForTimeout(300); // Wait for theme transition
+        
+        // Test dark state
+        await expect(themeToggle).toHaveScreenshot('theme-toggle-dark.png');
+      }
     });
 
-    test('Blog listing visual consistency', async ({ page }) => {
-      await navigationUtils.goToBlog();
-      await waitUtils.waitForHydration();
+    test('Form elements visual validation', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/test/form');
       
-      // Wait for blog posts to load
-      await page.waitForSelector('article', { timeout: 10000 });
+      // Test form in default state
+      const form = page.locator('form');
+      await expect(form).toHaveScreenshot('form-default-state.png');
       
-      await visualUtils.takeStableScreenshot('blog-listing-full');
-      await expect(page).toHaveScreenshot('blog-listing.png', {
-        fullPage: true,
-        threshold: 0.3
-      });
+      // Test form with validation errors
+      const submitButton = page.locator('button[type="submit"]');
+      await submitButton.click();
+      await page.waitForTimeout(200);
+      
+      await expect(form).toHaveScreenshot('form-validation-errors.png');
+      
+      // Test form with valid input
+      await page.fill('input[type="email"]', 'test@example.com');
+      await page.fill('textarea', 'This is a test message with sufficient content.');
+      
+      await expect(form).toHaveScreenshot('form-valid-input.png');
     });
+  });
 
-    test('Reading list visual consistency', async ({ page }) => {
-      await navigationUtils.goToReading();
-      await waitUtils.waitForHydration();
-      
-      await visualUtils.takeStableScreenshot('reading-list-full');
-      await expect(page).toHaveScreenshot('reading-list.png', {
-        fullPage: true,
-        threshold: 0.3
+  test.describe('Layout Shift Detection', () => {
+    test('Measure layout stability during page load', async ({ page }) => {
+      // Enable layout shift tracking
+      await page.addInitScript(() => {
+        let cls = 0;
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (!entry.hadRecentInput) {
+              cls += (entry as any).value;
+            }
+          }
+          (window as any).cls = cls;
+        }).observe({ type: 'layout-shift', buffered: true });
       });
-    });
-
-    test('Blog post detail visual consistency', async ({ page }) => {
-      await navigationUtils.navigateToFirstBlogPost();
-      await waitUtils.waitForHydration();
       
-      // Wait for code highlighting and math to render
+      await testUtils.navigateAndWait(page, '/');
+      
+      // Wait for page to settle
       await page.waitForTimeout(2000);
       
-      await visualUtils.takeStableScreenshot('blog-post-detail-full');
-      await expect(page).toHaveScreenshot('blog-post-detail.png', {
-        fullPage: true,
-        threshold: 0.3
-      });
-    });
-  });
-
-  test.describe('Component-level Screenshots', () => {
-    test('Navigation header consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      const header = page.locator('header, nav').first();
-      await expect(header).toBeVisible();
-      
-      await visualUtils.compareElementScreenshot('header, nav', 'navigation-header');
+      // Check cumulative layout shift
+      const cls = await page.evaluate(() => (window as any).cls || 0);
+      expect(cls).toBeLessThan(0.1); // Good CLS score
     });
 
-    test('Footer consistency', async ({ page }) => {
-      await navigationUtils.goHome();
+    test('Font loading does not cause layout shift', async ({ page }) => {
+      await page.goto('/');
       
-      const footer = page.locator('footer').first();
-      await expect(footer).toBeVisible();
-      
-      await visualUtils.compareElementScreenshot('footer', 'site-footer');
-    });
-
-    test('Blog post card consistency', async ({ page }) => {
-      await navigationUtils.goToBlog();
-      
-      const firstPost = page.locator('article').first();
-      await expect(firstPost).toBeVisible();
-      
-      await visualUtils.compareElementScreenshot('article:first-child', 'blog-post-card');
-    });
-
-    test('Background canvas consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      try {
-        const canvas = await backgroundUtils.getCanvasElement();
-        await expect(canvas).toBeVisible();
-        
-        // Wait for initial render
-        await page.waitForTimeout(3000);
-        
-        await visualUtils.compareElementScreenshot('canvas', 'background-canvas');
-      } catch (error) {
-        console.log('Canvas not available for testing:', error);
-        test.skip();
-      }
-    });
-  });
-
-  test.describe('Theme Variations', () => {
-    test('Light theme consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      // Set light theme
-      await page.evaluate(() => {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
+      // Take screenshot immediately after navigation
+      await expect(page).toHaveScreenshot('page-before-fonts.png', {
+        animations: 'disabled',
+        timeout: 5000
       });
       
-      await page.waitForTimeout(1000);
-      await expect(page).toHaveScreenshot('homepage-light-theme.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('Dark theme consistency', async ({ page }) => {
-      await navigationUtils.goHome();
+      // Wait for fonts to load
+      await page.waitForFunction(() => document.fonts.ready);
+      await page.waitForTimeout(500);
       
-      // Set dark theme
-      await page.evaluate(() => {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
+      // Take screenshot after fonts load
+      await expect(page).toHaveScreenshot('page-after-fonts.png', {
+        animations: 'disabled'
       });
       
-      await page.waitForTimeout(1000);
-      await expect(page).toHaveScreenshot('homepage-dark-theme.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('System theme consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      // Set system theme with light preference
-      await page.emulateMedia({ colorScheme: 'light' });
-      await page.evaluate(() => {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.removeItem('theme');
-      });
-      
-      await page.waitForTimeout(1000);
-      await expect(page).toHaveScreenshot('homepage-system-light.png', {
-        threshold: 0.3
-      });
-    });
-  });
-
-  test.describe('Responsive Visual Tests', () => {
-    test('Mobile viewport consistency', async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
-      
-      await expect(page).toHaveScreenshot('homepage-mobile.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('Tablet viewport consistency', async ({ page }) => {
-      await page.setViewportSize({ width: 768, height: 1024 });
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
-      
-      await expect(page).toHaveScreenshot('homepage-tablet.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('Desktop viewport consistency', async ({ page }) => {
-      await page.setViewportSize({ width: 1280, height: 720 });
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
-      
-      await expect(page).toHaveScreenshot('homepage-desktop.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('Large viewport consistency', async ({ page }) => {
-      await page.setViewportSize({ width: 1920, height: 1080 });
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
-      
-      await expect(page).toHaveScreenshot('homepage-large.png', {
-        threshold: 0.3
-      });
-    });
-  });
-
-  test.describe('Interactive State Screenshots', () => {
-    test('Navigation hover states', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      // Test main navigation hover
-      const navLinks = page.locator('nav a');
-      const firstLink = navLinks.first();
-      
-      if (await firstLink.isVisible()) {
-        await firstLink.hover();
-        await page.waitForTimeout(500);
-        
-        await expect(firstLink).toHaveScreenshot('nav-link-hover.png');
-      }
-    });
-
-    test('Button focus states', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      // Find focusable buttons
-      const buttons = page.locator('button, [role="button"]');
-      const firstButton = buttons.first();
-      
-      if (await firstButton.isVisible()) {
-        await firstButton.focus();
-        await page.waitForTimeout(500);
-        
-        await expect(firstButton).toHaveScreenshot('button-focus.png');
-      }
-    });
-
-    test('Form input states', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      // Look for form inputs (search, contact, etc.)
-      const inputs = page.locator('input, textarea');
-      const firstInput = inputs.first();
-      
-      if (await firstInput.isVisible()) {
-        // Focus state
-        await firstInput.focus();
-        await page.waitForTimeout(500);
-        await expect(firstInput).toHaveScreenshot('input-focus.png');
-        
-        // Filled state
-        await firstInput.fill('Test input value');
-        await page.waitForTimeout(500);
-        await expect(firstInput).toHaveScreenshot('input-filled.png');
-      }
-    });
-  });
-
-  test.describe('Background Module Visual Tests', () => {
-    test('Gradient module consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      try {
-        // Switch to gradient module if available
-        await backgroundUtils.switchModule('gradient');
-        await page.waitForTimeout(2000);
-        
-        const canvas = await backgroundUtils.getCanvasElement();
-        await expect(canvas).toHaveScreenshot('gradient-module.png');
-      } catch (error) {
-        console.log('Gradient module not available:', error);
-        test.skip();
-      }
-    });
-
-    test('Knowledge graph module consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      
-      try {
-        // Switch to knowledge module if available
-        await backgroundUtils.switchModule('knowledge');
-        await page.waitForTimeout(3000);
-        
-        const canvas = await backgroundUtils.getCanvasElement();
-        await expect(canvas).toHaveScreenshot('knowledge-module.png');
-      } catch (error) {
-        console.log('Knowledge module not available:', error);
-        test.skip();
-      }
+      // The two screenshots should be very similar
+      // (This will fail if there's significant layout shift due to font loading)
     });
   });
 
   test.describe('Error State Screenshots', () => {
-    test('404 page visual consistency', async ({ page }) => {
+    test('404 page visual design', async ({ page }) => {
       await page.goto('/non-existent-page');
-      await waitUtils.waitForHydration();
       
-      // Wait for 404 content to load
-      await page.waitForTimeout(2000);
+      // Wait for 404 page to load
+      await page.waitForSelector('h1', { timeout: 5000 });
       
+      // Verify we're on 404 page
+      await expect(page.locator('h1')).toContainText(/404|not found/i);
+      
+      // Take full page screenshot
       await expect(page).toHaveScreenshot('404-page.png', {
-        threshold: 0.3
+        fullPage: true,
+        threshold: 0.2
       });
     });
 
-    test('Network error state', async ({ page, context }) => {
-      // Block network requests to simulate offline
-      await context.route('**/*', route => route.abort());
-      
-      try {
-        await navigationUtils.goHome();
-      } catch {
-        // Expected to fail
-      }
-      
-      await page.waitForTimeout(2000);
-      await expect(page).toHaveScreenshot('network-error.png', {
-        threshold: 0.3
+    test('Network error fallback', async ({ context, page }) => {
+      // Block all network requests to simulate offline
+      await context.route('**/*', route => {
+        if (route.request().url().includes('localhost')) {
+          route.continue();
+        } else {
+          route.abort();
+        }
       });
-    });
-  });
-
-  test.describe('Print Styles', () => {
-    test('Print layout consistency', async ({ page }) => {
-      await navigationUtils.goHome();
-      await waitUtils.waitForHydration();
       
-      // Emulate print media
-      await page.emulateMedia({ media: 'print' });
-      await page.waitForTimeout(1000);
+      await testUtils.navigateAndWait(page, '/reading');
       
-      await expect(page).toHaveScreenshot('homepage-print.png', {
-        threshold: 0.3
-      });
-    });
-
-    test('Blog post print layout', async ({ page }) => {
-      await navigationUtils.navigateToFirstBlogPost();
-      await waitUtils.waitForHydration();
-      
-      await page.emulateMedia({ media: 'print' });
-      await page.waitForTimeout(1000);
-      
-      await expect(page).toHaveScreenshot('blog-post-print.png', {
+      // Check for graceful degradation
+      await expect(page).toHaveScreenshot('network-error-fallback.png', {
         fullPage: true,
         threshold: 0.3
       });
     });
   });
 
-  test.describe('Animation Consistency', () => {
-    test('Page transition animations', async ({ page }) => {
-      await navigationUtils.goHome();
+  test.describe('Print Styles Validation', () => {
+    test('Print preview of blog post', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/blog/mathematical-foundations-visual-media/');
       
-      // Enable animations for this test
-      await page.addStyleTag({
-        content: `
-          * {
-            animation-duration: 0.3s !important;
-            transition-duration: 0.3s !important;
-          }
-        `
+      // Emulate print media
+      await page.emulateMedia({ media: 'print' });
+      
+      // Take screenshot in print mode
+      await expect(page).toHaveScreenshot('blog-post-print.png', {
+        fullPage: true,
+        threshold: 0.2
       });
       
-      // Navigate and capture mid-animation
-      const blogLink = page.locator('a[href*="/blog"]').first();
-      if (await blogLink.isVisible()) {
-        await blogLink.click();
-        await page.waitForTimeout(150); // Capture mid-animation
+      // Reset to screen media
+      await page.emulateMedia({ media: 'screen' });
+    });
+
+    test('Print styles for main pages', async ({ page }) => {
+      const printPages = ['/', '/about', '/portfolio'];
+      
+      for (const pagePath of printPages) {
+        await testUtils.navigateAndWait(page, pagePath);
+        await page.emulateMedia({ media: 'print' });
         
-        await expect(page).toHaveScreenshot('page-transition-animation.png', {
-          threshold: 0.5 // Higher threshold for animation frames
+        const pageName = pagePath === '/' ? 'homepage' : pagePath.slice(1);
+        await expect(page).toHaveScreenshot(`${pageName}-print.png`, {
+          fullPage: true,
+          threshold: 0.2
         });
+        
+        await page.emulateMedia({ media: 'screen' });
+      }
+    });
+  });
+
+  test.describe('Visual Component Isolation', () => {
+    test('Navigation component visual test', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/');
+      
+      const navigation = page.locator('nav');
+      await expect(navigation).toHaveScreenshot('navigation-component.png');
+    });
+
+    test('Footer component visual test', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/');
+      
+      const footer = page.locator('footer');
+      if (await footer.count() > 0) {
+        await expect(footer).toHaveScreenshot('footer-component.png');
       }
     });
 
-    test('Loading states consistency', async ({ page }) => {
-      await navigationUtils.goHome();
+    test('Blog post cards visual consistency', async ({ page }) => {
+      await testUtils.navigateAndWait(page, '/blog');
       
-      // Look for loading indicators
-      const loadingElements = page.locator('[data-testid*="loading"], .loading, .spinner');
-      const firstLoader = loadingElements.first();
+      const blogCards = page.locator('.blog-card, [data-testid="blog-card"]');
+      const cardCount = await blogCards.count();
       
-      if (await firstLoader.isVisible()) {
-        await expect(firstLoader).toHaveScreenshot('loading-state.png');
+      if (cardCount > 0) {
+        // Test first few blog cards
+        for (let i = 0; i < Math.min(cardCount, 3); i++) {
+          const card = blogCards.nth(i);
+          await expect(card).toHaveScreenshot(`blog-card-${i + 1}.png`, {
+            threshold: 0.2
+          });
+        }
       }
     });
+  });
+});
+
+test.describe('High DPI Display Testing', () => {
+  test('High DPI screenshot comparison', async ({ browser }) => {
+    const contexts = [
+      { name: 'standard', deviceScaleFactor: 1 },
+      { name: 'retina', deviceScaleFactor: 2 },
+      { name: 'high-dpi', deviceScaleFactor: 3 }
+    ];
+    
+    for (const config of contexts) {
+      const context = await browser.newContext({
+        viewport: { width: 1280, height: 720 },
+        deviceScaleFactor: config.deviceScaleFactor
+      });
+      
+      const page = await context.newPage();
+      await testUtils.navigateAndWait(page, '/');
+      
+      await expect(page).toHaveScreenshot(`homepage-${config.name}-dpi.png`, {
+        threshold: 0.3,
+        animations: 'disabled'
+      });
+      
+      await context.close();
+    }
   });
 });

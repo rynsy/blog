@@ -1,0 +1,37 @@
+# Lightweight Dockerfile for running Playwright tests only
+FROM mcr.microsoft.com/playwright:v1.50.0-jammy
+
+# Install Node.js, pnpm, and build dependencies for native modules
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    python3 \
+    python3-pip \
+    git && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm@8 && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json pnpm-*.yaml ./
+COPY packages/site/package.json ./packages/site/
+
+# Install dependencies
+RUN pnpm install --filter site --force
+
+# Copy the built site and test files
+COPY packages/site/public ./packages/site/public
+COPY packages/site/tests ./packages/site/tests
+COPY packages/site/playwright.config.ts ./packages/site/
+
+# Set environment
+ENV NODE_ENV=test
+ENV CI=true
+
+WORKDIR /app/packages/site
+
+# Run tests by default
+CMD ["npx", "playwright", "test", "--reporter=list,html,json"]

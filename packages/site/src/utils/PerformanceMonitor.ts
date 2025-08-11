@@ -1,4 +1,4 @@
-import { PerformanceMetrics, MemoryStats } from '../interfaces/BackgroundSystemV3'
+import { PerformanceMetrics, MemoryStats } from '../../../interfaces/BackgroundSystemV3'
 
 /**
  * Monitors performance metrics for background modules

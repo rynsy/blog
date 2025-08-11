@@ -302,9 +302,9 @@ test.describe('Responsive Design Tests (R-01)', () => {
       await page.waitForTimeout(500)
 
       // Verify initial canvas size
-      let canvas = page.locator('canvas')
+      const canvas = page.locator('canvas')
       if (await canvas.isVisible()) {
-        let canvasRect = await canvas.boundingBox()
+        const canvasRect = await canvas.boundingBox()
         expect(canvasRect?.width).toBeCloseTo(375, 10)
         expect(canvasRect?.height).toBeCloseTo(667, 10)
       }
@@ -315,7 +315,7 @@ test.describe('Responsive Design Tests (R-01)', () => {
 
       // Canvas should adapt
       if (await canvas.isVisible()) {
-        let canvasRect = await canvas.boundingBox()
+        const canvasRect = await canvas.boundingBox()
         expect(canvasRect?.width).toBeCloseTo(667, 10)
         expect(canvasRect?.height).toBeCloseTo(375, 10)
       }

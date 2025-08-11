@@ -1,4 +1,4 @@
-import { CanvasRequirements, CanvasLayer, ModuleRegistryEntryV3 } from '../interfaces/BackgroundSystemV3'
+import { CanvasRequirements, CanvasLayer, ModuleRegistryEntryV3 } from '../../../interfaces/BackgroundSystemV3'
 
 /**
  * Manages layered canvas system for multiple background modules

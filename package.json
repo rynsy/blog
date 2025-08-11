@@ -44,9 +44,16 @@
     "test:e2e": "pnpm -F tests test:e2e",
     "test:watch": "pnpm -F tests test:unit:watch",
     "test:local-ci": "chmod +x scripts/local-ci.sh && ./scripts/local-ci.sh",
-    "test:docker:production": "docker-compose -f docker-compose.production-test.yml up --build production-site analytics-mock",
-    "test:docker:e2e": "docker-compose -f docker-compose.production-test.yml up --build --profile testing",
-    "test:docker:clean": "docker-compose -f docker-compose.production-test.yml down -v --remove-orphans"
+    "test:docker:production": "docker-compose -f docker/docker-compose.production-test.yml up --build production-site analytics-mock",
+    "test:docker:e2e": "COMPOSE_PROFILES=testing docker-compose -f docker/docker-compose.production-test.yml up --build e2e-tests",
+    "test:docker:clean": "docker-compose -f docker/docker-compose.production-test.yml down -v --remove-orphans",
+    "test:ui": "scripts/test-ui.sh",
+    "test:ui:visual": "scripts/test-ui.sh visual",
+    "test:ui:accessibility": "scripts/test-ui.sh accessibility",
+    "test:ui:performance": "scripts/test-ui.sh performance",
+    "test:ui:production": "scripts/test-ui.sh production",
+    "test:ui:clean": "scripts/test-ui.sh --clean all",
+    "test:ui:update": "scripts/test-ui.sh visual --update"
   },
   "repository": {
     "type": "git",
