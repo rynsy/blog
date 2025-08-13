@@ -167,6 +167,10 @@ class FluidSimulation {
   private lastFrameTime = 0;
   private frameCount = 0;
 
+  // Store bound event listeners for proper cleanup
+  private boundHandleContextLost: (event: Event) => void;
+  private boundHandleContextRestored: () => void;
+
   constructor(canvas: HTMLCanvasElement, config: FluidSimulationConfig) {
     this.canvas = canvas;
     this.config = config;
@@ -185,8 +189,59 @@ class FluidSimulation {
     this.pressureTextures = [];
     this.colorTextures = [];
     
+    // Bind event handlers for proper cleanup
+    this.boundHandleContextLost = this.handleContextLost.bind(this);
+    this.boundHandleContextRestored = this.handleContextRestored.bind(this);
+    
+    // Add WebGL context loss handling
+    this.setupContextLossHandling();
+    
     this.initializeGL();
   }
+
+  private setupContextLossHandling() {
+    // Handle WebGL context loss
+    this.canvas.addEventListener('webglcontextlost', this.boundHandleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', this.boundHandleContextRestored, false);
+  }
+
+  private handleContextLost(event: Event) {
+    event.preventDefault();
+    console.warn('FluidSimulation: WebGL context lost');
+    
+    // Clear all WebGL resources (they're automatically invalid now)
+    this.velocityFramebuffers = [];
+    this.pressureFramebuffers = [];
+    this.colorFramebuffers = [];
+    this.velocityTextures = [];
+    this.pressureTextures = [];
+    this.colorTextures = [];
+    
+    // Notify instance about context loss
+    if (this.onContextLost) {
+      this.onContextLost();
+    }
+  }
+
+  private handleContextRestored() {
+    console.log('FluidSimulation: WebGL context restored, reinitializing...');
+    
+    try {
+      // Reinitialize WebGL resources
+      this.initializeGL();
+      
+      // Notify instance about context restoration
+      if (this.onContextRestored) {
+        this.onContextRestored();
+      }
+    } catch (error) {
+      console.error('FluidSimulation: Failed to restore WebGL context:', error);
+    }
+  }
+
+  // Callback properties for context loss handling
+  public onContextLost?: () => void;
+  public onContextRestored?: () => void;
   
   private initializeGL() {
     const gl = this.gl;
@@ -468,6 +523,14 @@ class FluidSimulation {
   }
   
   public cleanup() {
+    // Remove event listeners first
+    this.canvas.removeEventListener('webglcontextlost', this.boundHandleContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this.boundHandleContextRestored);
+    
+    // Clear callbacks
+    this.onContextLost = undefined;
+    this.onContextRestored = undefined;
+    
     // Cleanup WebGL resources
     const gl = this.gl;
     
@@ -506,6 +569,21 @@ class FluidSimulationInstance implements ModuleInstance {
     };
     
     this.simulation = new FluidSimulation(canvas, config);
+    
+    // Set up context loss callbacks
+    this.simulation.onContextLost = () => {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    };
+    
+    this.simulation.onContextRestored = () => {
+      // Restart animation if it was running
+      if (this.isRunning && !this.animationId) {
+        this.animate();
+      }
+    };
   }
 
   start() {

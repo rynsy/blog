@@ -16,6 +16,7 @@ import {
   AnalyticsEvent,
   PerformanceAlert
 } from '../../types/background';
+import { ExtendedPerformance, PerformanceMemory } from '../../types/browser-apis';
 
 // Performance monitoring
 const PERFORMANCE_SAMPLE_INTERVAL = 1000; // 1 second
@@ -138,7 +139,8 @@ function usePerformanceMonitoring(dispatch: React.Dispatch<BackgroundAction>) {
 
   const measurePerformance = useCallback((): PerformanceMetrics => {
     const now = performance.now();
-    const memory = (performance as any).memory;
+    const extendedPerformance = performance as ExtendedPerformance;
+    const memory = extendedPerformance.memory;
     
     // FPS calculation
     performanceRef.current.frames++;

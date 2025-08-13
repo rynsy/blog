@@ -3,6 +3,7 @@ import * as d3Force from 'd3-force'
 import { select, pointer } from 'd3-selection'
 import { drag } from 'd3-drag'
 import { zoom } from 'd3-zoom'
+import { KeyboardNavigationManager } from '../utils/KeyboardNavigation'
 
 interface Node extends d3Force.SimulationNodeDatum {
   id: string
@@ -20,10 +21,13 @@ interface Link extends d3Force.SimulationLinkDatum<Node> {
 const InteractiveGraph: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null)
   const simulationRef = useRef<d3Force.Simulation<Node, Link> | null>(null)
+  const keyboardNavRef = useRef<KeyboardNavigationManager | null>(null)
   const [isClient, setIsClient] = useState(false)
   const [isAddingConnection, setIsAddingConnection] = useState(false)
   const [selectedNode, setSelectedNode] = useState<string | null>(null)
   const [tempLine, setTempLine] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null)
+  const [focusedNode, setFocusedNode] = useState<string | null>(null)
+  const [keyboardMode, setKeyboardMode] = useState(false)
 
   // Initial graph data
   const [nodes, setNodes] = useState<Node[]>([
@@ -74,6 +78,26 @@ const InteractiveGraph: React.FC = () => {
 
   useEffect(() => {
     if (!isClient || !svgRef.current) return
+
+    // Initialize keyboard navigation
+    if (!keyboardNavRef.current) {
+      keyboardNavRef.current = new KeyboardNavigationManager({
+        enableArrowKeys: true,
+        enableSpaceEnter: true,
+        enableEscape: true,
+        wrapNavigation: true,
+        customKeys: {
+          'a': () => addRandomNode(),
+          'c': () => setIsAddingConnection(!isAddingConnection),
+          'r': () => simulationRef.current?.alphaTarget(0.3).restart(),
+          'Delete': () => selectedNode && removeNode(selectedNode),
+          'k': () => {
+            setKeyboardMode(true)
+            keyboardNavRef.current?.activate()
+          }
+        }
+      })
+    }
 
     const svg = select(svgRef.current)
     const width = 600
@@ -133,6 +157,10 @@ const InteractiveGraph: React.FC = () => {
         .data(nodes)
         .join('g')
         .style('cursor', 'grab')
+        .attr('role', 'button')
+        .attr('aria-label', (d: Node) => `Node: ${d.label}. Press space to select, delete to remove.`)
+        .attr('tabindex', keyboardMode ? '0' : '-1')
+        .classed('keyboard-focusable', keyboardMode)
 
       // Add circles to nodes
       nodeElements.selectAll('circle').remove()
@@ -154,6 +182,55 @@ const InteractiveGraph: React.FC = () => {
         .style('dominant-baseline', 'middle')
         .style('pointer-events', 'none')
         .style('user-select', 'none')
+
+      // Register nodes for keyboard navigation
+      if (keyboardMode && keyboardNavRef.current) {
+        // Clear existing registrations
+        nodes.forEach(node => {
+          keyboardNavRef.current?.unregisterElement(node.id)
+        })
+
+        // Register each node
+        nodeElements.each(function(d: Node) {
+          const element = this as SVGGElement
+          keyboardNavRef.current?.registerElement({
+            id: d.id,
+            element: element,
+            ariaLabel: `Node: ${d.label}. Press space to select, delete to remove.`,
+            onActivate: () => {
+              if (isAddingConnection && selectedNode && selectedNode !== d.id) {
+                // Create connection
+                const targetNode = nodes.find(n => n.id === d.id)
+                if (targetNode) {
+                  setLinks(prev => [...prev, { source: selectedNode, target: d.id }])
+                  setIsAddingConnection(false)
+                  setSelectedNode(null)
+                }
+              } else {
+                // Select node
+                setSelectedNode(d.id)
+                setFocusedNode(d.id)
+              }
+            },
+            onFocus: () => {
+              setFocusedNode(d.id)
+              // Highlight focused node
+              select(element).select('circle')
+                .style('stroke', '#fbbf24')
+                .style('stroke-width', 4)
+            },
+            onBlur: () => {
+              if (focusedNode === d.id) {
+                setFocusedNode(null)
+              }
+              // Reset highlight
+              select(element).select('circle')
+                .style('stroke', selectedNode === d.id ? '#06b6d4' : '#fff')
+                .style('stroke-width', selectedNode === d.id ? 4 : 2)
+            }
+          })
+        })
+      }
 
       // Add drag behavior
       const dragHandler = drag<SVGGElement, Node>()
@@ -252,8 +329,9 @@ const InteractiveGraph: React.FC = () => {
 
     return () => {
       simulation.stop()
+      keyboardNavRef.current?.destroy()
     }
-  }, [isClient, nodes, links, isAddingConnection, selectedNode, removeNode])
+  }, [isClient, nodes, links, isAddingConnection, selectedNode, removeNode, keyboardMode, focusedNode])
 
   if (!isClient) {
     return (
@@ -269,27 +347,66 @@ const InteractiveGraph: React.FC = () => {
       <div className="mb-4 flex gap-2 flex-wrap justify-center">
         <button
           onClick={addRandomNode}
-          className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/80 transition-colors"
+          className="btn-accessible px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/80 transition-colors"
+          aria-label="Add a new random node to the graph"
         >
           Add Node
         </button>
         <button
           onClick={() => setIsAddingConnection(!isAddingConnection)}
-          className={`px-3 py-1 rounded text-sm transition-colors ${
+          className={`btn-accessible px-3 py-1 rounded text-sm transition-colors ${
             isAddingConnection 
               ? 'bg-amber-500 text-white' 
               : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
           }`}
+          aria-label={isAddingConnection ? 'Cancel connection mode' : 'Enter connection mode to link nodes'}
         >
           {isAddingConnection ? 'Cancel Connection' : 'Add Connection'}
         </button>
         <button
           onClick={() => simulationRef.current?.alphaTarget(0.3).restart()}
-          className="px-3 py-1 bg-secondary text-secondary-foreground rounded text-sm hover:bg-secondary/80 transition-colors"
+          className="btn-accessible px-3 py-1 bg-secondary text-secondary-foreground rounded text-sm hover:bg-secondary/80 transition-colors"
+          aria-label="Restart the physics simulation to reorganize nodes"
         >
           Reheat
         </button>
+        <button
+          onClick={() => {
+            const newKeyboardMode = !keyboardMode
+            setKeyboardMode(newKeyboardMode)
+            if (newKeyboardMode) {
+              keyboardNavRef.current?.activate()
+            } else {
+              keyboardNavRef.current?.deactivate()
+            }
+          }}
+          className={`btn-accessible px-3 py-1 rounded text-sm transition-colors ${
+            keyboardMode 
+              ? 'bg-green-600 text-white border-green-600' 
+              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+          }`}
+          aria-label={keyboardMode ? 'Disable keyboard navigation mode' : 'Enable keyboard navigation mode'}
+        >
+          {keyboardMode ? '⌨️ Keyboard ON' : '⌨️ Keyboard OFF'}
+        </button>
       </div>
+
+      {/* Keyboard Help */}
+      {keyboardMode && (
+        <div className="mb-4 p-3 bg-card rounded-lg border border-border text-sm">
+          <div className="font-semibold mb-2 text-foreground">Keyboard Controls:</div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-muted-foreground">
+            <div><kbd>K</kbd> Toggle keyboard mode</div>
+            <div><kbd>A</kbd> Add random node</div>
+            <div><kbd>C</kbd> Toggle connection mode</div>
+            <div><kbd>R</kbd> Reheat simulation</div>
+            <div><kbd>Arrow Keys</kbd> Navigate nodes</div>
+            <div><kbd>Space/Enter</kbd> Select node</div>
+            <div><kbd>Delete</kbd> Remove selected node</div>
+            <div><kbd>Escape</kbd> Clear selection</div>
+          </div>
+        </div>
+      )}
 
 
       {/* Graph */}

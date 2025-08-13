@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { UrlParameterManager } from '../../../site/src/utils/UrlParameterManager'
-import { PerformanceMonitor } from '../../../site/src/utils/PerformanceMonitor'
-import { DeviceCapabilityManager } from '../../../site/src/utils/DeviceCapabilityManager'
-import { ResourceManager } from '../../../site/src/utils/ResourceManager'
-import { ModuleRegistryV3 } from '../../../site/src/utils/ModuleRegistryV3'
-import { CanvasLayerManager } from '../../../site/src/utils/CanvasLayerManager'
+import { UrlParameterManager } from '@site/utils/UrlParameterManager'
+import { PerformanceMonitor } from '@site/utils/PerformanceMonitor'
+import { DeviceCapabilityManager } from '@site/utils/DeviceCapabilityManager'
+import { ResourceManager } from '@site/utils/ResourceManager'
+import { ModuleRegistryV3 } from '@site/utils/ModuleRegistryV3'
+import { CanvasLayerManager } from '@site/utils/CanvasLayerManager'
 import { 
   ModuleRegistryEntryV3, 
   ModuleCategory, 
   ModuleCapability, 
   AssetType 
-} from '../../../interfaces/BackgroundSystemV3'
+} from '@site/interfaces/BackgroundSystemV3'
 
 // Mock DOM APIs
 Object.defineProperty(window, 'performance', {

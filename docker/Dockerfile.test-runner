@@ -1,5 +1,5 @@
 # Lightweight Dockerfile for running Playwright tests only
-FROM mcr.microsoft.com/playwright:v1.50.0-jammy
+FROM mcr.microsoft.com/playwright:v1.54.2-jammy
 
 # Install Node.js, pnpm, and build dependencies for native modules
 RUN apt-get update && apt-get install -y \
@@ -18,20 +18,23 @@ WORKDIR /app
 # Copy package files
 COPY package*.json pnpm-*.yaml ./
 COPY packages/site/package.json ./packages/site/
+COPY packages/tests/package.json ./packages/tests/
 
 # Install dependencies
-RUN pnpm install --filter site --force
+RUN pnpm install --filter tests --force
 
 # Copy the built site and test files
 COPY packages/site/public ./packages/site/public
-COPY packages/site/tests ./packages/site/tests
-COPY packages/site/playwright.config.ts ./packages/site/
+COPY packages/tests/e2e ./packages/tests/e2e
+COPY packages/tests/axe ./packages/tests/axe
+COPY packages/tests/fixtures ./packages/tests/fixtures
+COPY docker/playwright.docker.config.ts ./docker/
 
 # Set environment
 ENV NODE_ENV=test
 ENV CI=true
 
-WORKDIR /app/packages/site
+WORKDIR /app/packages/tests
 
-# Run tests by default
-CMD ["npx", "playwright", "test", "--reporter=list,html,json"]
+# Run focused Docker tests with custom config
+CMD ["npx", "playwright", "test", "--config=/app/docker/playwright.docker.config.ts"]

@@ -52,92 +52,14 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }))
 
-// Mock canvas context for background modules
-const mockGradient = {
-  addColorStop: vi.fn()
-}
+// Import and setup standardized canvas mocks
+import { setupCanvasMocks } from './setup/mocks/canvas'
 
-const mockContext = {
-  fillRect: vi.fn(),
-  clearRect: vi.fn(),
-  getImageData: vi.fn(() => ({ data: new Array(4) })),
-  putImageData: vi.fn(),
-  createImageData: vi.fn(() => ({ data: new Array(4) })),
-  setTransform: vi.fn(),
-  drawImage: vi.fn(),
-  save: vi.fn(),
-  restore: vi.fn(),
-  beginPath: vi.fn(),
-  moveTo: vi.fn(),
-  lineTo: vi.fn(),
-  closePath: vi.fn(),
-  stroke: vi.fn(),
-  fill: vi.fn(),
-  // Canvas gradient methods
-  createLinearGradient: vi.fn(() => mockGradient),
-  createRadialGradient: vi.fn(() => mockGradient),
-  createPattern: vi.fn(),
-  // Additional canvas properties
-  fillStyle: '',
-  strokeStyle: '',
-  lineWidth: 1,
-  globalAlpha: 1,
-  globalCompositeOperation: 'source-over',
-  // Text methods
-  fillText: vi.fn(),
-  strokeText: vi.fn(),
-  measureText: vi.fn(() => ({ width: 0 })),
-  // Path methods
-  arc: vi.fn(),
-  arcTo: vi.fn(),
-  bezierCurveTo: vi.fn(),
-  quadraticCurveTo: vi.fn(),
-  rect: vi.fn(),
-  translate: vi.fn(),
-  scale: vi.fn(),
-  // Additional canvas properties needed for knowledge graph
-  font: '',
-  textAlign: 'center',
-  textBaseline: 'middle'
-}
+// Import and setup test utilities
+import './setup/mocks/testUtils'
 
-// Create a proper HTMLCanvasElement mock
-class MockHTMLCanvasElement {
-  width = 800
-  height = 600
-  tagName = 'CANVAS'
-  
-  getContext = vi.fn(() => mockContext)
-  toDataURL = vi.fn(() => 'data:image/png;base64,mock')
-  addEventListener = vi.fn()
-  removeEventListener = vi.fn()
-  getBoundingClientRect = vi.fn(() => ({
-    left: 0,
-    top: 0,
-    width: this.width,
-    height: this.height
-  }))
-  
-  constructor() {
-    // Create a simple style mock that can be set
-    Object.defineProperty(this, 'style', {
-      value: { cursor: 'default' },
-      writable: true,
-      enumerable: true,
-      configurable: true
-    })
-  }
-}
-
-// Make MockHTMLCanvasElement inherit from HTMLCanvasElement for instanceof checks
-Object.setPrototypeOf(MockHTMLCanvasElement.prototype, HTMLCanvasElement.prototype)
-Object.setPrototypeOf(MockHTMLCanvasElement, HTMLCanvasElement)
-
-// Set up the mock constructor
-global.MockHTMLCanvasElement = MockHTMLCanvasElement
-
-HTMLCanvasElement.prototype.getContext = vi.fn(() => mockContext)
-HTMLCanvasElement.prototype.toDataURL = vi.fn(() => 'data:image/png;base64,mock')
+// Setup standardized canvas mocks globally
+setupCanvasMocks()
 
 // Mock document.elementsFromPoint for knowledge graph tests
 global.document.elementsFromPoint = vi.fn(() => [])

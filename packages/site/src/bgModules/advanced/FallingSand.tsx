@@ -373,6 +373,10 @@ class FallingSandSimulation {
   private frameCount = 0;
   private lastFrameTime = 0;
 
+  // Store bound event listeners for proper cleanup
+  private boundHandleContextLost: (event: Event) => void;
+  private boundHandleContextRestored: () => void;
+
   constructor(canvas: HTMLCanvasElement, config: FallingSandConfig) {
     this.canvas = canvas;
     this.config = config;
@@ -395,9 +399,55 @@ class FallingSandSimulation {
     this.width = Math.floor(canvas.width / config.cellSize);
     this.height = Math.floor(canvas.height / config.cellSize);
     
+    // Bind event handlers for proper cleanup
+    this.boundHandleContextLost = this.handleContextLost.bind(this);
+    this.boundHandleContextRestored = this.handleContextRestored.bind(this);
+    
+    // Add WebGL context loss handling
+    this.setupContextLossHandling();
+    
     this.initializeGL();
     this.setupInteraction();
   }
+
+  private setupContextLossHandling() {
+    // Handle WebGL context loss
+    this.canvas.addEventListener('webglcontextlost', this.boundHandleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', this.boundHandleContextRestored, false);
+  }
+
+  private handleContextLost(event: Event) {
+    event.preventDefault();
+    console.warn('FallingSand: WebGL context lost');
+    
+    // Clear WebGL resources (they're automatically invalid now)
+    // Textures and framebuffers are automatically invalidated during context loss
+    
+    // Notify instance about context loss
+    if (this.onContextLost) {
+      this.onContextLost();
+    }
+  }
+
+  private handleContextRestored() {
+    console.log('FallingSand: WebGL context restored, reinitializing...');
+    
+    try {
+      // Reinitialize WebGL resources
+      this.initializeGL();
+      
+      // Notify instance about context restoration
+      if (this.onContextRestored) {
+        this.onContextRestored();
+      }
+    } catch (error) {
+      console.error('FallingSand: Failed to restore WebGL context:', error);
+    }
+  }
+
+  // Callback properties for context loss handling
+  public onContextLost?: () => void;
+  public onContextRestored?: () => void;
   
   private initializeGL() {
     const gl = this.gl;
@@ -636,6 +686,14 @@ class FallingSandSimulation {
   }
   
   public cleanup() {
+    // Remove event listeners first
+    this.canvas.removeEventListener('webglcontextlost', this.boundHandleContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this.boundHandleContextRestored);
+    
+    // Clear callbacks
+    this.onContextLost = undefined;
+    this.onContextRestored = undefined;
+    
     const gl = this.gl;
     
     gl.deleteTexture(this.currentTexture);
@@ -667,6 +725,21 @@ class FallingSandInstance implements ModuleInstance {
     };
     
     this.simulation = new FallingSandSimulation(canvas, config);
+    
+    // Set up context loss callbacks
+    this.simulation.onContextLost = () => {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    };
+    
+    this.simulation.onContextRestored = () => {
+      // Restart animation if it was running
+      if (this.isRunning && !this.animationId) {
+        this.animate();
+      }
+    };
   }
 
   start() {

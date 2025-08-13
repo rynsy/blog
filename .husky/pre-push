@@ -1,0 +1,132 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook for final validation before pushing to remote
+echo "🚀 Running pre-push validation..."
+
+# Navigate to project root
+cd "$(git rev-parse --show-toplevel)"
+
+# Get current branch
+current_branch=$(git branch --show-current)
+echo "📍 Current branch: $current_branch"
+
+# Check if pushing to main/master branch
+if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
+  echo "⚠️  Pushing to $current_branch branch. Running comprehensive checks..."
+  
+  # Run full test suite for main branch
+  if [ -f "packages/site/package.json" ]; then
+    cd packages/site
+    
+    echo "🧪 Running full test suite..."
+    if ! pnpm test:local-ci; then
+      echo "❌ Full test suite failed. Cannot push to $current_branch."
+      exit 1
+    fi
+    
+    echo "🏗️  Running production build test..."
+    if ! pnpm build; then
+      echo "❌ Production build failed. Cannot push to $current_branch."
+      exit 1
+    fi
+    
+    cd ../..
+  fi
+else
+  echo "📝 Feature branch detected. Running basic validation..."
+  
+  # Run basic checks for feature branches
+  if [ -f "packages/site/package.json" ]; then
+    cd packages/site
+    
+    # Type checking
+    echo "📘 Running TypeScript check..."
+    if ! pnpm typecheck; then
+      echo "❌ TypeScript errors found. Please fix before pushing."
+      exit 1
+    fi
+    
+    # Linting
+    echo "🔧 Running linter..."
+    if ! pnpm lint; then
+      echo "❌ Linting errors found. Please fix before pushing."
+      exit 1
+    fi
+    
+    # Unit tests only
+    echo "🧪 Running unit tests..."
+    if ! pnpm test:unit; then
+      echo "❌ Unit tests failed. Please fix before pushing."
+      exit 1
+    fi
+    
+    cd ../..
+  fi
+fi
+
+# Check for secrets in committed files
+echo "🔒 Scanning for potential secrets..."
+SECRET_PATTERNS="(password|secret|key|token|api_key|private_key|auth)"
+if git log --oneline -10 | xargs git show --name-only | xargs grep -l -i "$SECRET_PATTERNS" 2>/dev/null | grep -v node_modules | head -5; then
+  echo "⚠️  Potential secrets detected in recent commits. Please review:"
+  echo "   - API keys or tokens"
+  echo "   - Passwords or secrets"
+  echo "   - Private keys"
+  echo ""
+  echo "❓ Continue anyway? (y/N)"
+  read -r response
+  if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
+    echo "❌ Push cancelled by user."
+    exit 1
+  fi
+fi
+
+# Check commit history for quality
+echo "📜 Checking recent commit history..."
+RECENT_COMMITS=$(git log --oneline -5 --pretty=format:"%s")
+echo "Recent commits:"
+echo "$RECENT_COMMITS" | sed 's/^/   /'
+
+# Warn about fixup/squash commits
+if echo "$RECENT_COMMITS" | grep -qi "fixup\|squash"; then
+  echo "⚠️  Fixup/squash commits detected. Consider rebasing before pushing."
+fi
+
+# Check branch is up to date with remote (if remote exists)
+if git ls-remote --exit-code origin >/dev/null 2>&1; then
+  echo "📡 Checking if branch is up to date with remote..."
+  git fetch origin "$current_branch" 2>/dev/null || echo "   No remote branch found."
+  
+  if git merge-base --is-ancestor HEAD origin/"$current_branch" 2>/dev/null; then
+    echo "✅ Branch is up to date with remote."
+  else
+    LOCAL=$(git rev-parse HEAD)
+    REMOTE=$(git rev-parse origin/"$current_branch" 2>/dev/null || echo "")
+    
+    if [ -n "$REMOTE" ] && [ "$LOCAL" != "$REMOTE" ]; then
+      echo "⚠️  Branch may be out of sync with remote. Consider pulling latest changes."
+      echo "❓ Continue anyway? (y/N)"
+      read -r response
+      if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
+        echo "❌ Push cancelled by user."
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+# Final check for uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+  echo "⚠️  Uncommitted changes detected:"
+  git status --porcelain
+  echo "❓ Continue pushing anyway? (y/N)"
+  read -r response
+  if [ "$response" != "y" ] && [ "$response" != "Y" ]; then
+    echo "❌ Push cancelled by user."
+    exit 1
+  fi
+fi
+
+echo "✅ All pre-push checks passed! Pushing to remote..."
+exit 0

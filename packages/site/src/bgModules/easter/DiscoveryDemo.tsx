@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import { BackgroundModuleV3, ModuleSetupParamsV3, EasterEggEvent } from '../../interfaces/BackgroundSystemV3'
+import { TimerManager } from '../../utils/TimerManager'
 
 /**
  * Easter Egg Discovery Demo Module
@@ -43,6 +44,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
   private state: DiscoveryDemoState
   private lastFrame = 0
   private params!: ModuleSetupParamsV3
+  private timerManager: TimerManager = new TimerManager() // Track timers for cleanup
   
   constructor() {
     this.state = {
@@ -223,7 +225,7 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     }
     
     this.state.patternVisualization = true
-    setTimeout(() => {
+    this.timerManager.setTimeout(() => {
       this.state.patternVisualization = false
     }, 1000)
   }
@@ -247,6 +249,9 @@ class DiscoveryDemoModule implements BackgroundModuleV3 {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId)
     }
+    
+    // Clear any pending timers to prevent memory leaks
+    this.timerManager.destroy()
     console.log('🎨 Discovery Demo Module deactivated')
   }
   

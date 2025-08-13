@@ -1,0 +1,79 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit hook for code quality checks
+echo "🔍 Running pre-commit quality checks..."
+
+# Navigate to project root
+cd "$(git rev-parse --show-toplevel)"
+
+# Check if we're in the packages/site directory for site-specific checks
+if [ -f "packages/site/package.json" ]; then
+  cd packages/site
+  
+  # Run TypeScript type checking
+  echo "📘 Running TypeScript type check..."
+  if ! pnpm typecheck; then
+    echo "❌ TypeScript errors found. Please fix them before committing."
+    exit 1
+  fi
+  
+  # Run ESLint
+  echo "🔧 Running ESLint..."
+  if ! pnpm lint; then
+    echo "❌ ESLint errors found. Please fix them before committing."
+    exit 1
+  fi
+  
+  # Run unit tests
+  echo "🧪 Running unit tests..."
+  if ! pnpm test:unit; then
+    echo "❌ Unit tests failed. Please fix them before committing."
+    exit 1
+  fi
+  
+  cd ../..
+fi
+
+# Check for common issues across the repository
+echo "🔍 Running repository-wide checks..."
+
+# Check for merge conflict markers
+if grep -r "<<<<<<< HEAD\|=======" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.json" --include="*.md" .; then
+  echo "❌ Merge conflict markers found. Please resolve conflicts before committing."
+  exit 1
+fi
+
+# Check for TODO comments in critical files (optional warning)
+TODO_COUNT=$(grep -r "TODO\|FIXME\|XXX" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" . | grep -v node_modules | grep -v .git | wc -l)
+if [ "$TODO_COUNT" -gt 0 ]; then
+  echo "⚠️  Found $TODO_COUNT TODO/FIXME comments. Consider addressing them."
+fi
+
+# Check for console.log statements in production code (warning only)
+CONSOLE_COUNT=$(grep -r "console\." --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" packages/site/src | grep -v "console.error\|console.warn" | wc -l)
+if [ "$CONSOLE_COUNT" -gt 0 ]; then
+  echo "⚠️  Found $CONSOLE_COUNT console.log statements. Consider removing them from production code."
+fi
+
+# Check for large files
+echo "📦 Checking for large files..."
+LARGE_FILES=$(find . -type f -size +1M -not -path "./node_modules/*" -not -path "./.git/*" -not -path "./packages/site/public/*" -not -path "./build/*")
+if [ -n "$LARGE_FILES" ]; then
+  echo "⚠️  Large files found (>1MB):"
+  echo "$LARGE_FILES"
+  echo "Consider using Git LFS for large binary files."
+fi
+
+# Check package.json for security vulnerabilities (if available)
+if command -v npm >/dev/null 2>&1; then
+  echo "🔒 Running security audit..."
+  if npm audit --audit-level moderate 2>/dev/null; then
+    echo "✅ No security vulnerabilities found."
+  else
+    echo "⚠️  Security vulnerabilities detected. Run 'npm audit fix' to resolve."
+  fi
+fi
+
+echo "✅ All pre-commit checks passed!"
+exit 0

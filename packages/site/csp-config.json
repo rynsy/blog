@@ -12,8 +12,8 @@
     "default-src": ["'self'"],
       "script-src": [
       "'self'",
-      "'unsafe-inline'",
-      "'unsafe-eval'",
+      "'strict-dynamic'",
+      "'nonce-{NONCE}'",
       {
         "domain": "static.cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
@@ -47,7 +47,8 @@
     ],
     "script-src-elem": [
       "'self'",
-      "'unsafe-inline'",
+      "'strict-dynamic'",
+      "'nonce-{NONCE}'",
       {
         "domain": "static.cloudflareinsights.com",
         "purpose": "Cloudflare analytics",
@@ -109,17 +110,17 @@
     ],
     "style-src": [
       "'self'",
-      "'unsafe-inline'",
+      "'nonce-{NONCE}'",
       {
         "domain": "fonts.googleapis.com",
         "purpose": "Google Fonts CSS",
         "category": "fonts"
       }
     ],
-    "style-src-attr": ["'unsafe-inline'"],
+    "style-src-attr": ["'nonce-{NONCE}'"],
     "style-src-elem": [
       "'self'",
-      "'unsafe-inline'",
+      "'nonce-{NONCE}'",
       {
         "domain": "fonts.googleapis.com",
         "purpose": "Google Fonts CSS",

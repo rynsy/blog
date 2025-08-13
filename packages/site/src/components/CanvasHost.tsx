@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useBackground } from '../contexts/BackgroundContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { debugBackground } from '../utils/debug'
+import { WebGLErrorBoundary } from './WebGLErrorBoundary'
 
 interface CanvasHostProps {
   className?: string
@@ -16,7 +17,14 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
     modules,
     _setModuleInstance,
     _moduleInstance 
-  } = useBackground() as any // Type assertion needed for internal methods
+  } = useBackground() as {
+    currentModule: string | null;
+    isActive: boolean;
+    isPaused: boolean;
+    modules: Record<string, any>;
+    _setModuleInstance: (instance: any) => void;
+    _moduleInstance: any;
+  }
   const { theme } = useTheme()
 
   // Determine if current module needs interactivity (like knowledge graph)
@@ -183,7 +191,15 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
   }, [isActive, isPaused])
 
   return (
-    <>
+    <WebGLErrorBoundary
+      onError={(error, errorInfo) => {
+        debugBackground.canvas('CanvasHost WebGL error:', {
+          error: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack
+        })
+      }}
+    >
       {/* Accessibility banner for reduced motion */}
       {showReducedMotionBanner && (
         <div 
@@ -216,7 +232,7 @@ const CanvasHost: React.FC<CanvasHostProps> = ({ className = '' }) => {
           aria-hidden="true"
         />
       )}
-    </>
+    </WebGLErrorBoundary>
   )
 }
 

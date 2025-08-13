@@ -214,6 +214,10 @@ class DVDLogoBouncer {
   private frameCount = 0;
   private lastFrameTime = 0;
 
+  // Store bound event listeners for proper cleanup
+  private boundHandleContextLost: (event: Event) => void;
+  private boundHandleContextRestored: () => void;
+
   constructor(canvas: HTMLCanvasElement, config: DVDLogoConfig) {
     this.canvas = canvas;
     this.config = config;
@@ -233,10 +237,57 @@ class DVDLogoBouncer {
     
     this.gl = gl as WebGLRenderingContext;
     
+    // Bind event handlers for proper cleanup
+    this.boundHandleContextLost = this.handleContextLost.bind(this);
+    this.boundHandleContextRestored = this.handleContextRestored.bind(this);
+    
+    // Add WebGL context loss handling
+    this.setupContextLossHandling();
+    
     this.initializeGL();
     this.createLogos();
     this.setupInteraction();
   }
+
+  private setupContextLossHandling() {
+    // Handle WebGL context loss
+    this.canvas.addEventListener('webglcontextlost', this.boundHandleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', this.boundHandleContextRestored, false);
+  }
+
+  private handleContextLost(event: Event) {
+    event.preventDefault();
+    console.warn('DVDLogoBouncer: WebGL context lost');
+    
+    // Clear WebGL resources (they're automatically invalid now)
+    this.textures.clear();
+    
+    // Notify instance about context loss
+    if (this.onContextLost) {
+      this.onContextLost();
+    }
+  }
+
+  private handleContextRestored() {
+    console.log('DVDLogoBouncer: WebGL context restored, reinitializing...');
+    
+    try {
+      // Reinitialize WebGL resources
+      this.initializeGL();
+      this.createLogos();
+      
+      // Notify instance about context restoration
+      if (this.onContextRestored) {
+        this.onContextRestored();
+      }
+    } catch (error) {
+      console.error('DVDLogoBouncer: Failed to restore WebGL context:', error);
+    }
+  }
+
+  // Callback properties for context loss handling
+  public onContextLost?: () => void;
+  public onContextRestored?: () => void;
   
   private initializeGL() {
     const gl = this.gl;
@@ -587,6 +638,14 @@ class DVDLogoBouncer {
   }
   
   public cleanup() {
+    // Remove event listeners first
+    this.canvas.removeEventListener('webglcontextlost', this.boundHandleContextLost);
+    this.canvas.removeEventListener('webglcontextrestored', this.boundHandleContextRestored);
+    
+    // Clear callbacks
+    this.onContextLost = undefined;
+    this.onContextRestored = undefined;
+    
     const gl = this.gl;
     
     // Cleanup WebGL resources
@@ -629,6 +688,21 @@ class DVDLogoBouncerInstance implements ModuleInstance {
     };
     
     this.bouncer = new DVDLogoBouncer(canvas, config);
+    
+    // Set up context loss callbacks
+    this.bouncer.onContextLost = () => {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    };
+    
+    this.bouncer.onContextRestored = () => {
+      // Restart animation if it was running
+      if (this.isRunning && !this.animationId) {
+        this.animate();
+      }
+    };
   }
 
   start() {

@@ -1,5 +1,6 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
 import { BackgroundModuleV3, ModuleSetupParamsV3, PerformanceMetrics, MemoryStats, ModuleConfiguration, ValidationResult, SerializableState, ModuleMessage, ModuleResponse, CanvasRequirements } from '../../../interfaces/BackgroundSystemV3'
+import { ModuleConfigurationData } from '../../types/browser-apis'
 import { debugBackground } from '../../utils/debug'
 
 interface GradientConfig {
@@ -279,7 +280,7 @@ class GradientModule implements BackgroundModule, BackgroundModuleV3 {
       return { valid: false, errors, warnings }
     }
     
-    const cfg = config as any
+    const cfg = config as ModuleConfigurationData
     
     if (cfg.animationSpeed !== undefined && (typeof cfg.animationSpeed !== 'number' || cfg.animationSpeed < 0.1 || cfg.animationSpeed > 3.0)) {
       errors.push({ path: 'animationSpeed', message: 'Animation speed must be between 0.1 and 3.0' })

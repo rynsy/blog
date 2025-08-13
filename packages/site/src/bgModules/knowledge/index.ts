@@ -1,5 +1,6 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
 import { BackgroundModuleV3, ModuleSetupParamsV3, PerformanceMetrics, MemoryStats, ModuleConfiguration, ValidationResult, SerializableState, ModuleMessage, ModuleResponse, CanvasRequirements } from '../../../interfaces/BackgroundSystemV3'
+import { ModuleConfigurationData, SavedStateData } from '../../types/browser-apis'
 import * as d3Force from 'd3-force'
 import { select, pointer } from 'd3-selection'
 import { drag } from 'd3-drag'
@@ -616,7 +617,7 @@ class KnowledgeGraphModule implements BackgroundModule, BackgroundModuleV3 {
       return { valid: false, errors, warnings }
     }
     
-    const cfg = config as any
+    const cfg = config as ModuleConfigurationData
     
     if (cfg.nodes && (typeof cfg.nodes !== 'number' || cfg.nodes < 5 || cfg.nodes > 200)) {
       errors.push({ path: 'nodes', message: 'Node count must be between 5 and 200' })
@@ -680,7 +681,7 @@ class KnowledgeGraphModule implements BackgroundModule, BackgroundModuleV3 {
     }
     
     if (state.data) {
-      const data = state.data as any
+      const data = state.data as SavedStateData
       if (data.viewTransform) {
         this.viewTransform = data.viewTransform
       }

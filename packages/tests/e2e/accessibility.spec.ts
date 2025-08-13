@@ -78,7 +78,7 @@ test.describe('Accessibility Tests (A-01)', () => {
       await page.waitForLoadState('networkidle')
 
       // Open control tray using test utils
-      const dialog = await testUtils.openControlTray()
+      const _dialog = await testUtils.openControlTray()
 
       // Check accessibility of opened dialog
       await checkA11y(page, SELECTORS.DIALOG, {
@@ -192,14 +192,14 @@ test.describe('Accessibility Tests (A-01)', () => {
         if (await dialog.isVisible()) {
           // Focus should move into dialog
           const focused = page.locator(':focus')
-          const isInDialog = await focused.evaluate(el => !!el.closest('[role="dialog"]'))
+          const _isInDialog = await focused.evaluate(el => !!el.closest('[role="dialog"]'))
           
           // Close dialog
           await page.keyboard.press('Escape')
           await page.waitForTimeout(300)
           
           // Focus should return to trigger button
-          const newFocused = page.locator(':focus')
+          const _newFocused = page.locator(':focus')
           const isSameElement = await page.evaluate((buttonSelector) => {
             const focused = document.activeElement
             const button = document.querySelector(buttonSelector)
@@ -647,7 +647,7 @@ test.describe('Accessibility Tests (A-01)', () => {
       const controlButton = page.locator(SELECTORS.CONTROL_BUTTON).first()
       
       if (await controlButton.isVisible()) {
-        const dialog = await testUtils.openControlTray()
+        const _dialog = await testUtils.openControlTray()
         
         // Try to select knowledge module (will fail to load)
         await page.locator('text=Knowledge Graph').click()

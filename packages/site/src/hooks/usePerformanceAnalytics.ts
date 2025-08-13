@@ -14,6 +14,7 @@ import type {
   PerformanceMetrics,
   DeviceCapabilities
 } from '../interfaces/BackgroundSystemV3'
+import { ExtendedNavigator, BatteryManager, ThermalState } from '../types/browser-apis'
 
 interface PerformanceAnalyticsConfig {
   trackFrameDrops: boolean
@@ -133,8 +134,9 @@ export const usePerformanceAnalytics = (config: Partial<PerformanceAnalyticsConf
     if (!analytics.isEnabled || !finalConfig.trackBatteryImpact || typeof navigator === 'undefined') return
 
     const updateBatteryInfo = () => {
-      if ('getBattery' in navigator) {
-        (navigator as any).getBattery().then((battery: any) => {
+      const extendedNavigator = navigator as ExtendedNavigator
+      if (extendedNavigator.getBattery) {
+        extendedNavigator.getBattery().then((battery: BatteryManager) => {
           batteryInfoRef.current = {
             level: battery.level * 100,
             charging: battery.charging
@@ -189,7 +191,7 @@ export const usePerformanceAnalytics = (config: Partial<PerformanceAnalyticsConf
       renderTime: metrics.renderTime,
       cpuUsage: metrics.cpuUsage,
       batteryLevel: batteryInfoRef.current.level,
-      thermalState: thermalStateRef.current as any,
+      thermalState: thermalStateRef.current as ThermalState,
       activeModules: Array.from(backgroundContext?.activeModules.keys() || []),
       deviceType: deviceCapabilities.isMobile ? 'mobile' : 'desktop',
       qualityLevel: determineCurrentQualityLevel()

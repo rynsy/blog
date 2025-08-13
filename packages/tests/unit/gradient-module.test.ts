@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { setup } from '@site/bgModules/gradient'
+import testUtils from '../setup/testUtils'
 
 // Mock debug utility
 vi.mock('@site/utils/debug', () => ({
@@ -160,7 +161,7 @@ describe('Gradient Module Implementation', () => {
       expect(module).toBeDefined()
 
       // Wait for animation frame
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       expect(mockContext.createLinearGradient).toHaveBeenCalled()
       expect(mockContext.fillRect).toHaveBeenCalledWith(0, 0, 800, 600)
@@ -175,7 +176,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       expect(mockContext.createRadialGradient).toHaveBeenCalled()
     })
@@ -189,7 +190,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       expect(mockContext.beginPath).toHaveBeenCalled()
       expect(mockContext.arc).toHaveBeenCalled()
@@ -205,7 +206,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       expect(mockContext.clearRect).toHaveBeenCalledWith(0, 0, 800, 600)
     })
@@ -264,7 +265,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       // Should set multiply blend mode during render
       expect(mockContext.globalCompositeOperation).toBeDefined()
@@ -279,7 +280,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       // Should modify global alpha for particles
       expect(mockContext.globalAlpha).toEqual(expect.any(Number))
@@ -294,7 +295,7 @@ describe('Gradient Module Implementation', () => {
       })
       expect(module).toBeDefined()
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       // Should reset to default values
       // Note: This is tricky to test since we modify the property directly
@@ -316,7 +317,7 @@ describe('Gradient Module Implementation', () => {
       const mockDate = vi.spyOn(Date, 'now')
       mockDate.mockReturnValueOnce(1000).mockReturnValueOnce(1016)
 
-      await new Promise(resolve => setTimeout(resolve, 20))
+      await testUtils.waitForAnimationFrames(1)
 
       expect(mockRequestAnimationFrame).toHaveBeenCalled()
       mockDate.mockRestore()

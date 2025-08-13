@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useBackgroundV3 } from '../contexts/BackgroundContextV3'
 import { useTheme } from '../contexts/ThemeContext'
 import { debugBackground } from '../utils/debug'
+import { WebGLErrorBoundary } from './WebGLErrorBoundary'
 
 interface CanvasHostV3Props {
   className?: string
@@ -63,7 +64,15 @@ const CanvasHostV3: React.FC<CanvasHostV3Props> = ({ className = '' }) => {
   })
 
   return (
-    <>
+    <WebGLErrorBoundary
+      onError={(error, errorInfo) => {
+        debugBackground.canvas('CanvasHostV3 WebGL error:', {
+          error: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack
+        })
+      }}
+    >
       {/* Performance warning banner */}
       {showPerformanceWarning && (
         <div 
@@ -164,7 +173,7 @@ const CanvasHostV3: React.FC<CanvasHostV3Props> = ({ className = '' }) => {
         )}
         {!isActive && 'Background animations are disabled.'}
       </div>
-    </>
+    </WebGLErrorBoundary>
   )
 }
 

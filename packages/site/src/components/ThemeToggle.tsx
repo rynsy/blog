@@ -26,7 +26,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-gray-200 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      className="group fixed bottom-4 right-4 z-50 btn-accessible rounded-full bg-background border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode. Currently in ${theme} mode.`}
       aria-pressed={theme === 'dark'}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
@@ -34,7 +34,7 @@ const ThemeToggle: React.FC = () => {
       {theme === 'light' ? (
         // Moon icon for dark mode
         <svg
-          className="w-5 h-5 text-gray-800 dark:text-gray-200"
+          className="w-5 h-5 text-primary group-hover:text-primary-foreground"
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,7 @@ const ThemeToggle: React.FC = () => {
       ) : (
         // Sun icon for light mode
         <svg
-          className="w-5 h-5 text-gray-800 dark:text-gray-200"
+          className="w-5 h-5 text-primary group-hover:text-primary-foreground"
           fill="currentColor"
           viewBox="0 0 20 20"
           xmlns="http://www.w3.org/2000/svg"

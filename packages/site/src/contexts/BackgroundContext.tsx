@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode, useMemo } from 'react'
 import { useTheme } from './ThemeContext'
 
 export interface BackgroundModule {
@@ -215,7 +215,8 @@ export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({ children
     setModuleInstance(instance)
   }, [])
 
-  const contextValue = {
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
     currentModule,
     isActive,
     isPaused,
@@ -230,7 +231,18 @@ export const BackgroundProvider: React.FC<BackgroundProviderProps> = ({ children
   } as BackgroundContextType & {
     _setModuleInstance: (instance: BackgroundModule | null) => void
     _moduleInstance: BackgroundModule | null
-  }
+  }), [
+    currentModule,
+    isActive,
+    isPaused,
+    modules,
+    setCurrentModule,
+    toggleActive,
+    togglePause,
+    registerModule,
+    setModuleInstanceInternal,
+    moduleInstance
+  ])
 
   return (
     <BackgroundContext.Provider value={contextValue}>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode, useRef } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode, useRef, useMemo } from 'react'
 import { useTheme } from './ThemeContext'
 import {
   BackgroundModuleV3,
@@ -617,7 +617,19 @@ export const BackgroundProviderV3: React.FC<BackgroundProviderV3Props> = ({
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [activeModules, isPaused, isActive])
   
-  const contextValue: BackgroundContextV3Type = {
+  // Memoize expensive registry operations
+  const registeredModules = useMemo(() => 
+    moduleRegistryRef.current?.getAllModules() || new Map(),
+    [moduleRegistryRef.current]
+  )
+
+  const deviceCapabilities = useMemo(() => 
+    deviceCapabilityManagerRef.current?.getCapabilities() || {} as DeviceCapabilities,
+    [deviceCapabilityManagerRef.current]
+  )
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue: BackgroundContextV3Type = useMemo(() => ({
     // Module management
     currentModule,
     activeModules,
@@ -637,10 +649,10 @@ export const BackgroundProviderV3: React.FC<BackgroundProviderV3Props> = ({
     urlParams,
     
     // Registry access
-    registeredModules: moduleRegistryRef.current?.getAllModules() || new Map(),
+    registeredModules,
     
     // Device capabilities
-    deviceCapabilities: deviceCapabilityManagerRef.current?.getCapabilities() || {} as DeviceCapabilities,
+    deviceCapabilities,
     
     // Actions
     activateModule,
@@ -654,7 +666,30 @@ export const BackgroundProviderV3: React.FC<BackgroundProviderV3Props> = ({
     togglePause,
     registerModule,
     modules: {} // Will be populated by legacy modules
-  }
+  }), [
+    // State dependencies
+    currentModule,
+    activeModules,
+    moduleStack,
+    isActive,
+    isPaused,
+    globalConfig,
+    moduleConfigurations,
+    performanceMetrics,
+    memoryUsage,
+    urlParams,
+    registeredModules,
+    deviceCapabilities,
+    // Action dependencies
+    activateModule,
+    deactivateModule,
+    updateModuleConfiguration,
+    generateShareableUrl,
+    setCurrentModule,
+    toggleActive,
+    togglePause,
+    registerModule
+  ])
   
   return (
     <BackgroundContextV3.Provider value={contextValue}>

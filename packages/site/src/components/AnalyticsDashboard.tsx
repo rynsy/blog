@@ -10,10 +10,11 @@ import type {
   AnalyticsReport,
   AnalyticsMetric
 } from '../interfaces/AnalyticsSystem'
+import { TimeRangeValue } from '../types/browser-apis'
 
 interface AnalyticsDashboardProps {
   className?: string
-  timeRange?: '1h' | '24h' | '7d' | '30d'
+  timeRange?: TimeRangeValue
   showPrivacyInfo?: boolean
   readonly?: boolean
 }
@@ -306,7 +307,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         {!readonly && (
           <select
             value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value as any)}
+            onChange={(e) => setSelectedTimeRange(e.target.value as TimeRangeValue)}
             className="block w-40 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {timeRangeOptions.map(option => (
