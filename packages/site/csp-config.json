@@ -6,124 +6,62 @@
   },
   "environments": {
     "production": true,
-    "development": true
+    "development": false
   },
   "csp": {
     "default-src": ["'self'"],
       "script-src": [
       "'self'",
-      "'strict-dynamic'",
-      "'nonce-{NONCE}'",
-      {
-        "domain": "static.cloudflareinsights.com",
-        "purpose": "Cloudflare analytics",
-        "category": "analytics"
-      },
-      {
-        "domain": "*.cloudflareinsights.com",
-        "purpose": "Cloudflare analytics (wildcard)",
-        "category": "analytics"
-      },
-      {
-        "domain": "cloudflareinsights.com",
-        "purpose": "Cloudflare analytics",
-        "category": "analytics"
-      },
-      {
-        "domain": "cdn.jsdelivr.net",
-        "purpose": "CDN for libraries and demos",
-        "category": "cdn"
-      },
-      {
-        "domain": "unpkg.com",
-        "purpose": "CDN for npm packages",
-        "category": "cdn"
-      },
+      "'unsafe-inline'",
+      "'unsafe-eval'",
       {
         "domain": "js-agent.newrelic.com",
-        "purpose": "New Relic browser monitoring",
+        "purpose": "New Relic browser monitoring scripts",
         "category": "analytics"
-      }
+      },
+      "*"
     ],
     "script-src-elem": [
       "'self'",
-      "'strict-dynamic'",
-      "'nonce-{NONCE}'",
-      {
-        "domain": "static.cloudflareinsights.com",
-        "purpose": "Cloudflare analytics",
-        "category": "analytics"
-      },
-      {
-        "domain": "*.cloudflareinsights.com",
-        "purpose": "Cloudflare analytics (wildcard)",
-        "category": "analytics"
-      },
-      {
-        "domain": "cloudflareinsights.com",
-        "purpose": "Cloudflare analytics",
-        "category": "analytics"
-      },
-      {
-        "domain": "cdn.jsdelivr.net",
-        "purpose": "CDN for libraries and demos",
-        "category": "cdn"
-      },
-      {
-        "domain": "unpkg.com",
-        "purpose": "CDN for npm packages",
-        "category": "cdn"
-      },
+      "'unsafe-inline'",
+      "'unsafe-eval'",
       {
         "domain": "js-agent.newrelic.com",
-        "purpose": "New Relic browser monitoring",
+        "purpose": "New Relic browser monitoring script elements",
         "category": "analytics"
-      }
+      },
+      "*"
     ],
     "connect-src": [
       "'self'",
       {
-        "domain": "static.cloudflareinsights.com",
-        "purpose": "Cloudflare analytics",
-        "category": "analytics"
-      },
-      {
-        "domain": "*.cloudflareinsights.com", 
-        "purpose": "Cloudflare analytics (wildcard)",
-        "category": "analytics"
-      },
-      {
-        "domain": "api.github.com",
-        "purpose": "GitHub API for portfolio data",
-        "category": "api"
-      },
-      {
         "domain": "bam.nr-data.net",
-        "purpose": "New Relic RUM data collection",
+        "purpose": "New Relic browser monitoring data collection",
+        "category": "analytics"
+      },
+      {
+        "domain": "js-agent.newrelic.com",
+        "purpose": "New Relic browser agent scripts",
         "category": "analytics"
       },
       {
         "domain": "bam-cell.nr-data.net",
-        "purpose": "New Relic RUM data collection (cellular)",
+        "purpose": "New Relic mobile data collection",
         "category": "analytics"
-      }
+      },
+      "*"
     ],
     "style-src": [
       "'self'",
-      "'nonce-{NONCE}'",
-      {
-        "domain": "fonts.googleapis.com",
-        "purpose": "Google Fonts CSS",
-        "category": "fonts"
-      }
+      "'unsafe-inline'"
     ],
-    "style-src-attr": ["'nonce-{NONCE}'"],
+    "style-src-attr": ["'unsafe-inline'"],
     "style-src-elem": [
       "'self'",
-      "'nonce-{NONCE}'",
+      "'unsafe-inline'",
       {
         "domain": "fonts.googleapis.com",
-        "purpose": "Google Fonts CSS",
+        "purpose": "Google Fonts CSS files",
         "category": "fonts"
       }
     ],

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ThemeProvider } from '../contexts/ThemeContext'
 // import { BackgroundProvider } from '../contexts/BackgroundContext' // Temporarily disabled
 import { debug } from '../utils/debug'
+import { initializeNewRelic } from '../utils/newrelic'
 
 // BackgroundClient temporarily removed
 // const BackgroundClient = React.lazy(() => import("./BackgroundClient"))
@@ -20,6 +21,9 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
   useEffect(() => {
     // This only runs on the client
     setIsClient(true)
+    
+    // Initialize New Relic as early as possible
+    initializeNewRelic()
     
     if (!globalBackgroundInitialized) {
       console.log('🏠 RootWrapper: FIRST MOUNT - initializing background system')

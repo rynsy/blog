@@ -1,31 +1,16 @@
 # Security headers for Cloudflare Pages
 # Generated automatically from csp-config.json
-# Last generated: 2025-08-13T01:28:29.972Z
+# Last generated: 2025-08-14T00:41:39.586Z
 
 # CSP Configuration:
 # ANALYTICS:
-#   static.cloudflareinsights.com - Cloudflare analytics
-#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
-#   cloudflareinsights.com - Cloudflare analytics
-#   js-agent.newrelic.com - New Relic browser monitoring
-#   static.cloudflareinsights.com - Cloudflare analytics
-#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
-#   cloudflareinsights.com - Cloudflare analytics
-#   js-agent.newrelic.com - New Relic browser monitoring
-#   static.cloudflareinsights.com - Cloudflare analytics
-#   *.cloudflareinsights.com - Cloudflare analytics (wildcard)
-#   bam.nr-data.net - New Relic RUM data collection
-#   bam-cell.nr-data.net - New Relic RUM data collection (cellular)
-# CDN:
-#   cdn.jsdelivr.net - CDN for libraries and demos
-#   unpkg.com - CDN for npm packages
-#   cdn.jsdelivr.net - CDN for libraries and demos
-#   unpkg.com - CDN for npm packages
-# API:
-#   api.github.com - GitHub API for portfolio data
+#   js-agent.newrelic.com - New Relic browser monitoring scripts
+#   js-agent.newrelic.com - New Relic browser monitoring script elements
+#   bam.nr-data.net - New Relic browser monitoring data collection
+#   js-agent.newrelic.com - New Relic browser agent scripts
+#   bam-cell.nr-data.net - New Relic mobile data collection
 # FONTS:
-#   fonts.googleapis.com - Google Fonts CSS
-#   fonts.googleapis.com - Google Fonts CSS
+#   fonts.googleapis.com - Google Fonts CSS files
 #   fonts.gstatic.com - Google Fonts files
 # MEDIA:
 #   via.placeholder.com - Placeholder images for blog posts
@@ -46,7 +31,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   cf-web-analytics: on
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'strict-dynamic' 'nonce-{NONCE}' static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com cdn.jsdelivr.net unpkg.com js-agent.newrelic.com; script-src-elem 'self' 'strict-dynamic' 'nonce-{NONCE}' static.cloudflareinsights.com *.cloudflareinsights.com cloudflareinsights.com cdn.jsdelivr.net unpkg.com js-agent.newrelic.com; connect-src 'self' static.cloudflareinsights.com *.cloudflareinsights.com api.github.com bam.nr-data.net bam-cell.nr-data.net; style-src 'self' 'nonce-{NONCE}' fonts.googleapis.com; style-src-attr 'nonce-{NONCE}'; style-src-elem 'self' 'nonce-{NONCE}' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: https: via.placeholder.com media.giphy.com *.giphy.com i.imgur.com raw.githubusercontent.com; media-src 'self' https: commondatastorage.googleapis.com www.w3schools.com www.learningcontainer.com storage.googleapis.com sample-videos.com
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com *; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' js-agent.newrelic.com *; connect-src 'self' bam.nr-data.net js-agent.newrelic.com bam-cell.nr-data.net *; style-src 'self' 'unsafe-inline'; style-src-attr 'unsafe-inline'; style-src-elem 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' data: fonts.gstatic.com; img-src 'self' data: https: via.placeholder.com media.giphy.com *.giphy.com i.imgur.com raw.githubusercontent.com; media-src 'self' https: commondatastorage.googleapis.com www.w3schools.com www.learningcontainer.com storage.googleapis.com sample-videos.com
 
 /static/*
   Cache-Control: public, max-age=31536000, immutable
