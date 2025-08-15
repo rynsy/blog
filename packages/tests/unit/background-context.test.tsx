@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { BackgroundProvider, useBackground } from '@site/contexts/BackgroundContext'
@@ -35,13 +36,15 @@ vi.mock('@site/bgModules/registry', () => ({
 
 // Mock ThemeContext since BackgroundContext depends on it
 vi.mock('@site/contexts/ThemeContext', () => ({
-  useTheme: vi.fn(() => ({
-    theme: 'light'
-  })),
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => children
+  useTheme: () => ({
+    theme: 'light' as const,
+    setTheme: vi.fn(),
+    toggleTheme: vi.fn()
+  }),
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="theme-provider">{children}</div>
 }))
 
-const TestComponent = () => {
+const TestComponent: React.FC = () => {
   const { currentModule, setCurrentModule, modules } = useBackground()
   
   return (
@@ -61,6 +64,11 @@ const TestComponent = () => {
   )
 }
 
+// Test wrapper that provides both Theme and Background context
+const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <BackgroundProvider>{children}</BackgroundProvider>
+}
+
 describe('BackgroundContext', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -69,9 +77,9 @@ describe('BackgroundContext', () => {
 
   it('initializes with no active module by default', () => {
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
 
     expect(screen.getByTestId('active-module')).toHaveTextContent('none')
@@ -80,9 +88,9 @@ describe('BackgroundContext', () => {
 
   it('registers modules and shows them in UI', async () => {
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
     
     // Test that the context is working properly
@@ -92,9 +100,9 @@ describe('BackgroundContext', () => {
 
   it('persists active module to localStorage', async () => {
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
 
     // Since modules aren't auto-registered, we need to test the localStorage functionality differently
@@ -105,9 +113,9 @@ describe('BackgroundContext', () => {
     localStorage.setItem('bg-module', 'gradient')
     
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
 
     expect(screen.getByTestId('active-module')).toHaveTextContent('gradient')
@@ -117,16 +125,16 @@ describe('BackgroundContext', () => {
     localStorage.setItem('bg-module', 'nonexistent')
     
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
 
     expect(screen.getByTestId('active-module')).toHaveTextContent('nonexistent')
   })
 
   it('provides context methods', () => {
-    const TestMethodsComponent = () => {
+    const TestMethodsComponent: React.FC = () => {
       const context = useBackground()
       
       return (
@@ -148,9 +156,9 @@ describe('BackgroundContext', () => {
     }
 
     render(
-      <BackgroundProvider>
+      <TestWrapper>
         <TestMethodsComponent />
-      </BackgroundProvider>
+      </TestWrapper>
     )
 
     expect(screen.getByTestId('has-methods')).toHaveTextContent('true')

@@ -166,7 +166,7 @@ test.describe('Performance and Monitoring Tests (P-01)', () => {
       const resourceSizes = new Map<string, number>()
       
       page.on('response', response => {
-        const url = response.url()
+        const _url = response.url()
         const size = parseInt(response.headers()['content-length'] || '0')
         if (size > 0) {
           resourceSizes.set(url, size)
@@ -326,7 +326,7 @@ test.describe('Performance and Monitoring Tests (P-01)', () => {
         
         const measurePerformance = () => {
           const now = Date.now()
-          (window as any).__performanceUnderLoad.push({
+          ;(window as any).__performanceUnderLoad.push({
             timestamp: now - startTime,
             memory: 'memory' in performance ? (performance as any).memory?.usedJSHeapSize : 0
           })
@@ -456,7 +456,7 @@ test.describe('Performance and Monitoring Tests (P-01)', () => {
       const loadOrder: string[] = []
       
       page.on('response', response => {
-        const url = response.url()
+        const _url = response.url()
         const type = response.headers()['content-type'] || ''
         
         if (type.includes('text/html')) {

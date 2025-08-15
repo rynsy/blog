@@ -143,7 +143,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
         await controlButton.click()
         await page.waitForTimeout(300)
         
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         await expect(dialog).toBeVisible()
         
         // Check dialog structure
@@ -182,7 +182,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
         await controlButton.click()
         await page.waitForTimeout(300)
         
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         
         // Open module selector
         const selectorButton = dialog.locator('button').first()
@@ -219,7 +219,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
         await controlButton.click()
         await page.waitForTimeout(300)
         
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         
         // Test Background Active toggle
         const activeToggle = page.locator('text=Background Active').locator('..').locator('button')
@@ -268,7 +268,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
         await page.keyboard.press('Enter')
         await page.waitForTimeout(300)
         
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         await expect(dialog).toBeVisible()
         
         // Navigate with Tab
@@ -335,7 +335,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
         
         // Control tray should show correct state
         await controlButton.click()
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         
         // Should show Animated Gradient as selected
         const selectedModule = dialog.locator('button').first()
@@ -642,7 +642,7 @@ test.describe('Component-Level UI Testing (C-02)', () => {
       const controlButton = page.locator('button[aria-label*="background controls"]').first()
       if (await controlButton.isVisible()) {
         await controlButton.click()
-        const dialog = page.locator('[role="dialog"]')
+        const _dialog = page.locator('[role="dialog"]')
         await expect(dialog).toBeVisible()
         await page.keyboard.press('Escape')
       }

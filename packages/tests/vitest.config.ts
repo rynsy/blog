@@ -6,6 +6,18 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./setup.ts'],
+    // Add React environment configuration
+    environmentOptions: {
+      happyDOM: {
+        settings: {
+          disableJavaScriptEvaluation: false,
+          disableJavaScriptFileLoading: false,
+          disableCSSFileLoading: false,
+          disableIframePageLoading: false,
+          disableComputedStyleRendering: false
+        }
+      }
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

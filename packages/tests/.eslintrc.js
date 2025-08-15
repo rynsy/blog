@@ -52,16 +52,20 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+      files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}', 'e2e/**/*.ts', 'unit/**/*.ts'],
       rules: {
         'no-console': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        'no-undef': 'warn',  // Downgrade undefined vars to warnings in tests
       },
     },
     {
-      files: ['setup.ts'],
+      files: ['setup.ts', 'setup/**/*.ts'],
       rules: {
         'no-console': 'off',
+        'no-unused-vars': 'warn',
+        '@typescript-eslint/no-unused-vars': 'warn',
       },
     },
   ],

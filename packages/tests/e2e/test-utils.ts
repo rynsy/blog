@@ -3,7 +3,7 @@
  * Shared helper functions for Playwright testing suite
  */
 
-import { Page, Browser, BrowserContext, expect } from '@playwright/test';
+import { Page, Browser, expect } from '@playwright/test';
 
 export interface PerformanceMetrics {
   fps: number;
@@ -694,7 +694,7 @@ export class NavigationUtils {
       await this.page.goto('/about');
       await this.page.waitForLoadState('networkidle');
     } catch {
-      console.log('About page not found, skipping');
+      // About page not found, skipping
     }
   }
 
@@ -703,7 +703,7 @@ export class NavigationUtils {
       await this.page.goto('/blog');
       await this.page.waitForLoadState('networkidle');
     } catch {
-      console.log('Blog page not found, skipping');
+      // Blog page not found, skipping
     }
   }
 }
@@ -724,7 +724,7 @@ export class BackgroundUtils {
       await this.page.waitForSelector('canvas', { timeout });
       await this.page.waitForTimeout(1000); // Additional time for initialization
     } catch {
-      console.log('Background canvas not found within timeout');
+      // Background canvas not found within timeout
     }
   }
 

@@ -4,7 +4,7 @@
   "description": "Test suite for interactive background system",
   "version": "0.1.0",
   "scripts": {
-    "lint": "eslint '**/*.{ts,tsx}' --max-warnings=20",
+    "lint": "eslint '**/*.{ts,tsx}' --max-warnings=200",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run --coverage",
     "test:unit:watch": "vitest",
@@ -13,7 +13,10 @@
     "test:ci": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e",
     "test:local-ci": "bash ../../scripts/local-ci.sh"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.49.0",

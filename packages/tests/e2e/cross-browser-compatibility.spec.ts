@@ -76,7 +76,7 @@ test.describe('Cross-Browser Compatibility Tests', () => {
     
     // Check that content adapts to viewport
     const viewport = page.viewportSize()
-    const isMobile = viewport ? viewport.width < 768 : false
+    const _isMobile = viewport ? viewport.width < 768 : false
     
     // Navigation should be accessible on all sizes
     const nav = page.locator('nav')
