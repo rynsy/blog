@@ -52,7 +52,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@site': path.resolve(__dirname, '../site/src'),
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, '../site/src'),
+      '@/components': path.resolve(__dirname, '../site/src/components'),
+      '@/contexts': path.resolve(__dirname, '../site/src/contexts'),
+      '@/utils': path.resolve(__dirname, '../site/src/utils'),
+      '@/bgModules': path.resolve(__dirname, '../site/src/bgModules'),
+      '@/types': path.resolve(__dirname, '../site/src/types'),
+      '@/hooks': path.resolve(__dirname, '../site/src/hooks'),
+      '@/assets': path.resolve(__dirname, '../site/src/assets')
     }
   }
 })

@@ -1,6 +1,12 @@
 import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 
+// Mock Gatsby modules
+vi.mock('gatsby', async () => {
+  const gatsbyMock = await import('./__mocks__/gatsby.js')
+  return gatsbyMock
+})
+
 // Mock requestAnimationFrame for animations
 global.requestAnimationFrame = (callback: FrameRequestCallback) => {
   return setTimeout(callback, 16)

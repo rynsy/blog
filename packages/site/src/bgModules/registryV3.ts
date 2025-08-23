@@ -4,10 +4,10 @@ import {
   ModuleCategory, 
   ModuleCapability,
   ModuleSetupParamsV3
-} from '../../interfaces/BackgroundSystemV3'
+} from '../interfaces/BackgroundSystemV3'
 
 // Extend ModuleCapability enum for advanced features
-declare module '../../interfaces/BackgroundSystemV3' {
+declare module '../interfaces/BackgroundSystemV3' {
   namespace ModuleCapability {
     const THEME_AWARE = 'theme-aware';
     const REAL_TIME_PHYSICS = 'real-time-physics';

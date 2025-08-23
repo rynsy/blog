@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { ThemeProvider } from '../contexts/ThemeContext'
-// import { BackgroundProvider } from '../contexts/BackgroundContext' // Temporarily disabled
+import { BackgroundProviderV3 } from '../contexts/BackgroundContextV3'
 import { debug } from '../utils/debug'
 import { initializeNewRelic } from '../utils/newrelic'
+import { registerDefaultModulesV3 } from '../bgModules/registryV3'
 
 // BackgroundClient temporarily removed
 // const BackgroundClient = React.lazy(() => import("./BackgroundClient"))
@@ -28,6 +29,14 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
     if (!globalBackgroundInitialized) {
       console.log('🏠 RootWrapper: FIRST MOUNT - initializing background system')
       debug.log('🏠 RootWrapper:', 'FIRST MOUNT - initializing background system')
+      
+      // Initialize V3 background system
+      registerDefaultModulesV3().then(() => {
+        console.log('✅ V3 background system initialized successfully')
+      }).catch((error) => {
+        console.error('❌ Failed to initialize V3 background system:', error)
+      })
+      
       globalBackgroundInitialized = true
     } else {
       console.log('🏠 RootWrapper: REMOUNT - background system already initialized (React Strict Mode)')
@@ -44,8 +53,9 @@ const RootWrapper: React.FC<RootWrapperProps> = ({ children }) => {
   // The providers must always be present for consistent hydration
   return (
     <ThemeProvider>
-      {/* BackgroundProvider moved to layout.tsx, BackgroundClient temporarily disabled */}
-      {children}
+      <BackgroundProviderV3>
+        {children}
+      </BackgroundProviderV3>
     </ThemeProvider>
   )
 }

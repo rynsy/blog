@@ -1,5 +1,5 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
-import { BackgroundModuleV3, ModuleSetupParamsV3 } from '../../../interfaces/BackgroundSystemV3'
+import { BackgroundModuleV3, ModuleSetupParamsV3 } from '../interfaces/BackgroundSystemV3'
 
 /**
  * Simplified fallback version of the knowledge graph for low-end devices

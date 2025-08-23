@@ -1,5 +1,5 @@
 import { BackgroundModule, ModuleSetupParams } from '../../contexts/BackgroundContext'
-import { BackgroundModuleV3, ModuleSetupParamsV3, PerformanceMetrics, MemoryStats, ModuleConfiguration, ValidationResult, SerializableState, ModuleMessage, ModuleResponse, CanvasRequirements } from '../../../interfaces/BackgroundSystemV3'
+import { BackgroundModuleV3, ModuleSetupParamsV3, PerformanceMetrics, MemoryStats, ModuleConfiguration, ValidationResult, SerializableState, ModuleMessage, ModuleResponse, CanvasRequirements } from '../interfaces/BackgroundSystemV3'
 import { ModuleConfigurationData } from '../../types/browser-apis'
 import { debugBackground } from '../../utils/debug'
 

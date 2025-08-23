@@ -1,7 +1,7 @@
 import React from "react"
 import { Link } from "gatsby"
 import ThemeToggle from "./ThemeToggle"
-// import { SimpleBackgroundProvider as BackgroundProvider } from "../bgModules/core/SimpleBackgroundProvider" // Temporarily disabled
+import CanvasHostV3 from "./CanvasHostV3"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -10,6 +10,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100 transition-colors duration-200 relative">
+        {/* Background Canvas Layer - Temporarily disabled for build testing */}
+        {/* <CanvasHostV3 /> */}
         {/* Skip Navigation Links */}
         <a 
           href="#main-content" 

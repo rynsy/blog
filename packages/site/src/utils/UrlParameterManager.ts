@@ -1,4 +1,4 @@
-import { BackgroundUrlParams, UrlParameterSchema } from '../../../interfaces/BackgroundSystemV3'
+import { BackgroundUrlParams, UrlParameterSchema } from '../interfaces/BackgroundSystemV3'
 
 /**
  * Manages URL parameters for shareable background configurations

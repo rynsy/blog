@@ -1,9 +1,7 @@
 // New Relic Browser Agent Configuration
-// This initializes New Relic monitoring for the browser
+// Optimized implementation using environment variables
 
-// Conditional import to prevent SSR issues
-
-// New Relic configuration from your account
+// New Relic configuration using environment variables
 const newRelicConfig = {
   init: {
     privacy: { cookies_enabled: true },
@@ -12,16 +10,16 @@ const newRelicConfig = {
   info: {
     beacon: "bam.nr-data.net",
     errorBeacon: "bam.nr-data.net",
-    licenseKey: "NRBR-1ee01d1479b9191d26e",
-    applicationID: "1589123863",
+    licenseKey: process.env.GATSBY_NEW_RELIC_LICENSE_KEY || "NRBR-1ee01d1479b9191d26e",
+    applicationID: process.env.GATSBY_NEW_RELIC_APP_ID || "1589123863",
     sa: 1
   },
   loader_config: {
-    accountID: "6576957",
-    trustKey: "6576957",
-    agentID: "1589123863",
-    licenseKey: "NRBR-1ee01d1479b9191d26e",
-    applicationID: "1589123863"
+    accountID: process.env.GATSBY_NEW_RELIC_ACCOUNT_ID || "6576957",
+    trustKey: process.env.GATSBY_NEW_RELIC_ACCOUNT_ID || "6576957",
+    agentID: process.env.GATSBY_NEW_RELIC_APP_ID || "1589123863",
+    licenseKey: process.env.GATSBY_NEW_RELIC_LICENSE_KEY || "NRBR-1ee01d1479b9191d26e",
+    applicationID: process.env.GATSBY_NEW_RELIC_APP_ID || "1589123863"
   }
 }
 

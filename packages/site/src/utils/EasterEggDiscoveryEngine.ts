@@ -7,7 +7,7 @@
 
 import { PerformanceMonitor } from './PerformanceMonitor'
 import { DeviceCapabilityManager } from './DeviceCapabilityManager'
-import { EasterEgg, EasterEggTrigger, Achievement } from '../../../interfaces/BackgroundSystemV3'
+import { EasterEgg, EasterEggTrigger, Achievement } from '../interfaces/BackgroundSystemV3'
 
 // ============================================================================
 // Pattern Recognition Types
