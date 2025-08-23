@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react"
-import { Link, graphql } from "gatsby"
+import { Link, graphql, HeadFC } from "gatsby"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 
@@ -98,7 +98,6 @@ const BlogPage: React.FC<BlogPageProps> = ({ data }) => {
 
   return (
     <Layout>
-      <SEO title="Blog" />
       <div className="space-y-section">
         <div className="mb-component">
           <h1 className="text-display-md font-bold text-foreground mb-component font-serif">Blog</h1>
@@ -267,5 +266,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ data }) => {
     </Layout>
   )
 }
+
+export const Head: HeadFC = () => <SEO title="Blog" description="Technical articles and insights about web development, programming, and technology" />
 
 export default BlogPage

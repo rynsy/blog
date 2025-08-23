@@ -1,7 +1,8 @@
 import Layout from "../components/layout"
+import SEO from "../components/seo"
 
 import * as React from "react"
-import { Link } from "gatsby"
+import { Link, HeadFC } from "gatsby"
 
 const NotFoundPage = () => {
   return (
@@ -49,5 +50,7 @@ const styles = {
     fontWeight: "bold",
   },
 }
+
+export const Head: HeadFC = () => <SEO title="Page Not Found" description="The page you're looking for doesn't exist" />
 
 export default NotFoundPage
